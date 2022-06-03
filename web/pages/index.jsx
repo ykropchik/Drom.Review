@@ -1,19 +1,15 @@
 import * as React from 'react';
-import { Menu } from 'antd';
+import { Layout } from 'antd';
+import Header from '../components/Header/Header';
+import Footer from '../components/Footer/Footer';
+import { Content } from 'antd/lib/layout/layout';
 
 export default function Main() {
 	return (
-		<Menu
-			theme="dark"
-			mode="horizontal"
-			defaultSelectedKeys={['2']}
-			items={new Array(15).fill(null).map((_, index) => {
-				const key = index + 1;
-				return {
-					key,
-					label: `nav ${key}`,
-				};
-			})}
-		/>
+		<Layout>
+			<Header avatar={true}></Header>
+			<Content></Content>
+			<Footer></Footer>
+		</Layout>
 	);
 }

@@ -1,0 +1,26 @@
+.content {
+  height: 100%;
+  font-size: 24px;
+  color: #FFFFFF;
+  display: flex;
+}
+
+.logo_container {
+  height: 100%;
+  padding: 12px 0;
+  margin: 0 24px;
+}
+
+.app_name {
+  margin-right: 46px;
+  font-weight: 600;
+}
+
+.user_avatar {
+  height: 40px;
+  width: 40px;
+  margin: 12px 24px 12px auto;
+  border-radius: 50%;
+  cursor: pointer;
+  background: no-repeat center/cover url('https://i.pravatar.cc/100');
+}
