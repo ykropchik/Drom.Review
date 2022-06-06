@@ -1,0 +1,36 @@
+@import "global";
+
+.content {
+  display: flex;
+  justify-content: center;
+  align-content: flex-start;
+  flex-wrap: wrap;
+  height: 100%;
+  gap: 32px;
+}
+
+.left_side {
+  display: flex;
+  justify-content: center;
+}
+
+.right_side {
+  display: flex;
+  flex-direction: column;
+  min-width: 320px;
+}
+
+.form {
+  width: 100%;
+}
+
+.avatar {
+  margin: 0 auto;
+}
+
+.avatar_placeholder {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: 1rem;
+}

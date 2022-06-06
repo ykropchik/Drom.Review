@@ -1,0 +1,32 @@
+@import 'public/styles/global';
+
+.content {
+  position: relative;
+  height: fit-content;
+}
+
+.avatar {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: $main-color;
+}
+
+.avatar__placeholder {
+  color: $default-white;
+  font-weight: 700;
+}
+
+.avatar__img {
+  height: 100%;
+  z-index: 1;
+}
+
+.edit_button {
+  position: absolute;
+  right: -20px;
+  bottom: 10px;
+}

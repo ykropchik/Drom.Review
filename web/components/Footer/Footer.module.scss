@@ -1,5 +1,7 @@
+@import '../../public/styles/global';
+
 .content {
-    background-color: #000000;
+    background-color: $default-black;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -7,5 +9,6 @@
 }
 
 .copyright {
-    color: #4f4f4f;
+    text-align: center;
+    color: $grey-900;
 }

@@ -1,7 +1,9 @@
+@import 'global';
+
 .content {
   display: flex;
   justify-content: center;
-  background-color: #000000;
+  background-color: $default-black;
 }
 
 .form_container {
@@ -21,14 +23,14 @@
 .form__header {
   font-size: 32px;
   margin-bottom: 46px;
-  color: #FFFFFF;
+  color: $default-white;
 }
 
 .submit_button {
-  width: 100%;
+  width: 100% !important;
 }
 
 .reg_link {
-  color: #3291FF;
+  color: $link-color;
   margin-bottom: 32px;
 }
