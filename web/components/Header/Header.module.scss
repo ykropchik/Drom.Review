@@ -1,26 +1,58 @@
+@import 'public/styles/global';
+
 .content {
   height: 100%;
   font-size: 24px;
-  color: #FFFFFF;
+  color: $default-white;
   display: flex;
 }
 
 .logo_container {
+  display: flex;
+  align-items: center;
   height: 100%;
   padding: 12px 0;
   margin: 0 24px;
 }
 
-.app_name {
-  margin-right: 46px;
-  font-weight: 600;
+.mobile__logo_container {
+  margin: 0 auto;
 }
 
-.user_avatar {
-  height: 40px;
-  width: 40px;
-  margin: 12px 24px 12px auto;
-  border-radius: 50%;
+.app_name {
+  padding: 0 24px;
+  font-weight: 600;
+  color: $default-white;
+  font-size: 24px;
   cursor: pointer;
-  background: no-repeat center/cover url('https://i.pravatar.cc/100');
+}
+
+.left_side {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  padding: 12px 0;
+}
+
+.right_side {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  padding: 12px 0;
+  margin-left: auto;
+  margin-right: 24px;
+}
+
+.main_menu {
+  background-color: $default-black;
+  border-color: $default-black;
+}
+
+.mobile_menu {
+  left: 0;
+  position: absolute;
+  height: 100%;
+  z-index: 1;
 }

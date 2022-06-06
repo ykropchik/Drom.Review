@@ -12,7 +12,9 @@
   "author": "ykropchik",
   "license": "ISC",
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "antd": "^4.20.7",
+    "classnames": "^2.3.1",
     "next": "^12.1.6",
     "react": "^18.1.0",
     "react-dom": "^18.1.0"

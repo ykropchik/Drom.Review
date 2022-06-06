@@ -1,7 +1,9 @@
+@import '../../public/styles/global';
+
 .content {
   margin-top: 12px;
   border-radius: 6px;
-  border: 1px solid #ddd;
+  border: 1px solid $grey-400;
   box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
@@ -10,6 +12,6 @@
   margin: 0 !important;
 
   &:not(:last-child) {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid $grey-400;
   }
 }
