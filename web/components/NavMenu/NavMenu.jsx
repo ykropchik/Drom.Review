@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Menu } from 'antd';
 
-export default function NavMenu({ items, onSelect, ...props }) {
+const NavMenu = React.memo(({ items, onSelect, ...props }) => {
 	return (
 		<Menu {...props}
 		      items={items}
@@ -9,4 +9,8 @@ export default function NavMenu({ items, onSelect, ...props }) {
 		      selectedKeys={[]}
 		/>
 	);
-}
+});
+
+NavMenu.displayName = 'NavMenu';
+
+export default NavMenu;
