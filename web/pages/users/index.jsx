@@ -1,15 +1,40 @@
 import * as React from 'react';
-import { Divider, Table, Tag } from 'antd';
+import { Table, Tabs, Tag } from 'antd';
 import { Users as UsersStub } from '../../stubs/users';
 import UserAvatar from '../../components/UserAvatar/UserAvatar';
 import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
+import useWindowSize from '../../scripts/hooks/useWindowSize';
+import { OrderedListOutlined, UserAddOutlined } from '@ant-design/icons';
+import styles from '../../public/styles/pages/Users.module.scss';
+import NewUserForm from '../../components/NewUserForm/NewUserForm';
+
+const { TabPane } = Tabs;
 
 export default function Users() {
 	return (
-		<>
-			<Divider orientation="left">Сотрудники</Divider>
-			<Table dataSource={UsersStub} columns={columns} locale={i18n}/>
-		</>
+		<Tabs defaultActiveKey="list">
+			<TabPane tab={<TabPaneItem icon={<OrderedListOutlined/>}/>} key="list">
+				<Table dataSource={UsersStub} columns={columns} locale={i18n}/>
+			</TabPane>
+			<TabPane tab={<TabPaneItem icon={<UserAddOutlined/>}/>} key="newUsers">
+				<NewUserForm/>
+			</TabPane>
+		</Tabs>
+	);
+}
+
+function TabPaneItem({ icon }) {
+	const { width } = useWindowSize();
+
+	const createIconWithClass = (icon) => {
+		return React.cloneElement(icon, { className: styles.tab_icon });
+	};
+
+	return (
+		<span>
+			{createIconWithClass(icon)}
+			{width > 420 && <span className={styles.tab_title}>Список сотрудников</span>}
+		</span>
 	);
 }
 
