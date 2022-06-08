@@ -4,7 +4,7 @@ const { Content } = Layout;
 import { useRouter } from 'next/router';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
-import styles from '../../public/styles/Login.module.scss';
+import styles from '../../public/styles/pages/Login.module.scss';
 import { useState } from 'react';
 import timeout from '../../scripts/timeout';
 

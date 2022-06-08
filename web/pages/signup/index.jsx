@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRouter } from 'next/router';
 import { Button, ConfigProvider, Form, Input, Layout } from 'antd';
 import Header from '../../components/Header/Header';
-import styles from '../../public/styles/Login.module.scss';
+import styles from '../../public/styles/pages/Login.module.scss';
 import Footer from '../../components/Footer/Footer';
 import MailInput from '../../components/MailInput/MailInput';
 import { useState } from 'react';

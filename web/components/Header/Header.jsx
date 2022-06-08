@@ -23,7 +23,7 @@ export default function Header({ mainNavMenu, personalNavItems }) {
 		<AntHeader>
 			<div className={styles.content} style={width < 720 ? { marginLeft: -50 } : {}}>
 				{
-					width < 720 &&
+					width <= 720 &&
 					<Button
 						type="text"
 						onClick={toggleCollapsed}
@@ -36,7 +36,7 @@ export default function Header({ mainNavMenu, personalNavItems }) {
 						{isCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
 					</Button>
 				}
-				<div className={classNames(styles.logo_container, {[styles.mobile__logo_container]: width < 720})}>
+				<div className={classNames(styles.logo_container, {[styles.mobile__logo_container]: width <= 720})}>
 					<MainLogo/>
 					{
 						width > 720 &&
@@ -66,7 +66,7 @@ export default function Header({ mainNavMenu, personalNavItems }) {
 				}
 			</div>
 			{
-				width < 720 &&
+				width <= 720 &&
 				<NavMenu
 					mode="inline"
 					className={styles.mobile_menu}
