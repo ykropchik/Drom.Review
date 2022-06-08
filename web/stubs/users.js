@@ -1,162 +1,162 @@
 export const Users = [
 	{
-		name: 'Jimenez Jones',
+		name: 'Olsen Howell',
 		avatarUrl: null,
-		email: 'jimenezjones@enersol.com',
-		specialization: 'DevOps',
-		grade: 'Junior',
-		role: 'Lider'
-	},
-	{
-		name: 'Lolita House',
-		avatarUrl: null,
-		email: 'lolitahouse@enersol.com',
-		specialization: 'DevOps',
-		grade: 'Junior',
-		role: 'Lider'
-	},
-	{
-		name: 'Diana Noel',
-		avatarUrl: 'https://i.pravatar.cc/100',
-		email: 'diananoel@enersol.com',
-		specialization: 'IOS',
-		grade: 'Midle',
-		role: 'Scrum'
-	},
-	{
-		name: 'Sweeney Robertson',
-		avatarUrl: null,
-		email: 'sweeneyrobertson@enersol.com',
-		specialization: 'IOS',
-		grade: 'Midle',
-		role: 'Scrum'
-	},
-	{
-		name: 'Fox Tyler',
-		avatarUrl: null,
-		email: 'foxtyler@enersol.com',
+		email: 'olsenhowell@enersol.com',
 		specialization: 'Frontend',
 		grade: 'Junior',
 		role: 'Default'
 	},
 	{
-		name: 'Combs Williamson',
+		name: 'Chris Berg',
 		avatarUrl: null,
-		email: 'combswilliamson@enersol.com',
+		email: 'chrisberg@enersol.com',
+		specialization: 'IOS',
+		grade: 'Senior',
+		role: 'Scrum'
+	},
+	{
+		name: 'Stacey Price',
+		avatarUrl: null,
+		email: 'staceyprice@enersol.com',
+		specialization: 'Frontend',
+		grade: 'Senior',
+		role: 'Default'
+	},
+	{
+		name: 'Daniel Howe',
+		avatarUrl: 'https://i.pravatar.cc/100',
+		email: 'danielhowe@enersol.com',
+		specialization: 'IOS',
+		grade: 'Junior',
+		role: 'Lead'
+	},
+	{
+		name: 'Fannie Ashley',
+		avatarUrl: 'https://i.pravatar.cc/100',
+		email: 'fannieashley@enersol.com',
+		specialization: 'Android',
+		grade: 'Senior',
+		role: 'Lead'
+	},
+	{
+		name: 'Washington Roy',
+		avatarUrl: 'https://i.pravatar.cc/100',
+		email: 'washingtonroy@enersol.com',
+		specialization: 'IOS',
+		grade: 'Senior',
+		role: 'Default'
+	},
+	{
+		name: 'Jennings Mcdaniel',
+		avatarUrl: null,
+		email: 'jenningsmcdaniel@enersol.com',
+		specialization: 'IOS',
+		grade: 'Junior',
+		role: 'Default'
+	},
+	{
+		name: 'Finch Jackson',
+		avatarUrl: 'https://i.pravatar.cc/100',
+		email: 'finchjackson@enersol.com',
+		specialization: 'Android',
+		grade: 'Senior',
+		role: 'Default'
+	},
+	{
+		name: 'Elise English',
+		avatarUrl: null,
+		email: 'eliseenglish@enersol.com',
+		specialization: 'Java',
+		grade: 'Junior',
+		role: 'Lead'
+	},
+	{
+		name: 'Paige Barlow',
+		avatarUrl: 'https://i.pravatar.cc/100',
+		email: 'paigebarlow@enersol.com',
+		specialization: 'Android',
+		grade: 'Junior',
+		role: 'Lead'
+	},
+	{
+		name: 'Mayo Burch',
+		avatarUrl: null,
+		email: 'mayoburch@enersol.com',
+		specialization: 'DevOps',
+		grade: 'Junior',
+		role: 'Default'
+	},
+	{
+		name: 'Anderson Salazar',
+		avatarUrl: 'https://i.pravatar.cc/100',
+		email: 'andersonsalazar@enersol.com',
+		specialization: 'Frontend',
+		grade: 'Junior',
+		role: 'Lead'
+	},
+	{
+		name: 'Meagan Hicks',
+		avatarUrl: null,
+		email: 'meaganhicks@enersol.com',
 		specialization: 'Java',
 		grade: 'Senior',
 		role: 'Default'
 	},
 	{
-		name: 'Petersen Brooks',
+		name: 'Kelley Obrien',
 		avatarUrl: null,
-		email: 'petersenbrooks@enersol.com',
-		specialization: 'Android',
+		email: 'kelleyobrien@enersol.com',
+		specialization: 'Backend',
 		grade: 'Junior',
-		role: 'Lider'
+		role: 'Default'
 	},
 	{
-		name: 'Moon Morrison',
+		name: 'Jenkins Rodriguez',
 		avatarUrl: null,
-		email: 'moonmorrison@enersol.com',
+		email: 'jenkinsrodriguez@enersol.com',
 		specialization: 'Frontend',
-		grade: 'Midle',
-		role: 'Default'
+		grade: 'Senior',
+		role: 'Lead'
 	},
 	{
-		name: 'Tamra Watson',
+		name: 'Knowles Hurley',
 		avatarUrl: null,
-		email: 'tamrawatson@enersol.com',
-		specialization: 'Android',
-		grade: 'Junior',
-		role: 'Default'
-	},
-	{
-		name: 'Hatfield Ayers',
-		avatarUrl: null,
-		email: 'hatfieldayers@enersol.com',
-		specialization: 'Android',
-		grade: 'Junior',
-		role: 'Default'
-	},
-	{
-		name: 'Debbie Talley',
-		avatarUrl: null,
-		email: 'debbietalley@enersol.com',
-		specialization: 'IOS',
-		grade: 'Junior',
-		role: 'Default'
-	},
-	{
-		name: 'Esther Shelton',
-		avatarUrl: null,
-		email: 'esthershelton@enersol.com',
+		email: 'knowleshurley@enersol.com',
 		specialization: 'DevOps',
-		grade: 'Junior',
+		grade: 'Middle',
 		role: 'Default'
 	},
 	{
-		name: 'Frank Anthony',
+		name: 'Hoffman Jefferson',
 		avatarUrl: null,
-		email: 'frankanthony@enersol.com',
-		specialization: 'IOS',
-		grade: 'Senior',
-		role: 'Lider'
-	},
-	{
-		name: 'Jeannette Mckenzie',
-		avatarUrl: 'https://i.pravatar.cc/100',
-		email: 'jeannettemckenzie@enersol.com',
-		specialization: 'IOS',
-		grade: 'Senior',
-		role: 'Scrum'
-	},
-	{
-		name: 'Rosemarie Santana',
-		avatarUrl: null,
-		email: 'rosemariesantana@enersol.com',
-		specialization: 'Frontend',
-		grade: 'Senior',
-		role: 'Default'
-	},
-	{
-		name: 'Ella Valentine',
-		avatarUrl: null,
-		email: 'ellavalentine@enersol.com',
-		specialization: 'IOS',
-		grade: 'Midle',
-		role: 'Scrum'
-	},
-	{
-		name: 'Brady Tillman',
-		avatarUrl: 'https://i.pravatar.cc/100',
-		email: 'bradytillman@enersol.com',
-		specialization: 'Frontend',
-		grade: 'Junior',
-		role: 'Scrum'
-	},
-	{
-		name: 'Avila Brock',
-		avatarUrl: 'https://i.pravatar.cc/100',
-		email: 'avilabrock@enersol.com',
-		specialization: 'IOS',
-		grade: 'Midle',
-		role: 'Scrum'
-	},
-	{
-		name: 'Mooney Townsend',
-		avatarUrl: null,
-		email: 'mooneytownsend@enersol.com',
-		specialization: 'Frontend',
-		grade: 'Senior',
-		role: 'Lider'
-	},
-	{
-		name: 'Dixie Boone',
-		avatarUrl: null,
-		email: 'dixieboone@enersol.com',
+		email: 'hoffmanjefferson@enersol.com',
 		specialization: 'DevOps',
-		grade: 'Midle',
+		grade: 'Senior',
+		role: 'Default'
+	},
+	{
+		name: 'Meyers Shaffer',
+		avatarUrl: null,
+		email: 'meyersshaffer@enersol.com',
+		specialization: 'Java',
+		grade: 'Senior',
+		role: 'Lead'
+	},
+	{
+		name: 'Jean Kelly',
+		avatarUrl: null,
+		email: 'jeankelly@enersol.com',
+		specialization: 'Android',
+		grade: 'Middle',
 		role: 'Scrum'
+	},
+	{
+		name: 'Dawn Roach',
+		avatarUrl: null,
+		email: 'dawnroach@enersol.com',
+		specialization: 'Frontend',
+		grade: 'Middle',
+		role: 'Default'
 	}
 ];

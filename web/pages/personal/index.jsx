@@ -5,14 +5,7 @@ import { useEffect, useState } from 'react';
 import timeout from '../../scripts/timeout';
 import UserAvatar from '../../components/UserAvatar/UserAvatar';
 import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
-
-const stubInfo = {
-	name: 'Зыков Михаил Григорьевич',
-	avatarUrl: null,
-	email: 'zykov_mg@farpost.com',
-	specialization: 'Frontend',
-	grade: 'Junior',
-};
+import { Users } from '../../stubs/users';
 
 export default function Personal() {
 	const [userInfo, setUserInfo] = useState({});
@@ -20,7 +13,7 @@ export default function Personal() {
 
 	useEffect(() => {
 		timeout(2000, false)
-			.then(() => setUserInfo(stubInfo))
+			.then(() => setUserInfo(Users[0]))
 			.finally(() => setLoading(false));
 	});
 

@@ -8,10 +8,10 @@ export default function UserAvatar({ avatarUrl, avatarPlaceholder, size, editabl
 		<div className={styles.content}>
 			{
 				avatarUrl
-					? <Avatar {...props} className={styles.avatar} src={avatarUrl} size={40}/>
+					? <Avatar {...props} className={styles.avatar} src={avatarUrl} size={size}/>
 					:
 					<span {...props} className={styles.avatar} style={{ height: size, width: size }}>
-						<span className={styles.avatar__placeholder} style={{  fontSize: size / 2.5, lineHeight: `${size}px`}}>{avatarPlaceholder}</span>
+						<span className={styles.avatar__placeholder} style={{  fontSize: size / 2.5, lineHeight: `${size + 1}px`}}>{avatarPlaceholder}</span>
 					</span>
 			}
 			{
