@@ -30,6 +30,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./api:/app
+      - /app/vendor
     depends_on:
       - 'mysql'
 
