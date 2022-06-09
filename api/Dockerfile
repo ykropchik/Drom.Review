@@ -11,8 +11,8 @@ RUN set -xe && \
 RUN apk add --no-cache --update mysql-dev curl git build-base zlib-dev oniguruma-dev autoconf bash && \
     docker-php-ext-install pdo_mysql
 
-RUN pecl install xdebug && docker-php-ext-enable xdebug
-COPY ./docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+#RUN pecl install xdebug && docker-php-ext-enable xdebug
+#COPY ./docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 COPY docker/php/php.ini "/usr/local/etc/php/php.ini"
 
