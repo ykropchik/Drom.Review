@@ -28,11 +28,15 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
+    working_dir: /app
+    restart: on-failure
     volumes:
-      - ./api:/app
-      - /app/vendor
+      - ./api:/app:delegated
     depends_on:
       - 'mysql'
+    environment:
+      - APP_ENV=${APP_ENV}
+      - DATABASE_URL=${DATABASE_URL}
 
   mysql:
     image: mysql:latest
@@ -44,10 +48,10 @@ services:
     ports:
       - '3306:3306'
     environment:
-      MYSQL_DATABASE: "Drom.Review"
-      MYSQL_USER: "user"
-      MYSQL_PASSWORD: "password"
-      MYSQL_ROOT_PASSWORD: "password"
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql:delegated
 
