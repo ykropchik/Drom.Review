@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import styles from './MarkdownRender.module.scss';
 import classNames from 'classnames';

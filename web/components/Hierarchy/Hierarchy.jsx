@@ -1,6 +1,5 @@
-import * as React from 'react';
+import React from 'react';
 import styles from './Hierarchy.module.scss';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';

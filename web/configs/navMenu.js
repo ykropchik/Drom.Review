@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { EditOutlined, UserOutlined } from '@ant-design/icons';
 
@@ -21,7 +21,7 @@ export const mainMenu = [
 	},
 	{
 		key: 'editor',
-		label: <Link href={'/editor'}>Редактор</Link>,
+		label: <Link href={'/editors'}>Редакторы</Link>,
 		icon: <EditOutlined />
 	}
 ];

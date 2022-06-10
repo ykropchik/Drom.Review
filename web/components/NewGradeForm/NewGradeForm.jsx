@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Button, Form, Input, Modal } from 'antd';
 import timeout from '../../scripts/timeout';
 import MarkdownEditor from '../MarkdownEditor/MarkdownEditor';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Button, Form, Input, Select } from 'antd';
 import styles from './NewUserForm.module.scss';
 import MailInput from '../MailInput/MailInput';

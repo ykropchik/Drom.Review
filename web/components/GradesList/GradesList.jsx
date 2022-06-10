@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { SettingOutlined } from '@ant-design/icons';
 import MarkdownRender from '../MarkdownRender/MarkdownRender';
 import { Collapse } from 'antd';

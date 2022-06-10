@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import styles from '../../public/styles/pages/Personal.module.scss';
 import { Col, Divider, Form, Input, Row, Skeleton as AntSkeleton } from 'antd';
 import { useEffect, useState } from 'react';

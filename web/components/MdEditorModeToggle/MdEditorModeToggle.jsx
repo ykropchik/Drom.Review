@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { PluginComponent } from 'react-markdown-editor-lite';
 
 export class MdEditorModeToggle extends PluginComponent {

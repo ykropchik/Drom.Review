@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Editor, { Plugins } from 'react-markdown-editor-lite';
 import styles from './MarkdownEditor.module.scss';
 import MarkdownRender from '../MarkdownRender/MarkdownRender';

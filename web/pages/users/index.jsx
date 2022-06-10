@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Table, Tabs, Tag } from 'antd';
 import { Users as UsersStub } from '../../stubs/users';
 import UserAvatar from '../../components/UserAvatar/UserAvatar';

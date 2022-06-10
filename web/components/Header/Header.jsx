@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Header as AntHeader } from 'antd/lib/layout/layout';
 import styles from './Header.module.scss';
 import MainLogo from '../MainLogo/MainLogo';
