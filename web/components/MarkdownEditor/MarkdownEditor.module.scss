@@ -1,0 +1,12 @@
+@import '../../public/styles/global';
+
+.content {
+  border: 1px solid $grey-300;
+  border-radius: $default-border-radius;
+  overflow: hidden;
+}
+
+// Этот класс нужен только для того, чтобы переписать дефолтный класс, чтобы не применялись дефотные стили.
+.html_container {
+  margin: 0;
+}

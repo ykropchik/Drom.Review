@@ -1,0 +1,29 @@
+@import './public/styles/global';
+
+.content {
+  height: 100%;
+}
+
+.skeleton_container {
+  margin: 8px 16px;
+}
+
+.not_set_label {
+  color: $error-color;
+}
+
+.hierarchy_view {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.spec_select {
+  margin-bottom: 24px;
+  min-width: 280px;
+}
+
+.description_view {
+  flex: 1 1;
+  min-width: 350px;
+}

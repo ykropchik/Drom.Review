@@ -1,0 +1,33 @@
+@import "public/styles/global";
+
+.content {
+  flex: 0 0 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 8px;
+
+  &:not(:last-child):after {
+    content: '';
+    width: 2px;
+    height: 24px;
+    background-color: $main-color;
+  }
+}
+
+.item_text {
+  cursor: pointer;
+}
+
+.info_icon {
+  margin-left: 8px;
+}
+
+.item_text__selected {
+  color: $main-color;
+}

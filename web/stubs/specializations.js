@@ -1,0 +1,1 @@
+export const specializations = ['Frontend', 'Backend', 'IOS', 'Android', 'DevOps', 'Java'];

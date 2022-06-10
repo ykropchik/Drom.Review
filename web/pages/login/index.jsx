@@ -1,6 +1,5 @@
-import * as React from 'react';
+import React from 'react';
 import { Button, ConfigProvider, Form, Input, Layout } from 'antd';
-const { Content } = Layout;
 import { useRouter } from 'next/router';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
@@ -8,13 +7,15 @@ import styles from '../../public/styles/pages/Login.module.scss';
 import { useState } from 'react';
 import timeout from '../../scripts/timeout';
 
+const { Content } = Layout;
+
 export default function Login() {
 	const [isLoading, setLoading] = useState(false);
 	const router = useRouter();
 
 	const onFinish = () => {
 		setLoading(true);
-		timeout(1000, false).then(() => router.push('/'));
+		timeout(1000).then(() => router.push('/'));
 	};
 
 	return(

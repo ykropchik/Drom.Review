@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import { Button, Form, Input, Select } from 'antd';
-import styles from '../../public/styles/pages/Users.module.scss';
+import styles from './NewUserForm.module.scss';
 import MailInput from '../MailInput/MailInput';
 import timeout from '../../scripts/timeout';
 import { useState } from 'react';
@@ -10,7 +10,7 @@ export default function NewUserForm() {
 
 	const createUser = () => {
 		setLoading(true);
-		timeout(1000, false).finally(() => setLoading(false));
+		timeout(1000).finally(() => setLoading(false));
 	};
 
 	return (

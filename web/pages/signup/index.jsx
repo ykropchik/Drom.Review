@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
 import { Button, ConfigProvider, Form, Input, Layout } from 'antd';
 import Header from '../../components/Header/Header';
