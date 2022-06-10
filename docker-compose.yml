@@ -2,6 +2,7 @@ version: "3.3"
 
 services:
   nextjs:
+    container_name: nextjs
     ports:
       - "80:3000"
     build:
@@ -11,3 +12,48 @@ services:
       - ./web:/usr/src/web
       - /usr/src/web/node_modules
       - /usr/src/web/.next
+
+  nginx:
+    container_name: nginx
+    build:
+      context: ./api/docker/nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - php-fpm
+      - nextjs
+
+  php-fpm:
+    container_name: php-fpm
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    working_dir: /app
+    restart: on-failure
+    volumes:
+      - ./api:/app:delegated
+    depends_on:
+      - 'mysql'
+    environment:
+      - APP_ENV=${APP_ENV}
+      - DATABASE_URL=${DATABASE_URL}
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    expose:
+      - '3306'
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql:delegated
+
+volumes:
+  mysql-data: { }
