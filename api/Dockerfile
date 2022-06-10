@@ -22,4 +22,6 @@ WORKDIR /app
 
 RUN composer install --optimize-autoloader && \
     composer dump-autoload --classmap-authoritative --optimize && \
-    php bin/console cache:warmup
+    php bin/console cache:warmup && \
+    composer install && \
+    composer dump-autoload
