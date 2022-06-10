@@ -7,11 +7,16 @@ module.exports = withLess({
 			{
 				source: '/logout',
 				destination: '/login',
-			},
-			{
-				source: '/api/:path*',
-				destination: 'https://i.pravatar.cc/:path*',
-			},
+			}
 		]
 	},
+	async redirects() {
+		return [
+			{
+				source: '/api/:path*',
+				destination: 'http://localhost/:path*',
+				permanent: true
+			}
+		]
+	}
 });
