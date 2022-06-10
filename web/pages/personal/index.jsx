@@ -12,7 +12,7 @@ export default function Personal() {
 	const [isLoading, setLoading] = useState(true);
 
 	useEffect(() => {
-		timeout(2000, false)
+		timeout(2000)
 			.then(() => setUserInfo(Users[0]))
 			.finally(() => setLoading(false));
 	});

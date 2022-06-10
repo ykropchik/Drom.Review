@@ -19,4 +19,8 @@ export class Validator {
 			}
 		}
 	}
+
+	abortAll() {
+		this.controller.abort();
+	}
 }

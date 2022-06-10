@@ -1,52 +1,53 @@
 import * as React from 'react';
-import { Button, Collapse, Divider, Form, Modal, Select, Spin, Table, Tabs } from 'antd';
+import { Button, Collapse, Divider, Skeleton, message } from 'antd';
 import { grades as gradesStub } from '../../stubs/grades';
 import MarkdownRender from '../MarkdownRender/MarkdownRender';
 import styles from './GradesEditor.module.scss';
-import TabPaneItem from '../TabPaneItem/TabPaneItem';
-import Hierarchy from '../Hierarchy/Hierarchy';
 import { useEffect, useState } from 'react';
 import timeout from '../../scripts/timeout';
 import { specializations as specStub } from '../../stubs/specializations';
 import useGetData from '../../scripts/hooks/useGetData';
-import { ApartmentOutlined, LoadingOutlined, TableOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import NewGradeForm from '../NewGradeForm/NewGradeForm';
+import GradesList from '../GradesList/GradesList';
 
-const { TabPane } = Tabs;
-const { Option } = Select;
-const { Panel } = Collapse;
-// const spinner = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 // TODO: добавить спинер при загрузке грейдов
 // TODO: добавить фильтры и сортировки
 
 export default function GradesEditor() {
 	const grades = useGetData(async () => {
-		await timeout(1500, false);
+		await timeout(1500);
 		return gradesStub;
 	});
-	const [selectedGrade, selectGrade] = useState(null);
 	const specializations = useGetData(async () => {
-		await timeout(1500, false);
+		await timeout(1500);
 		return specStub;
 	});
-	const [isModalVisible, setModalVisible] = useState(false);
+	const [isFormVisible, setFormVisible] = useState(false);
+	const [creatingGrade, setCreatingGrade] = useState(false);
 
 	useEffect(() => {
 		specializations.getData();
 		grades.getData();
 	}, []);
 
-	const onSelectHandler = (specialization) => {
-		grades.getData(specialization);
+	const handleCreate = () => {
+		setCreatingGrade(true);
+		timeout(1000, 40)
+			.finally(() => setFormVisible(false))
+			.then(() => onCreateSuccess())
+			.catch(() => onCreateFailure());
 	};
 
-	const handleOk = () => {
-		setModalVisible(false);
+
+	const onCreateFailure = () => {
+		message.error('Произошла ошибка! Попробуйте позже.');
 	};
 
-	const handleCancel = () => {
-		setModalVisible(false);
+	const onCreateSuccess = () => {
+		setFormVisible(false);
+		message.success('Новый грейд создан!');
 	};
 
 	return (
@@ -80,28 +81,28 @@ export default function GradesEditor() {
 		// 		{/*<NewGradeForm/>*/}
 		// 	</TabPane>
 		// </Tabs>
-		<div>
+		<div className={styles.content}>
 			<Divider orientation="left">Грейды</Divider>
-			<Button icon={<PlusOutlined />} type="dashed" style={{ margin: '8px 16px' }} onClick={() => setModalVisible(true)}>Создать новый</Button>
-			<Collapse ghost>
-				{grades.data?.map((item, i) => <Panel header={item.name} key={i}><MarkdownRender mdText={item.description}/></Panel>)}
-			</Collapse>
-			<Modal className={styles.modal}
-			       title="Новый грейд"
-			       visible={isModalVisible}
-			       onOk={handleOk}
-			       onCancel={handleCancel}
-			>
-				<NewGradeForm/>
-			</Modal>
+			{
+				grades.isLoading
+					?
+					<div className={styles.skeleton_container}>
+						<Skeleton.Button active size="default" shape="square" block={false} />
+						<Skeleton active/>
+						<Skeleton active/>
+					</div>
+					:
+					<>
+						<Button icon={<PlusOutlined />} type="dashed" style={{ margin: '8px 16px' }} onClick={() => setFormVisible(true)}>Создать новый</Button>
+						<GradesList grades={grades.data}/>
+					</>
+			}
+			<NewGradeForm visible={isFormVisible}
+			              isCreating={creatingGrade}
+			              onCancel={() => setFormVisible(false)}
+			              onCreate={() => handleCreate()}/>
 		</div>
 	);
-}
-
-function traversalGrades(item) {
-	if (item.next === null) return [];
-
-	return [item].concat(traversalGrades(item.next));
 }
 
 const columns = [

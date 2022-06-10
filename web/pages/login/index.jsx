@@ -14,7 +14,7 @@ export default function Login() {
 
 	const onFinish = () => {
 		setLoading(true);
-		timeout(1000, false).then(() => router.push('/'));
+		timeout(1000).then(() => router.push('/'));
 	};
 
 	return(

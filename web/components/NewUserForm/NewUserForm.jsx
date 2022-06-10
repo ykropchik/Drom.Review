@@ -10,7 +10,7 @@ export default function NewUserForm() {
 
 	const createUser = () => {
 		setLoading(true);
-		timeout(1000, false).finally(() => setLoading(false));
+		timeout(1000).finally(() => setLoading(false));
 	};
 
 	return (
