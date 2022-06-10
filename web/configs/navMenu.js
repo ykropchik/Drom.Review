@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Link from 'next/link';
-import { UserOutlined } from '@ant-design/icons';
+import { EditOutlined, UserOutlined } from '@ant-design/icons';
 
 export const personalNavMenu = [
 	{
@@ -18,5 +18,10 @@ export const mainMenu = [
 		key: 'users',
 		label: <Link href={'/users'}>Пользователи</Link>,
 		icon: <UserOutlined />
+	},
+	{
+		key: 'editor',
+		label: <Link href={'/editor'}>Редактор</Link>,
+		icon: <EditOutlined />
 	}
 ];

@@ -1,0 +1,32 @@
+@import './public/styles/global';
+
+.content {
+  height: 100%;
+}
+
+.not_set_label {
+  color: $error-color;
+}
+
+.hierarchy_view {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.spec_select {
+  margin-bottom: 24px;
+  min-width: 280px;
+}
+
+.description_view {
+  flex: 1 1;
+  min-width: 350px;
+}
+
+.modal {
+  width: 100% !important;
+  max-width: 1000px;
+  height: 100% !important;
+  max-height: 700px;
+}

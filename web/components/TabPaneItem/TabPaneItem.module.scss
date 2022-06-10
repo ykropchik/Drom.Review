@@ -1,0 +1,11 @@
+.tab_icon {
+  margin: 0 12px;
+}
+
+.tab_title {
+  margin-right: 12px;
+
+  &:first-child {
+    margin-left: 12px;
+  }
+}

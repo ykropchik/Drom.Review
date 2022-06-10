@@ -3,38 +3,26 @@ import { Table, Tabs, Tag } from 'antd';
 import { Users as UsersStub } from '../../stubs/users';
 import UserAvatar from '../../components/UserAvatar/UserAvatar';
 import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
-import useWindowSize from '../../scripts/hooks/useWindowSize';
 import { OrderedListOutlined, UserAddOutlined } from '@ant-design/icons';
-import styles from '../../public/styles/pages/Users.module.scss';
 import NewUserForm from '../../components/NewUserForm/NewUserForm';
+import TabPaneItem from '../../components/TabPaneItem/TabPaneItem';
 
 const { TabPane } = Tabs;
 
 export default function Users() {
 	return (
 		<Tabs defaultActiveKey="list">
-			<TabPane tab={<TabPaneItem icon={<OrderedListOutlined/>}/>} key="list">
+			<TabPane key="list"
+			         tab={<TabPaneItem icon={<OrderedListOutlined/>} title="Список сотрудников"/>}
+			>
 				<Table dataSource={UsersStub} columns={columns} locale={i18n}/>
 			</TabPane>
-			<TabPane tab={<TabPaneItem icon={<UserAddOutlined/>}/>} key="newUsers">
+			<TabPane key="newUsers"
+			         tab={<TabPaneItem icon={<UserAddOutlined/>} title="Создать"/>}
+			>
 				<NewUserForm/>
 			</TabPane>
 		</Tabs>
-	);
-}
-
-function TabPaneItem({ icon }) {
-	const { width } = useWindowSize();
-
-	const createIconWithClass = (icon) => {
-		return React.cloneElement(icon, { className: styles.tab_icon });
-	};
-
-	return (
-		<span>
-			{createIconWithClass(icon)}
-			{width > 420 && <span className={styles.tab_title}>Список сотрудников</span>}
-		</span>
 	);
 }
 

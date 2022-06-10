@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Form, Input, Select } from 'antd';
-import styles from '../../public/styles/pages/Users.module.scss';
+import styles from './NewUserForm.module.scss';
 import MailInput from '../MailInput/MailInput';
 import timeout from '../../scripts/timeout';
 import { useState } from 'react';
