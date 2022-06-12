@@ -11,7 +11,7 @@ export default function GradesList({ grades }) {
 			{
 				grades?.map((item, i) =>
 					<Panel header={item.name} key={i} extra={<SettingOutlined
-						onClick={(event) => {
+						onClick={() => {
 
 						}}
 					/>}>
