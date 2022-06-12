@@ -1,0 +1,20 @@
+@import '../global';
+
+.content {
+  height: 100%;
+}
+
+.skeleton_container {
+  margin: 8px 16px;
+}
+
+.hierarchy_view {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.description_view {
+  flex: 1 1;
+  min-width: 350px;
+}
