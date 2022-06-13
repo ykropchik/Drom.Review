@@ -19,23 +19,35 @@ class GradeController extends AppController
     }
 
     #[Route('/api/grade', name: 'add_grade', methods: ['POST'])]
-    public function add_grade(Request $request): Response
+    public function add_grade(Request $request, GradeRepository $gradeRepository): Response
     {
         try {
             $request = $this->transformJsonBody($request);
+            if ($request->get('type') == 'validate') {
+                if ($gradeRepository->findOneBy(['name' => $request->get('name')])) {
+                    $data = [
+                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                        'exist' => true,
+                    ];
+                } else {
+                    $data = [
+                        'status' => Response::HTTP_OK,
+                        'exist' => false,
+                    ];
+                }
+            } else {
+                $grade = new Grade();
+                $grade->setName($request->get('name'));
+                $grade->setDescription($request->get('description'));
 
-            $grade = new Grade();
-            $grade->setName($request->get('name'));
-            $grade->setDescription($request->get('description'));
+                $this->entityManager->persist($grade);
+                $this->entityManager->flush();
 
-            $this->entityManager->persist($grade);
-            $this->entityManager->flush();
-
-            $data = [
-                'status' => Response::HTTP_OK,
-                'success' => 'Grade added successfully',
-            ];
-
+                $data = [
+                    'status' => Response::HTTP_OK,
+                    'success' => 'Grade added successfully',
+                ];
+            }
             return $this->response($data);
         } catch (\Exception $e) {
             $data = [

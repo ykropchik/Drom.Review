@@ -22,22 +22,34 @@ class SpecializationController extends AppController
     }
 
     #[Route('/api/specialization', name: 'add_specialization', methods: ['POST'])]
-    public function add_specialization(Request $request): Response
+    public function add_specialization(Request $request, SpecializationRepository $specializationRepository): Response
     {
         try {
             $request = $this->transformJsonBody($request);
+            if ($request->get('type') == 'validate') {
+                if ($specializationRepository->findOneBy(['name' => $request->get('name')])) {
+                    $data = [
+                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                        'exist' => true,
+                    ];
+                } else {
+                    $data = [
+                        'status' => Response::HTTP_OK,
+                        'exist' => false,
+                    ];
+                }
+            } else {
+                $specialization = new Specialization();
+                $specialization->setName($request->get('name'));
 
-            $specialization = new Specialization();
-            $specialization->setName($request->get('name'));
+                $this->entityManager->persist($specialization);
+                $this->entityManager->flush();
 
-            $this->entityManager->persist($specialization);
-            $this->entityManager->flush();
-
-            $data = [
-                'status' => Response::HTTP_OK,
-                'success' => 'Specialization added successfully',
-            ];
-
+                $data = [
+                    'status' => Response::HTTP_OK,
+                    'success' => 'Specialization added successfully',
+                ];
+            }
             return $this->response($data);
         } catch (\Exception $e) {
             $data = [
