@@ -1,11 +1,12 @@
 import React from 'react';
 import { Button, Form, Input, Modal } from 'antd';
-import timeout from '../../scripts/timeout';
 import MarkdownEditor from '../MarkdownEditor/MarkdownEditor';
-import styles from './NewGradeForm.module.scss';
+import styles from './GradeForm.module.scss';
 import { useEffect } from 'react';
+import request from '../../scripts/api/request';
+import { EndPoints } from '../../scripts/api/EndPoints';
 
-export default function NewGradeForm({ visible, onCreate, onCancel, isCreating }) {
+export default function GradeForm({ visible, onSaveClick, onCancelClick, isLoading, saveButtonText = '', initialData = null }) {
 	const [form] = Form.useForm();
 
 	useEffect(() => {
@@ -13,17 +14,14 @@ export default function NewGradeForm({ visible, onCreate, onCancel, isCreating }
 	}, [visible]);
 
 	const validateGradeName = async (_, value) => {
-		console.log('start validating');
 		if (!value) {
 			return Promise.reject(new Error('Обязательное поле!'));
 		}
 
 		try {
-			await timeout(1000, 30);
-			console.log('Valid!');
+			await request(EndPoints.GRADES, 'POST', { name: value }, { type: 'validate' });
 			return  Promise.resolve();
 		} catch (e) {
-			console.log('Invalid');
 			return Promise.reject(new Error('Грейд с таким именем уже существует!'));
 		}
 	};
@@ -31,7 +29,7 @@ export default function NewGradeForm({ visible, onCreate, onCancel, isCreating }
 	const onCreateHandler = () => {
 		form.validateFields()
 			.then(() => {
-				onCreate();
+				onSaveClick(form.getFieldsValue());
 			});
 	};
 
@@ -39,19 +37,20 @@ export default function NewGradeForm({ visible, onCreate, onCancel, isCreating }
 		<Modal className={styles.modal}
 		       title="Новый грейд"
 		       visible={visible}
-		       onCancel={onCancel}
+		       onCancel={onCancelClick}
+		       forceRender
 		       footer={[
 			       <Button type="primary"
 			               key="create-btn"
 			               onClick={onCreateHandler}
-			               loading={isCreating}
+			               loading={isLoading}
 			       >
-				       Создать
+				       {saveButtonText}
 			       </Button>
 		       ]}
 		>
-			<Form form={form}>
-				<Form.Item name="gradeName"
+			<Form form={form} initialValues={initialData}>
+				<Form.Item name="name"
 				           hasFeedback
 				           rules={[
 					           // { required: true, message: 'Обязательное поле' },
