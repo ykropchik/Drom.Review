@@ -1,11 +1,11 @@
 import React from 'react';
-import { Button, ConfigProvider, Form, Input, Layout } from 'antd';
+import { Button, ConfigProvider, Form, Input, Layout, message } from 'antd';
 import { useRouter } from 'next/router';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import styles from '../../public/styles/pages/Login.module.scss';
 import { useState } from 'react';
-import timeout from '../../scripts/timeout';
+import authenticate from '../../scripts/api/authenticate';
 
 const { Content } = Layout;
 
@@ -13,9 +13,12 @@ export default function Login() {
 	const [isLoading, setLoading] = useState(false);
 	const router = useRouter();
 
-	const onFinish = () => {
+	const onFinish = (data) => {
 		setLoading(true);
-		timeout(1000).then(() => router.push('/'));
+		authenticate(data)
+			.finally(() => setLoading(false))
+			.then(() => router.push('/'))
+			.catch((err) => message.error(err));
 	};
 
 	return(
@@ -25,10 +28,12 @@ export default function Login() {
 				<ConfigProvider componentSize="large">
 					<Form className={styles.form}
 					      onFinish={onFinish}>
-						<Form.Item>
+						<Form.Item name="email"
+						           rules={[{ required: true, message: 'Обязательное поле!' }]}>
 							<Input placeholder="Почта"/>
 						</Form.Item>
-						<Form.Item>
+						<Form.Item name="password"
+						           rules={[{ required: true, message: 'Обязательное поле!' }]}>
 							<Input.Password placeholder="Пароль"/>
 						</Form.Item>
 						<Form.Item>
