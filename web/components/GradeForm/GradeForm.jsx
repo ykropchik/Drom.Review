@@ -19,7 +19,7 @@ export default function GradeForm({ visible, onSaveClick, onCancelClick, isLoadi
 		}
 
 		try {
-			await request(EndPoints.GRADES, 'POST', { name: value }, { type: 'validate' });
+			await request(EndPoints.VALIDATE_GRADE, 'POST', { name: value });
 			return  Promise.resolve();
 		} catch (e) {
 			return Promise.reject(new Error('Грейд с таким именем уже существует!'));

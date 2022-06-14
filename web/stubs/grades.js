@@ -1,5 +1,6 @@
 export const grades = [
 	{
+		id: 1,
 		name: 'Junior - Start',
 		description: '## Header 2\n' +
 			'\n' +
@@ -10,6 +11,7 @@ export const grades = [
 			'*In ornare nisi eget elit pretium consequat.* Duis semper maximus maximus. Pellentesque iaculis lacus a laoreet varius. Pellentesque consectetur scelerisque nunc, a convallis lacus semper ut. *Fusce nec posuere nibh, **luctus blandit tellus.*** Nam finibus nunc in mauris ultrices venenatis. Morbi neque arcu, faucibus et eros at, dignissim tincidunt dui. *Nulla aliquam ullamcorper venenatis.* Donec porttitor nibh eget nisl semper aliquet suscipit at justo. ~~Phasellus consequat nec odio nec consectetur~~. Pellentesque tincidunt metus augue, eget tristique augue volutpat at. Nam vel dolor tempus, mollis justo auctor, accumsan ipsum.\n'
 	},
 	{
+		id: 2,
 		name: 'Junior - Full',
 		description: '## Header 2\n' +
 			'\n' +
@@ -20,6 +22,7 @@ export const grades = [
 			'*In ornare nisi eget elit pretium consequat.* Duis semper maximus maximus. Pellentesque iaculis lacus a laoreet varius. Pellentesque consectetur scelerisque nunc, a convallis lacus semper ut. *Fusce nec posuere nibh, **luctus blandit tellus.*** Nam finibus nunc in mauris ultrices venenatis. Morbi neque arcu, faucibus et eros at, dignissim tincidunt dui. *Nulla aliquam ullamcorper venenatis.* Donec porttitor nibh eget nisl semper aliquet suscipit at justo. ~~Phasellus consequat nec odio nec consectetur~~. Pellentesque tincidunt metus augue, eget tristique augue volutpat at. Nam vel dolor tempus, mollis justo auctor, accumsan ipsum.\n'
 	},
 	{
+		id: 3,
 		name: 'Middle - Start',
 		description: '## Header 2\n' +
 			'\n' +
@@ -30,6 +33,7 @@ export const grades = [
 			'*In ornare nisi eget elit pretium consequat.* Duis semper maximus maximus. Pellentesque iaculis lacus a laoreet varius. Pellentesque consectetur scelerisque nunc, a convallis lacus semper ut. *Fusce nec posuere nibh, **luctus blandit tellus.*** Nam finibus nunc in mauris ultrices venenatis. Morbi neque arcu, faucibus et eros at, dignissim tincidunt dui. *Nulla aliquam ullamcorper venenatis.* Donec porttitor nibh eget nisl semper aliquet suscipit at justo. ~~Phasellus consequat nec odio nec consectetur~~. Pellentesque tincidunt metus augue, eget tristique augue volutpat at. Nam vel dolor tempus, mollis justo auctor, accumsan ipsum.\n'
 	},
 	{
+		id: 4,
 		name: 'Middle - Progressive',
 		description: '## Header 2\n' +
 			'\n' +
@@ -40,6 +44,7 @@ export const grades = [
 			'*In ornare nisi eget elit pretium consequat.* Duis semper maximus maximus. Pellentesque iaculis lacus a laoreet varius. Pellentesque consectetur scelerisque nunc, a convallis lacus semper ut. *Fusce nec posuere nibh, **luctus blandit tellus.*** Nam finibus nunc in mauris ultrices venenatis. Morbi neque arcu, faucibus et eros at, dignissim tincidunt dui. *Nulla aliquam ullamcorper venenatis.* Donec porttitor nibh eget nisl semper aliquet suscipit at justo. ~~Phasellus consequat nec odio nec consectetur~~. Pellentesque tincidunt metus augue, eget tristique augue volutpat at. Nam vel dolor tempus, mollis justo auctor, accumsan ipsum.\n'
 	},
 	{
+		id: 5,
 		name: 'Middle - Full',
 		description: '## Header 2\n' +
 			'\n' +

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import MarkdownRender from '../MarkdownRender/MarkdownRender';
 import { Collapse, message } from 'antd';
-import GradeForm from '../NewGradeForm/GradeForm';
+import GradeForm from '../GradeForm/GradeForm';
 import request from '../../scripts/api/request';
 import { EndPoints } from '../../scripts/api/EndPoints';
 import PanelExtra from '../PanelExtra/PanelExtra';
@@ -9,7 +9,6 @@ import PanelExtra from '../PanelExtra/PanelExtra';
 const { Panel } = Collapse;
 
 export default function GradesList({ grades, onEditSuccess }) {
-	const [activePanels, setActivePanels] = useState([]);
 	const [editableItem, setEditableItem] = useState(null);
 	const [saving, setSaving] = useState(false);
 
@@ -26,7 +25,7 @@ export default function GradesList({ grades, onEditSuccess }) {
 
 	const onSaveClick = (data) => {
 		setSaving(true);
-		request(EndPoints.GRADES + `/${editableItem.id}`, 'PUT', data)
+		request(EndPoints.SPECIALIZATIONS + `/${editableItem.id}`, 'PUT', data)
 			.finally(() => {
 				setSaving(false);
 			})
@@ -45,7 +44,7 @@ export default function GradesList({ grades, onEditSuccess }) {
 	};
 
 	return (
-		<Collapse activeKey={activePanels} onChange={setActivePanels} ghost>
+		<Collapse ghost>
 			{
 				grades?.map((item, i) =>
 					<Panel header={editableItem === i ? '' : item.name}

@@ -6,13 +6,13 @@ import classNames from 'classnames';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from '../../scripts/arrayMove';
 
-export default function Hierarchy({ items, dataIndex, onItemClick, defaultSelect, editable}) {
-	const [selfItems, setSelfItems] = useState([]);
+export default function Hierarchy({ value, dataIndex, onItemClick, defaultSelect, editable = false}) {
+	const [items, setItems] = useState([]);
 	const [selectedItem, selectItem] = useState(defaultSelect);
 
 	useEffect(() => {
-		setSelfItems(items);
-	}, [items]);
+		setItems(value);
+	}, [value]);
 
 	useEffect(() => {
 		onItemClick && onItemClick(defaultSelect);
@@ -25,7 +25,7 @@ export default function Hierarchy({ items, dataIndex, onItemClick, defaultSelect
 	};
 
 	const onSortEnd = ({oldIndex, newIndex}) => {
-		setSelfItems(arrayMove(selfItems, oldIndex, newIndex));
+		setItems(arrayMove(items, oldIndex, newIndex));
 	};
 
 	return (
@@ -33,9 +33,9 @@ export default function Hierarchy({ items, dataIndex, onItemClick, defaultSelect
 			{
 				editable
 					?
-					<SortableList items={selfItems} onSortEnd={onSortEnd} />
+					<SortableList items={items} onSortEnd={onSortEnd} />
 					:
-					selfItems.map((item, i) =>
+					items.map((item, i) =>
 						<span className={styles.item} key={i}>
 							<Tooltip title={onItemClick && 'Нажмите, чтобы увидеть подробности'} mouseEnterDelay={0.75}>
 								<span className={classNames(styles.item_text, { [styles.item_text__selected]: Object.is(selectedItem, item) })}
