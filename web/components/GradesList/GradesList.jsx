@@ -1,41 +1,66 @@
 import React, { useState } from 'react';
-import { SettingOutlined } from '@ant-design/icons';
 import MarkdownRender from '../MarkdownRender/MarkdownRender';
-import { Collapse } from 'antd';
-import styles from './GradesList.module.scss';
+import { Collapse, message } from 'antd';
+import GradeForm from '../NewGradeForm/GradeForm';
+import request from '../../scripts/api/request';
+import { EndPoints } from '../../scripts/api/EndPoints';
+import PanelExtra from '../PanelExtra/PanelExtra';
 
 const { Panel } = Collapse;
 
-export default function GradesList({ grades }) {
+export default function GradesList({ grades, onEditSuccess }) {
 	const [activePanels, setActivePanels] = useState([]);
-	const [editablePanel, setEditablePanel] = useState(null);
+	const [editableItem, setEditableItem] = useState(null);
+	const [saving, setSaving] = useState(false);
 
-	console.log(editablePanel);
+	const onRemoveClick = (item) => {
+		let msg = message.loading('Удаляем грейд', 0);
+		request(EndPoints.GRADES + `/${item.id}`, 'DELETE')
+			.then(() => {
+				onEditSuccess();
+				msg();
+				message.success('Грейд успешно удален!');
+			})
+			.catch(() => onSaveFailure());
+	};
+
+	const onSaveClick = (data) => {
+		setSaving(true);
+		request(EndPoints.GRADES + `/${editableItem.id}`, 'PUT', data)
+			.finally(() => {
+				setSaving(false);
+			})
+			.then(() => onSaveSuccess())
+			.catch(() => onSaveFailure());
+	};
+
+	const onSaveSuccess = () => {
+		onEditSuccess();
+		setEditableItem(null);
+		message.success('Грейд успешно изменен!');
+	};
+
+	const onSaveFailure = () => {
+		message.error('Произошла ошибка! Попробуйте позже.');
+	};
 
 	return (
 		<Collapse activeKey={activePanels} onChange={setActivePanels} ghost>
 			{
 				grades?.map((item, i) =>
-					<Panel header={item.name}
+					<Panel header={editableItem === i ? '' : item.name}
 					       key={i}
-					       extra={<EditButton activePanels={activePanels} clickedPanel={i.toString()} onClick={setEditablePanel}/>}>
+					       extra={<PanelExtra onEditClick={() => setEditableItem(item)} onRemoveClick={() => onRemoveClick(item)}/>}>
 						<MarkdownRender mdText={item.description}/>
 					</Panel>
 				)
 			}
+			<GradeForm visible={editableItem !== null}
+			           isLoading={saving}
+			           onCancelClick={() => setEditableItem(null)}
+			           onSaveClick={onSaveClick}
+			           saveButtonText="Сохранить"
+			           initialData={editableItem}/>
 		</Collapse>
-	);
-}
-
-function EditButton({ activePanels, clickedPanel, onClick }) {
-	return (
-		<SettingOutlined className={styles.edit_button} onClick={(event) => {
-			console.log(activePanels, clickedPanel);
-			if (activePanels.includes(clickedPanel)) {
-				event.stopPropagation();
-			}
-
-			onClick(clickedPanel);
-		}}/>
 	);
 }

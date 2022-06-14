@@ -1,47 +1,35 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Divider, message, Skeleton } from 'antd';
 import styles from '../../../components/GradeEditor/GradesEditor.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import GradesList from '../../../components/GradesList/GradesList';
-import NewGradeForm from '../../../components/NewGradeForm/NewGradeForm';
-import useGetData from '../../../scripts/hooks/useGetData';
-import timeout from '../../../scripts/timeout';
-import { grades as gradesStub } from '../../../stubs/grades';
-import { specializations as specStub } from '../../../stubs/specializations';
+import GradeForm from '../../../components/NewGradeForm/GradeForm';
+import useGrades from '../../../scripts/hooks/useGrades';
+import request from '../../../scripts/api/request';
+import { EndPoints } from '../../../scripts/api/EndPoints';
 
-// TODO: Добавить возможность редачить существующие грейды
 export default function GradesEditor() {
-	const grades = useGetData(async () => {
-		await timeout(1500);
-		return gradesStub;
-	});
-	const specializations = useGetData(async () => {
-		await timeout(1500);
-		return specStub;
-	});
+	const grades = useGrades();
 	const [isFormVisible, setFormVisible] = useState(false);
 	const [creatingGrade, setCreatingGrade] = useState(false);
 
-	useEffect(() => {
-		specializations.getData();
-		grades.getData();
-	}, []);
-
-	const handleCreate = () => {
+	const handleCreate = (data) => {
 		setCreatingGrade(true);
-		timeout(1000, 40)
-			.finally(() => setFormVisible(false))
+		request(EndPoints.GRADES, 'POST', data)
+			.finally(() => {
+				setCreatingGrade(false);
+			})
 			.then(() => onCreateSuccess())
 			.catch(() => onCreateFailure());
 	};
-
 
 	const onCreateFailure = () => {
 		message.error('Произошла ошибка! Попробуйте позже.');
 	};
 
 	const onCreateSuccess = () => {
+		grades.update();
 		setFormVisible(false);
 		message.success('Новый грейд создан!');
 	};
@@ -60,13 +48,14 @@ export default function GradesEditor() {
 					:
 					<>
 						<Button icon={<PlusOutlined />} type="dashed" style={{ margin: '8px 16px' }} onClick={() => setFormVisible(true)}>Создать новый</Button>
-						<GradesList grades={grades.data}/>
+						<GradesList grades={grades.list} onEditSuccess={() => grades.update()}/>
 					</>
 			}
-			<NewGradeForm visible={isFormVisible}
-			              isCreating={creatingGrade}
-			              onCancel={() => setFormVisible(false)}
-			              onCreate={() => handleCreate()}/>
+			<GradeForm visible={isFormVisible}
+			           isLoading={creatingGrade}
+			           saveButtonText="Создать"
+			           onCancelClick={() => setFormVisible(false)}
+			           onSaveClick={handleCreate}/>
 		</div>
 	);
 }

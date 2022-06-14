@@ -1,0 +1,10 @@
+@import "../../public/styles/global";
+
+.edit_button {
+  transition: color 0.1s ease-out;
+  margin-right: 16px;
+
+  &:hover {
+    color: $main-color;
+  }
+}
