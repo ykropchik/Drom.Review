@@ -51,7 +51,7 @@ export default function Header({ mainNavMenu, personalNavItems }) {
 						{
 							mainNavMenu &&
 							<div className={styles.left_side}>
-								<NavMenu className={styles.main_menu} theme="dark" items={mainNavMenu} mode="horizontal" disabledOverflow/>
+								<NavMenu className={styles.main_menu} items={mainNavMenu} mode="horizontal" disabledOverflow/>
 							</div>
 						}
 						{
