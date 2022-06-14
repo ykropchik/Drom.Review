@@ -6,7 +6,7 @@ export default function usePageLoading() {
 	const router = useRouter();
 
 	const handleStart = (url) => (url !== router.asPath) && setLoading(true);
-	const handleComplete = (url) => { console.log(url, router.asPath); (url === router.asPath) && setLoading(false); };
+	const handleComplete = (url) => (url === router.asPath) && setLoading(false);
 
 	router.events.on('routeChangeStart', handleStart);
 	router.events.on('routeChangeComplete', handleComplete);
