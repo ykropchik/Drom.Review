@@ -4,3 +4,13 @@
   max-width: 1280px;
   margin: 0 auto;
 }
+
+.spinner {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+}
+
+.spinner__indicator {
+  font-size: 56px;
+}
