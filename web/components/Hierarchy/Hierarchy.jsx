@@ -1,6 +1,5 @@
 import React from 'react';
 import styles from './Hierarchy.module.scss';
-import { Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
@@ -43,16 +42,15 @@ const UnsortableList = ({ items, dataIndex, defaultSelect, onItemClick }) => {
 			{
 				items.map((item, i) =>
 					<span className={styles.item} key={i}>
-						<Tooltip title={onItemClick && 'Нажмите, чтобы увидеть подробности'} mouseEnterDelay={0.75}>
-							<span className={
-								classNames({
-									[styles.item_text__selected]: Object.is(selectedItem, item),
-									[styles.item_text__clickable]: onItemClick !== undefined
-								})}
-							      style={onItemClick && { cursor: 'pointer' }}
-							      onClick={() => onItemClickHandler(item)}>{item[dataIndex]}
-							</span>
-						</Tooltip>
+						<span className={
+							classNames({
+								[styles.item_text__selected]: Object.is(selectedItem, item),
+								[styles.item_text__clickable]: onItemClick !== undefined
+							})}
+						      style={onItemClick && { cursor: 'pointer' }}
+						      onClick={() => onItemClickHandler(item)}>
+							{item[dataIndex]}
+						</span>
 					</span>
 				)
 			}

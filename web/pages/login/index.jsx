@@ -11,6 +11,7 @@ const { Content } = Layout;
 
 export default function Login() {
 	const [isLoading, setLoading] = useState(false);
+	const [form] = Form.useForm();
 	const router = useRouter();
 
 	const onFinish = (data) => {
@@ -18,7 +19,10 @@ export default function Login() {
 		authenticate(data)
 			.finally(() => setLoading(false))
 			.then(() => router.push('/'))
-			.catch((err) => message.error(err));
+			.catch((err) => {
+				form.resetFields(['password']);
+				message.error(err);
+			});
 	};
 
 	return(
@@ -27,6 +31,7 @@ export default function Login() {
 				<span className={styles.form__header}>Войти</span>
 				<ConfigProvider componentSize="large">
 					<Form className={styles.form}
+					      form={form}
 					      onFinish={onFinish}>
 						<Form.Item name="email"
 						           rules={[{ required: true, message: 'Обязательное поле!' }]}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { Button, Divider, message, Skeleton } from 'antd';
-import styles from '../../../components/GradeEditor/GradesEditor.module.scss';
+import styles from '../../../public/styles/pages/GradesEditor.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import GradesList from '../../../components/GradesList/GradesList';
 import GradeForm from '../../../components/GradeForm/GradeForm';

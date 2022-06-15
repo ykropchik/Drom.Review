@@ -46,22 +46,24 @@ export default function SpecializationsList({ specializations, onEditSuccess }) 
 	};
 
 	return (
-		<Collapse ghost>
-			{
-				specializations?.map((item, i) =>
-					<Panel header={item.name}
-					       key={i}
-					       extra={<PanelExtra onEditClick={() => setEditableItem(item)} onRemoveClick={() => onRemoveClick(item)}/>}>
-						<SpecializationGradesView specialization={item} defaultSelect={item.grades[0]}/>
-					</Panel>
-				)
-			}
+		<>
+			<Collapse ghost>
+				{
+					specializations?.map((item, i) =>
+						<Panel header={item.name}
+						       key={i}
+						       extra={<PanelExtra onEditClick={() => setEditableItem(item)} onRemoveClick={() => onRemoveClick(item)}/>}>
+							<SpecializationGradesView specialization={item} defaultSelect={item.grades[0]}/>
+						</Panel>
+					)
+				}
+			</Collapse>
 			<SpecializationForm visible={editableItem !== null}
 			           isLoading={saving}
 			           onCancelClick={() => setEditableItem(null)}
 			           onSaveClick={onSaveClick}
 			           saveButtonText="Сохранить"
 			           initialData={editableItem}/>
-		</Collapse>
+		</>
 	);
 }
