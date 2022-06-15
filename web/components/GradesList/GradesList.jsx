@@ -25,7 +25,7 @@ export default function GradesList({ grades, onEditSuccess }) {
 
 	const onSaveClick = (data) => {
 		setSaving(true);
-		request(EndPoints.SPECIALIZATIONS + `/${editableItem.id}`, 'PUT', data)
+		request(EndPoints.GRADES + `/${editableItem.id}`, 'PUT', data)
 			.finally(() => {
 				setSaving(false);
 			})

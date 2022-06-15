@@ -5,9 +5,11 @@
  * @param {Object} params
  * @return {Promise<unknown>}
  */
-export default async function request(endPoint, method = 'GET', data = {}, params = {}) {
+export default async function request(endPoint, method = 'GET', data = {}, params = null) {
 	let url = new URL(endPoint);
-	url.search = new URLSearchParams(params);
+	if (params) {
+		url.search = new URLSearchParams(params);
+	}
 	let res;
 	if (method === 'GET') {
 		res = await fetch(url);

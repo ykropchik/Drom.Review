@@ -26,14 +26,14 @@
   padding: 8px 12px;
 }
 
-.item_text {
-  cursor: pointer;
-}
-
 .info_icon {
   margin-left: 8px;
 }
 
 .item_text__selected {
   color: $main-color;
+}
+
+.item_text__clickable {
+  cursor: pointer;
 }

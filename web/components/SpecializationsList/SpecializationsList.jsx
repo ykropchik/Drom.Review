@@ -1,14 +1,11 @@
 import * as React from 'react';
 import { Collapse, message } from 'antd';
-import styles from './SpecializationsList.module.scss';
 import { useState } from 'react';
 import PanelExtra from '../PanelExtra/PanelExtra';
 import SpecializationForm from '../SpecializationForm/SpecializationForm';
 import request from '../../scripts/api/request';
 import { EndPoints } from '../../scripts/api/EndPoints';
-import Hierarchy from '../Hierarchy/Hierarchy';
-import { grades } from '../../stubs/grades';
-import MarkdownRender from '../MarkdownRender/MarkdownRender';
+import SpecializationGradesView from '../SpecializationGradesView/SpecializationGradesView';
 
 const { Panel } = Collapse;
 
@@ -24,17 +21,17 @@ export default function SpecializationsList({ specializations, onEditSuccess }) 
 				onEditSuccess();
 				message.success('Грейд успешно удален!');
 			})
-			.catch(() => onSaveFailure());
+			.catch(onSaveFailure);
 	};
 
 	const onSaveClick = (data) => {
 		setSaving(true);
-		request(EndPoints.GRADES + `/${editableItem.id}`, 'PUT', data)
+		request(EndPoints.SPECIALIZATIONS + `/${editableItem.id}`, 'PUT', data)
 			.finally(() => {
 				setSaving(false);
 			})
-			.then(() => onSaveSuccess())
-			.catch(() => onSaveFailure());
+			.then(onSaveSuccess)
+			.catch(onSaveFailure);
 	};
 
 	const onSaveSuccess = () => {
@@ -43,7 +40,8 @@ export default function SpecializationsList({ specializations, onEditSuccess }) 
 		message.success('Грейд успешно изменен!');
 	};
 
-	const onSaveFailure = () => {
+	const onSaveFailure = (err) => {
+		console.log(err);
 		message.error('Произошла ошибка! Попробуйте позже.');
 	};
 
@@ -54,12 +52,7 @@ export default function SpecializationsList({ specializations, onEditSuccess }) 
 					<Panel header={item.name}
 					       key={i}
 					       extra={<PanelExtra onEditClick={() => setEditableItem(item)} onRemoveClick={() => onRemoveClick(item)}/>}>
-						<div className={styles.panel_content}>
-							<div className={styles.left_side}>
-								<Hierarchy value={grades} dataIndex="name" defaultSelect={grades[0]}/>
-							</div>
-							{editableItem !== item && <MarkdownRender mdText={grades[0].description}/>}
-						</div>
+						<SpecializationGradesView specialization={item} defaultSelect={item.grades[0]}/>
 					</Panel>
 				)
 			}

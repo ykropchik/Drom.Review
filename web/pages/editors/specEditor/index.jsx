@@ -9,7 +9,7 @@ import SpecializationForm from '../../../components/SpecializationForm/Specializ
 import useData from '../../../scripts/hooks/useData';
 
 export default function SpecEditor() {
-	const specializations = useData(EndPoints.SPECIALIZATIONS);
+	const specializations = useData(EndPoints.SPECIALIZATIONS_FULL);
 	const [isFormVisible, setFormVisible] = useState(false);
 	const [creatingSpec, setCreatingSpec] = useState(false);
 
@@ -47,7 +47,7 @@ export default function SpecEditor() {
 					:
 					<>
 						<Button icon={<PlusOutlined />} type="dashed" style={{ margin: '8px 16px' }} onClick={() => setFormVisible(true)}>Создать новую</Button>
-						<SpecializationsList specializations={specializations.list}/>
+						<SpecializationsList specializations={specializations.list} onEditSuccess={() => specializations.update()}/>
 					</>
 			}
 			<SpecializationForm visible={isFormVisible}

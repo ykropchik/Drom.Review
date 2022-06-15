@@ -6,13 +6,27 @@ import classNames from 'classnames';
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import arrayMove from '../../scripts/arrayMove';
 
-export default function Hierarchy({ value, dataIndex, onItemClick, defaultSelect, editable = false}) {
-	const [items, setItems] = useState([]);
-	const [selectedItem, selectItem] = useState(defaultSelect);
+export default function Hierarchy({ value, dataIndex, onItemClick, onChange, defaultSelect, sortable = false}) {
+	const [items, setItems] = useState(value);
 
 	useEffect(() => {
 		setItems(value);
 	}, [value]);
+
+	const onSortEnd = ({oldIndex, newIndex}) => {
+		let newItems = arrayMove(items, oldIndex, newIndex);
+		setItems(newItems);
+		onChange && onChange(newItems);
+	};
+
+	return sortable ?
+		<SortableList items={items} onSortEnd={onSortEnd}/>
+		:
+		<UnsortableList items={items} dataIndex={dataIndex} defaultSelect={defaultSelect} onItemClick={onItemClick}/>;
+}
+
+const UnsortableList = ({ items, dataIndex, defaultSelect, onItemClick }) => {
+	const [selectedItem, selectItem] = useState(defaultSelect);
 
 	useEffect(() => {
 		onItemClick && onItemClick(defaultSelect);
@@ -24,32 +38,27 @@ export default function Hierarchy({ value, dataIndex, onItemClick, defaultSelect
 		onItemClick && onItemClick(item);
 	};
 
-	const onSortEnd = ({oldIndex, newIndex}) => {
-		setItems(arrayMove(items, oldIndex, newIndex));
-	};
-
 	return (
 		<div className={styles.content}>
 			{
-				editable
-					?
-					<SortableList items={items} onSortEnd={onSortEnd} />
-					:
-					items.map((item, i) =>
-						<span className={styles.item} key={i}>
-							<Tooltip title={onItemClick && 'Нажмите, чтобы увидеть подробности'} mouseEnterDelay={0.75}>
-								<span className={classNames(styles.item_text, { [styles.item_text__selected]: Object.is(selectedItem, item) })}
+				items.map((item, i) =>
+					<span className={styles.item} key={i}>
+						<Tooltip title={onItemClick && 'Нажмите, чтобы увидеть подробности'} mouseEnterDelay={0.75}>
+							<span className={
+								classNames({
+									[styles.item_text__selected]: Object.is(selectedItem, item),
+									[styles.item_text__clickable]: onItemClick !== undefined
+								})}
 							      style={onItemClick && { cursor: 'pointer' }}
 							      onClick={() => onItemClickHandler(item)}>{item[dataIndex]}
-									{/*{onItemClick && <InfoCircleOutlined className={styles.info_icon}/>}*/}
-								</span>
-							</Tooltip>
-						</span>
-					)
+							</span>
+						</Tooltip>
+					</span>
+				)
 			}
 		</div>
 	);
-}
+};
 
 const SortableList = SortableContainer(({ items }) => {
 	return (
@@ -65,8 +74,8 @@ const SortableList = SortableContainer(({ items }) => {
 
 const SortableItem = SortableElement(({value}) => {
 	return (
-		<div className={styles.item__editable}>
-			<span className={styles.item_text}>
+		<div className={styles.item}>
+			<span className={styles.item_text__clickable}>
 				{value}
 			</span>
 		</div>

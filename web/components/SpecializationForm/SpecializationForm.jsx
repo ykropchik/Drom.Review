@@ -3,7 +3,6 @@ import { Button, Form, Input, Modal } from 'antd';
 import styles from '../GradeForm/GradeForm.module.scss';
 import request from '../../scripts/api/request';
 import { EndPoints } from '../../scripts/api/EndPoints';
-import { grades } from '../../stubs/grades';
 import SpecializationGradesEditor from '../SpecializationGradesEditor/SpecializationGradesEditor';
 
 export default function SpecializationForm({ visible, onSaveClick, onCancelClick, isLoading, saveButtonText = '', initialData = null }) {
@@ -18,15 +17,19 @@ export default function SpecializationForm({ visible, onSaveClick, onCancelClick
 			return Promise.reject(new Error('Обязательное поле!'));
 		}
 
+		if (value === initialData.name) {
+			return Promise.resolve();
+		}
+
 		try {
 			await request(EndPoints.VALIDATE_SPECIALIZATION, 'POST', { name: value });
-			return  Promise.resolve();
+			return Promise.resolve();
 		} catch (e) {
 			return Promise.reject(new Error('Грейд с таким именем уже существует!'));
 		}
 	};
 
-	const onCreateHandler = () => {
+	const onSaveHandler = () => {
 		form.validateFields()
 			.then(() => {
 				onSaveClick(form.getFieldsValue());
@@ -42,7 +45,7 @@ export default function SpecializationForm({ visible, onSaveClick, onCancelClick
 		       footer={[
 			       <Button type="primary"
 			               key="create-btn"
-			               onClick={onCreateHandler}
+			               onClick={onSaveHandler}
 			               loading={isLoading}
 			       >
 				       {saveButtonText}
@@ -58,8 +61,8 @@ export default function SpecializationForm({ visible, onSaveClick, onCancelClick
 				           ]}>
 					<Input placeholder="Название грейда" style={{ maxWidth: 300 }}/>
 				</Form.Item>
-				<Form.Item name="grades" initialValue={grades}>
-					<SpecializationGradesEditor allGrades={grades}/>
+				<Form.Item name="grades">
+					<SpecializationGradesEditor/>
 				</Form.Item>
 			</Form>
 		</Modal>
