@@ -22,7 +22,7 @@ class SpecializationController extends AppController
     }
 
     #[Route('/api/specialization', name: 'add_specialization', methods: ['POST'])]
-    public function add_specialization(Request $request, SpecializationRepository $specializationRepository): Response
+    public function add_specialization(Request $request, SpecializationRepository $specializationRepository, GradeRepository $gradeRepository): Response
     {
         try {
             $request = $this->transformJsonBody($request);
@@ -39,11 +39,34 @@ class SpecializationController extends AppController
                     ];
                 }
             } else {
+                if ($request->get('grades')) {
+                   foreach ($request->get('grades') as $grade_id) {
+                       if (!$gradeRepository->find($grade_id)) {
+                           $data = [
+                               'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                               'error' => 'Grade with id ' . $grade_id . ' does not exist',
+                           ];
+                           return $this->response($data);
+                       }
+                   }
+                }
                 $specialization = new Specialization();
                 $specialization->setName($request->get('name'));
 
                 $this->entityManager->persist($specialization);
                 $this->entityManager->flush();
+
+                $specialization_id = $specializationRepository->findOneBy(['name' => $specialization->getName()])->getId();
+
+                if ($request->get('grades')) {
+                    foreach ($request->get('grades') as $grade_id) {
+                        $specialization_grade = new SpecializationGrades();
+                        $specialization_grade->setSpecializationId($specialization_id);
+                        $specialization_grade->setGradeId($grade_id);
+                        $this->entityManager->persist($specialization_grade);
+                    }
+                    $this->entityManager->flush();
+                }
 
                 $data = [
                     'status' => Response::HTTP_OK,
@@ -61,7 +84,7 @@ class SpecializationController extends AppController
     }
 
     #[Route('/api/specialization', name: 'get_all_specializations', methods: ['GET'])]
-    public function get_specializations(SpecializationRepository $specializationRepository): Response
+    public function get_specializations(Request $request, SpecializationRepository $specializationRepository, SpecializationGradesRepository $specializationGradesRepository, GradeRepository $gradeRepository): Response
     {
         try {
             $specializations = $specializationRepository->findAll();
@@ -69,10 +92,24 @@ class SpecializationController extends AppController
             $specializationArray = [];
 
             foreach ($specializations as $specialization) {
-                $temp_specialization = [
-                    'id' => $specialization->getId(),
-                    'name' => $specialization->getName(),
-                ];
+                if ($request->get('type') == 'full') {
+                    $gradeArray = [];
+                    foreach ($specializationGradesRepository->findBy(['specialization_id' => $specialization->getId()]) as $spec_grade) {
+                        $grade = $gradeRepository->find($spec_grade->getGradeId());
+                        array_push($gradeArray, ['id' => $grade->getId(), 'name' => $grade->getName(), 'description' => $grade->getDescription()]);
+                    }
+                    $temp_specialization = [
+                        'id' => $specialization->getId(),
+                        'name' => $specialization->getName(),
+                        'grades' => $gradeArray
+                    ];
+                } else {
+                    $temp_specialization = [
+                        'id' => $specialization->getId(),
+                        'name' => $specialization->getName(),
+                    ];
+                }
+
                 array_push($specializationArray, $temp_specialization);
             }
 
