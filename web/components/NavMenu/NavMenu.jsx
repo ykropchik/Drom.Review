@@ -8,7 +8,7 @@ const NavMenu = React.memo(({ items, onSelect, ...props }) => {
 	const [selectedKey, setSelectedKey] = useState(null);
 
 	useEffect(() => {
-		setSelectedKey(items.filter((item) => router.pathname.includes(`/${item.key}`))[0]?.key);
+		setSelectedKey(items.filter((item) => router.pathname.includes(`/${item?.key}`))[0]?.key);
 	}, [router.pathname]);
 
 	return (
