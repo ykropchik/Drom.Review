@@ -17,7 +17,7 @@ export default function SpecializationGradesView({ specialization, defaultSelect
 						<div className={styles.left_side}>
 							<Hierarchy value={specialization.grades} dataIndex="name" defaultSelect={selectedItem} onItemClick={setSelectedItem}/>
 						</div>
-						<MarkdownRender mdText={selectedItem?.description}/>
+						<MarkdownRender className={styles.grade_description} mdText={selectedItem?.description}/>
 					</div>
 			}
 		</>
