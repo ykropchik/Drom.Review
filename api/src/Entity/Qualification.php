@@ -22,6 +22,9 @@ class Qualification
     #[ORM\Column(type: 'integer')]
     private ?int $grade_id;
 
+    #[ORM\Column(type: 'array')]
+    private $questions = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +62,18 @@ class Qualification
     public function setGradeId(int $grade_id): self
     {
         $this->grade_id = $grade_id;
+
+        return $this;
+    }
+
+    public function getQuestions(): ?array
+    {
+        return $this->questions;
+    }
+
+    public function setQuestions(array $questions): self
+    {
+        $this->questions = $questions;
 
         return $this;
     }

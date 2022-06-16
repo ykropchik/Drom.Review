@@ -22,7 +22,7 @@ class SpecializationController extends AppController
     }
 
     #[Route('/api/specialization', name: 'add_specialization', methods: ['POST'])]
-    public function add_specialization(Request $request, SpecializationRepository $specializationRepository, GradeRepository $gradeRepository): Response
+    public function add_specialization(Request $request, SpecializationRepository $specializationRepository, GradeRepository $gradeRepository, QualificationController $qualificationController): Response
     {
         try {
             $request = $this->transformJsonBody($request);
@@ -64,6 +64,7 @@ class SpecializationController extends AppController
                         $specialization_grade->setSpecializationId($specialization_id);
                         $specialization_grade->setGradeId($grade_id);
                         $this->entityManager->persist($specialization_grade);
+                        $qualificationController->add_qualification($specialization_id, $grade_id);
                     }
                     $this->entityManager->flush();
                 }
@@ -125,16 +126,37 @@ class SpecializationController extends AppController
     }
 
     #[Route('/api/specialization/{id}', name: 'update_specialization', methods: ['PUT'])]
-    public function update_specialization(Request $request, SpecializationRepository $specializationRepository, $id): Response
+    public function update_specialization(Request $request, SpecializationRepository $specializationRepository, GradeRepository $gradeRepository, $id): Response
     {
         try {
             $request = $this->transformJsonBody($request);
 
+            if ($request->get('grades')) {
+                foreach ($request->get('grades') as $grade_id) {
+                    if (!$gradeRepository->find($grade_id)) {
+                        $data = [
+                            'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                            'error' => 'Grade with id ' . $grade_id . ' does not exist',
+                        ];
+                        return $this->response($data);
+                    }
+                }
+            }
+
             $specialization = $specializationRepository->find($id);
             $specialization->setName($request->get('name'));
-
             $this->entityManager->persist($specialization);
             $this->entityManager->flush();
+
+            if ($request->get('grades')) {
+                foreach ($request->get('grades') as $grade_id) {
+                    $specialization_grade = new SpecializationGrades();
+                    $specialization_grade->setSpecializationId($id);
+                    $specialization_grade->setGradeId($grade_id);
+                    $this->entityManager->persist($specialization_grade);
+                }
+                $this->entityManager->flush();
+            }
 
             $data = [
                 'status' => Response::HTTP_OK,
@@ -176,31 +198,38 @@ class SpecializationController extends AppController
     }
 
     #[Route('/api/specialization/grade/{id}', name: 'add_specializations_grade', methods: ['POST'])]
-    public function add_specializations_grade(Request $request, SpecializationGradesRepository $specializationGradesRepository, $id): Response
+    public function add_specializations_grade(Request $request, SpecializationGradesRepository $specializationGradesRepository, GradeRepository $gradeRepository, $id): Response
     {
         try {
             $request = $this->transformJsonBody($request);
 
-            if ($specializationGradesRepository->findOneBy([
-                'specialization_id' => $id,
-                'grade_id' => $request->get('grade_id')
-            ])) {
+            if ($gradeRepository->find($request->get('grade_id'))) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'error' => 'Specializations grade already exist',
+                    'error' => 'No grade with this id',
                 ];
             } else {
-                $specializationsGrade = new SpecializationGrades();
-                $specializationsGrade->setSpecializationId($id);
-                $specializationsGrade->setGradeId($request->get('grade_id'));
+                if ($specializationGradesRepository->findOneBy([
+                    'specialization_id' => $id,
+                    'grade_id' => $request->get('grade_id')
+                ])) {
+                    $data = [
+                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                        'error' => 'Specializations grade already exist',
+                    ];
+                } else {
+                    $specializationsGrade = new SpecializationGrades();
+                    $specializationsGrade->setSpecializationId($id);
+                    $specializationsGrade->setGradeId($request->get('grade_id'));
 
-                $this->entityManager->persist($specializationsGrade);
-                $this->entityManager->flush();
+                    $this->entityManager->persist($specializationsGrade);
+                    $this->entityManager->flush();
 
-                $data = [
-                    'status' => Response::HTTP_OK,
-                    'success' => 'Specializations grade added successfully',
-                ];
+                    $data = [
+                        'status' => Response::HTTP_OK,
+                        'success' => 'Specializations grade added successfully',
+                    ];
+                }
             }
             return $this->response($data);
         } catch (\Exception $e) {

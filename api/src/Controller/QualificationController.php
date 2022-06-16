@@ -5,10 +5,10 @@ namespace App\Controller;
 use App\Entity\Qualification;
 use App\Repository\GradeRepository;
 use App\Repository\QualificationRepository;
+use App\Repository\QuestionRepository;
 use App\Repository\SpecializationRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -21,55 +21,19 @@ class QualificationController extends AppController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/api/qualification', name: 'add_qualification', methods: ['POST'])]
-    public function add_qualification(Request $request, GradeRepository $gradeRepository, SpecializationRepository $specializationRepository): Response
+    public function add_qualification($specialization, $grade)
     {
-        try {
-            $request = $this->transformJsonBody($request);
-            if (!$request->get('specialization_id') or !$request->get('grade_id')) {
-                $data = [
-                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'error' => 'Unprocessable entity',
-                ];
-            } else {
-                if (!$gradeRepository->find($request->get('grade_id'))) {
-                    $data = [
-                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                        'error' => 'Unprocessable entity. No Grade with this id',
-                    ];
-                } elseif (!$specializationRepository->find($request->get('specialization_id'))) {
-                    $data = [
-                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                        'error' => 'Unprocessable entity. No Specialization with this id',
-                    ];
-                } else {
-                    $qualification = new Qualification();
-                    $qualification->setCreatedAt(new DateTimeImmutable());
-                    $qualification->setSpecializationId($request->get('specialization_id'));
-                    $qualification->setGradeId($request->get('grade_id'));
+        $qualification = new Qualification();
+        $qualification->setCreatedAt(new DateTimeImmutable());
+        $qualification->setSpecializationId($specialization);
+        $qualification->setGradeId($grade);
 
-                    $this->entityManager->persist($qualification);
-                    $this->entityManager->flush();
-
-                    $data = [
-                        'status' => Response::HTTP_OK,
-                        'success' => 'Qualification added successfully',
-                    ];
-                }
-            }
-
-            return $this->response($data);
-        } catch (\Exception $e) {
-            $data = [
-                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                'errors' => $e->getMessage(),
-            ];
-            return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $this->entityManager->persist($qualification);
+        $this->entityManager->flush();
     }
 
     #[Route('/api/qualification', name: 'get_all_qualifications', methods: ['GET'])]
-    public function get_qualifications(QualificationRepository $qualificationRepository, GradeRepository $gradeRepository, SpecializationRepository $specializationRepository): Response
+    public function get_qualifications(QualificationRepository $qualificationRepository, GradeRepository $gradeRepository, SpecializationRepository $specializationRepository, QuestionRepository $questionRepository): Response
     {
         try {
             $qualifications = $qualificationRepository->findAll();
@@ -78,6 +42,12 @@ class QualificationController extends AppController
             foreach ($qualifications as $qualification) {
                 $grade = $gradeRepository->find($qualification->getGradeId());
                 $specialization = $specializationRepository->find($qualification->getSpecializationId());
+                $questions = $qualification->getQuestions();
+                $temp_questions = [];
+                foreach ($questions as $question_id) {
+                    $temp_question = $questionRepository->find($question_id);
+                    array_push($temp_questions, ['id' => $temp_question->getId(), 'text' => $temp_question->getText(), 'rating' => $temp_question->getRating()]);
+                }
                 $temp_qualification = [
                     'id' => $qualification->getId(),
                     'created_at' => $qualification->getCreatedAt(),
@@ -89,7 +59,8 @@ class QualificationController extends AppController
                     'specialization' => [
                         'id' => $specialization->getId(),
                         'name' => $specialization->getName()
-                    ]
+                    ],
+                    'questions' => $temp_questions
                 ];
                 array_push($qualificationArray, $temp_qualification);
             }
@@ -105,7 +76,6 @@ class QualificationController extends AppController
         }
     }
 
-    #[Route('/api/qualification/{id}', name: 'delete_qualification', methods: ['DELETE'])]
     public function delete_qualification(QualificationRepository $qualificationRepository, $id): Response
     {
         try {
