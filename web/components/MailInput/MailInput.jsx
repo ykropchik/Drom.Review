@@ -3,7 +3,7 @@ import { Input, Select } from 'antd';
 
 const { Option } = Select;
 
-export default function MailInput({ value, onChange, placeHolder }) {
+export default function MailInput({ value, onChange, placeholder }) {
 	const [email, setEmail] = useState(getValue(value));
 
 	const onChangeBody = (e) => {
@@ -24,7 +24,7 @@ export default function MailInput({ value, onChange, placeHolder }) {
 
 	return (
 		<Input value={email.body}
-		       placeholder={placeHolder}
+		       placeholder={placeholder}
 		       onChange={onChangeBody}
 		       addonAfter={<SuffixSelector value={email.suffix}
 		                                   onChange={onChangeSuffix}/>}/>
