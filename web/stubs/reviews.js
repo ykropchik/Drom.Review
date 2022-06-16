@@ -180,7 +180,12 @@ export const reviews = [
 					'ne sed igne malis abdidit movet. Vidistis non data vocis ab laniare *init*,\n' +
 					'premeret notissima sarisa, Byblis **mecumque** caedem, sed sors!',
 			}
-		]
+		],
+		status: [{
+			status: 'waiting',
+			user: '',
+			comment: '',
+		}]
 	},
 	{
 		id: 1,
@@ -212,6 +217,11 @@ export const reviews = [
 			}
 		],
 		opinionsList: null,
+		status: [{
+			status: 'completed',
+			user: '',
+			comment: '',
+		}]
 	},
 	{
 		id: 2,
@@ -224,5 +234,63 @@ export const reviews = [
 		selfReview: null,
 		respondentsList: null,
 		opinionsList: null,
+		status: [{
+			status: 'checking',
+			user: '',
+			comment: '',
+		}]
+	},
+	{
+		id: 1,
+		object: {
+			id: 1,
+			name: 'Петров Петр Петрович'
+		},
+		specialization: 'Frontend',
+		grade: 'Junior - Full',
+		selfReview: null,
+		respondentsList: [
+			{
+				id: 4,
+				name: 'Петров Петр Петрович',
+				status: 'accept',
+				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse egestas dictum elit nec dapibus. Donec sed molestie ipsum, sed lobortis ex. Cras at justo pretium dui ultricies cursus ut et arcu. Quisque vulputate mi elit, in elementum metus elementum non. Donec ut ullamcorper felis. Vestibulum mattis lacus sit amet sapien vulputate, a pulvinar quam ultrices. Sed dui ante, sagittis ac semper euismod, molestie id orci.'
+			},
+			{
+				id: 2,
+				name: 'Петров Петр Петрович',
+				status: 'decline',
+				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse egestas dictum elit nec dapibus. Donec sed molestie ipsum, sed lobortis ex. Cras at justo pretium dui ultricies cursus ut et arcu. Quisque vulputate mi elit, in elementum metus elementum non. Donec ut ullamcorper felis. Vestibulum mattis lacus sit amet sapien vulputate, a pulvinar quam ultrices. Sed dui ante, sagittis ac semper euismod, molestie id orci.'
+			},
+			{
+				id: 3,
+				name: 'Петров Петр Петрович',
+				status: 'accept',
+				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse egestas dictum elit nec dapibus. Donec sed molestie ipsum, sed lobortis ex. Cras at justo pretium dui ultricies cursus ut et arcu. Quisque vulputate mi elit, in elementum metus elementum non. Donec ut ullamcorper felis. Vestibulum mattis lacus sit amet sapien vulputate, a pulvinar quam ultrices. Sed dui ante, sagittis ac semper euismod, molestie id orci.'
+			}
+		],
+		opinionsList: null,
+		status: [{
+			status: 'completed',
+			user: '',
+			comment: '',
+		}]
+	},
+	{
+		id: 2,
+		object: {
+			id: 1,
+			name: 'Петров Петр Петрович'
+		},
+		specialization: 'Frontend',
+		grade: 'Middle - Start',
+		selfReview: null,
+		respondentsList: null,
+		opinionsList: null,
+		status: [{
+			status: 'fixing',
+			user: '',
+			comment: '',
+		}]
 	}
 ];

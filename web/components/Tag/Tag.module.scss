@@ -1,0 +1,31 @@
+@import "public/styles/global";
+
+.tag__success {
+  color: $success-color;
+  background-color: $success-light-color;
+  border-color: $success-color;
+}
+
+.tag__default {
+  color: $disabled-color;
+  background-color: $disabled-light-color;
+  border-color: $disabled-color;
+}
+
+.tag__warning {
+  color: $warning-color;
+  background-color: $warning-light-color;
+  border-color: $warning-color;
+}
+
+.tag__error {
+  color: $error-color;
+  background-color: $error-light-color;
+  border-color: $error-color;
+}
+
+.tag__process {
+  color: $link-color;
+  background-color: $link-light-color;
+  border-color: $link-color;
+}

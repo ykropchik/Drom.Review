@@ -46,7 +46,7 @@ export default function NewUserForm() {
 			           className={styles.form_item}
 			           rules={[{ required: true, message: 'Укажите адрес электронной почты сотрудника' }]}
 			>
-				<MailInput placeHolder="Электронная почта"/>
+				<MailInput placeholder="Электронная почта"/>
 			</Form.Item>
 			<Form.Item name="name"
 			           className={styles.form_item}
