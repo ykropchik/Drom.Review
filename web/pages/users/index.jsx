@@ -15,7 +15,7 @@ export default function Users() {
 			<TabPane key="list"
 			         tab={<TabPaneItem icon={<OrderedListOutlined/>} title="Список сотрудников"/>}
 			>
-				<Table dataSource={UsersStub} columns={columns} locale={i18n}/>
+				<Table dataSource={UsersStub} columns={columns}/>
 			</TabPane>
 			<TabPane key="newUsers"
 			         tab={<TabPaneItem icon={<UserAddOutlined/>} title="Создать"/>}
@@ -112,23 +112,3 @@ const columns = [
 		}
 	}
 ];
-
-const i18n = {
-	filterTitle: 'Меню фильтров',
-	filterConfirm: 'OK',
-	filterReset: 'Сброс',
-	filterEmptyText: 'Нет фильтров',
-	filterCheckall: 'Выбрать всё',
-	filterSearchPlaceholder: 'Искать фильтр',
-	emptyText: 'Нет данных',
-	selectAll: 'Выбрать текущую страницу',
-	selectInvert: 'Инвертировать текущую страницу',
-	selectNone: 'Убрать выделение',
-	selectionAll: 'Выбрать всё',
-	sortTitle: 'Сортировать',
-	expand: 'Показать полностью',
-	collapse: 'Скрыть подробности',
-	triggerDesc: 'Нажмите для сортировки по убыванию',
-	triggerAsc: 'Нажмите для сортировки по возрастанию',
-	cancelSort: 'Нажмите для отмены сортировки',
-};

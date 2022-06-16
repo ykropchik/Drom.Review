@@ -1,0 +1,23 @@
+@import "public/styles/global";
+
+.item_content {
+  display: flex;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+.respondent_name {
+  cursor: pointer;
+
+  &:hover {
+    color: $main-color;
+  }
+}
+
+.respondent_opinion {
+  width: 100% !important;
+  max-width: 1000px;
+  height: 100% !important;
+  max-height: 700px;
+  top: 20px;
+}

@@ -7,10 +7,10 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 
 export default function ReviewBrief({ review, selfBrief }) {
-	return selfBrief ? <SelfBrief review={review}/> : <UnfamiliarBrief review={review}/>;
+	return selfBrief ? <OwnBrief review={review}/> : <UnfamiliarBrief review={review}/>;
 }
 
-function SelfBrief({ review }) {
+function OwnBrief({ review }) {
 	const router = useRouter();
 
 	const onClickHandler = () => {
