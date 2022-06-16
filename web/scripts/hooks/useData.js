@@ -1,11 +1,10 @@
 import useSWR, { useSWRConfig } from 'swr';
-import { EndPoints } from '../api/EndPoints';
 import fetcher from '../api/fetcher';
 import { useRouter } from 'next/router';
 
-export default function useGrades() {
+export default function useData(endPoint) {
 	const { mutate } = useSWRConfig();
-	const { data, error } = useSWR(EndPoints.GRADES, fetcher);
+	const { data, error } = useSWR(endPoint, fetcher);
 	const router = useRouter();
 
 	if (error === 401) {
@@ -13,7 +12,7 @@ export default function useGrades() {
 	}
 
 	const update = () => {
-		mutate(EndPoints.GRADES);
+		mutate(endPoint);
 	};
 
 	return {

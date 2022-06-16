@@ -1,4 +1,4 @@
-@import './public/styles/global';
+@import '../global';
 
 .content {
   height: 100%;
@@ -8,19 +8,10 @@
   margin: 8px 16px;
 }
 
-.not_set_label {
-  color: $error-color;
-}
-
 .hierarchy_view {
   display: flex;
   flex-wrap: wrap;
   gap: 32px;
-}
-
-.spec_select {
-  margin-bottom: 24px;
-  min-width: 280px;
 }
 
 .description_view {

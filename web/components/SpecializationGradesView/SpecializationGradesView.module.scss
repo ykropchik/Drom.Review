@@ -1,0 +1,15 @@
+.content {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.left_side {
+  flex: 0 0 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.edit_button {
+  margin: 8px auto 0 auto;
+}

@@ -1,0 +1,9 @@
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.left_side {
+  flex: 0 0 300px;
+}

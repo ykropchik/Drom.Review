@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from 'antd';
-import styles from '../../public/styles/pages/editor.module.scss';
+import styles from '../../public/styles/pages/Editors.module.scss';
 import Link from 'next/link';
 
 export default function Editor() {
@@ -10,7 +10,9 @@ export default function Editor() {
 			<Link href={'/editors/gradesEditor'}>
 				<Card.Grid className={styles.card}>Редактор грейдов</Card.Grid>
 			</Link>
-			<Card.Grid className={styles.card}>Редактор специализаций</Card.Grid>
+			<Link href={'/editors/specEditor'}>
+				<Card.Grid className={styles.card}>Редактор специализаций</Card.Grid>
+			</Link>
 			<Card.Grid className={styles.card}>Редактор шаблонов</Card.Grid>
 		</Card>
 	);

@@ -18,8 +18,12 @@ export default function GradeForm({ visible, onSaveClick, onCancelClick, isLoadi
 			return Promise.reject(new Error('Обязательное поле!'));
 		}
 
+		if (initialData && value === initialData.name) {
+			return Promise.resolve();
+		}
+
 		try {
-			await request(EndPoints.GRADES, 'POST', { name: value }, { type: 'validate' });
+			await request(EndPoints.VALIDATE_GRADE, 'POST', { name: value });
 			return  Promise.resolve();
 		} catch (e) {
 			return Promise.reject(new Error('Грейд с таким именем уже существует!'));
@@ -52,10 +56,7 @@ export default function GradeForm({ visible, onSaveClick, onCancelClick, isLoadi
 			<Form form={form} initialValues={initialData}>
 				<Form.Item name="name"
 				           hasFeedback
-				           rules={[
-					           // { required: true, message: 'Обязательное поле' },
-					           { validator: validateGradeName }
-				           ]}>
+				           rules={[{ validator: validateGradeName }]}>
 					<Input placeholder="Название грейда" style={{ maxWidth: 300 }}/>
 				</Form.Item>
 				<Form.Item name="description">

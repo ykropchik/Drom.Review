@@ -1,16 +1,16 @@
 import React from 'react';
 import { useState } from 'react';
 import { Button, Divider, message, Skeleton } from 'antd';
-import styles from '../../../components/GradeEditor/GradesEditor.module.scss';
+import styles from '../../../public/styles/pages/GradesEditor.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import GradesList from '../../../components/GradesList/GradesList';
-import GradeForm from '../../../components/NewGradeForm/GradeForm';
-import useGrades from '../../../scripts/hooks/useGrades';
+import GradeForm from '../../../components/GradeForm/GradeForm';
 import request from '../../../scripts/api/request';
 import { EndPoints } from '../../../scripts/api/EndPoints';
+import useData from '../../../scripts/hooks/useData';
 
 export default function GradesEditor() {
-	const grades = useGrades();
+	const grades = useData(EndPoints.GRADES);
 	const [isFormVisible, setFormVisible] = useState(false);
 	const [creatingGrade, setCreatingGrade] = useState(false);
 
