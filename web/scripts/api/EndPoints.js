@@ -6,4 +6,5 @@ export class EndPoints {
 	static SPECIALIZATIONS = this.BASE_PATH + '/specialization';
 	static SPECIALIZATIONS_FULL = this.SPECIALIZATIONS + '?type=full';
 	static VALIDATE_SPECIALIZATION = this.SPECIALIZATIONS + '?type=validate';
+	static USER = this.BASE_PATH + '/user';
 }
