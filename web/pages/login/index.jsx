@@ -60,11 +60,9 @@ export default function Login() {
 Login.getLayout = function getLayout(page) {
 	return (
 		<Layout style={{ flex: '1 0 0' }}>
-			<Header/>
+			<Header clickableLogo={false}/>
 			{page}
-			<Footer>
-				<a href={'/signup'} className={styles.reg_link}>У вас нет аккаунта? Зарегистрироваться</a>
-			</Footer>
+			<Footer/>
 		</Layout>
 	);
 };

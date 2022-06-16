@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import UserAvatar from '../UserAvatar/UserAvatar';
 import NavMenu from '../NavMenu/NavMenu';
 
-export default function Header({ mainNavMenu, personalNavItems }) {
+export default function Header({ mainNavMenu, personalNavItems, clickableLogo = true}) {
 	const [isCollapsed, setCollapsed] = useState(true);
 	const { width } = useWindowSize();
 
@@ -40,9 +40,12 @@ export default function Header({ mainNavMenu, personalNavItems }) {
 					<MainLogo/>
 					{
 						width > 720 &&
-						<Link href={'/'}>
-							<span className={styles.app_name}>Drom.Review</span>
-						</Link>
+						clickableLogo ?
+							<Link href={'/'}>
+								<span className={styles.app_name}>Drom.Review</span>
+							</Link>
+							:
+							<span className={styles.app_name} style={{ cursor: 'default' }}>Drom.Review</span>
 					}
 				</div>
 				{
