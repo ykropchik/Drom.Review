@@ -17,7 +17,7 @@ export default function SpecializationForm({ visible, onSaveClick, onCancelClick
 			return Promise.reject(new Error('Обязательное поле!'));
 		}
 
-		if (value === initialData.name) {
+		if (initialData && value === initialData.name) {
 			return Promise.resolve();
 		}
 
@@ -25,7 +25,7 @@ export default function SpecializationForm({ visible, onSaveClick, onCancelClick
 			await request(EndPoints.VALIDATE_SPECIALIZATION, 'POST', { name: value });
 			return Promise.resolve();
 		} catch (e) {
-			return Promise.reject(new Error('Грейд с таким именем уже существует!'));
+			return Promise.reject(new Error('Специализация с таким именем уже существует!'));
 		}
 	};
 
@@ -38,7 +38,7 @@ export default function SpecializationForm({ visible, onSaveClick, onCancelClick
 
 	return (
 		<Modal className={styles.modal}
-		       title="Новый грейд"
+		       title="Новая специализация"
 		       visible={visible}
 		       onCancel={onCancelClick}
 		       forceRender
@@ -55,11 +55,8 @@ export default function SpecializationForm({ visible, onSaveClick, onCancelClick
 			<Form form={form} initialValues={initialData}>
 				<Form.Item name="name"
 				           hasFeedback
-				           rules={[
-					           // { required: true, message: 'Обязательное поле' },
-					           { validator: validateSpecName }
-				           ]}>
-					<Input placeholder="Название грейда" style={{ maxWidth: 300 }}/>
+				           rules={[{ validator: validateSpecName }]}>
+					<Input placeholder="Название специализации" style={{ maxWidth: 300 }}/>
 				</Form.Item>
 				<Form.Item name="grades">
 					<SpecializationGradesEditor/>

@@ -1,8 +1,9 @@
 .content {
   display: flex;
   flex-wrap: wrap;
+  gap: 16px;
 }
 
-.right_side {
+.left_side {
   flex: 0 0 300px;
 }

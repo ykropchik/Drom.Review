@@ -15,7 +15,7 @@ export default function SpecEditor() {
 
 	const handleCreate = (data) => {
 		setCreatingSpec(true);
-		request(EndPoints.GRADES, 'POST', data)
+		request(EndPoints.SPECIALIZATIONS, 'POST', data)
 			.finally(() => {
 				setCreatingSpec(false);
 			})

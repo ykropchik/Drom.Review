@@ -21,23 +21,25 @@ export default function SpecializationGradesEditor({ value, onChange }) {
 
 	return (
 		<div className={styles.content}>
+			<div className={styles.left_side}>
+				{
+					grades.isLoading ?
+						<Spin/>
+						:
+						<Checkbox.Group value={selectedValues.map((item) => item.id)} onChange={onItemsChangeHandler}>
+							{
+								grades.list.map((option, i) =>
+									<Row key={i}>
+										<Checkbox value={option.id}>
+											{option.name}
+										</Checkbox>
+									</Row>
+								)
+							}
+						</Checkbox.Group>
+				}
+			</div>
 			<Hierarchy value={selectedValues} dataIndex="name" onChange={onOrderChangeHandler} sortable/>
-			{
-				grades.isLoading ?
-					<Spin/>
-					:
-					<Checkbox.Group value={selectedValues.map((item) => item.id)} onChange={onItemsChangeHandler}>
-						{
-							grades.list.map((option, i) =>
-								<Row key={i}>
-									<Checkbox value={option.id}>
-										{option.name}
-									</Checkbox>
-								</Row>
-							)
-						}
-					</Checkbox.Group>
-			}
 		</div>
 	);
 }
