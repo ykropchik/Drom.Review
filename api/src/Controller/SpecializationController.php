@@ -22,7 +22,7 @@ class SpecializationController extends AppController
     }
 
     #[Route('/api/specialization', name: 'add_specialization', methods: ['POST'])]
-    public function add_specialization(Request $request, SpecializationRepository $specializationRepository, GradeRepository $gradeRepository, QualificationController $qualificationController): Response
+    public function add_specialization(Request $request, SpecializationRepository $specializationRepository, GradeRepository $gradeRepository): Response
     {
         try {
             $request = $this->transformJsonBody($request);
@@ -64,7 +64,6 @@ class SpecializationController extends AppController
                         $specialization_grade->setSpecializationId($specialization_id);
                         $specialization_grade->setGradeId($grade_id);
                         $this->entityManager->persist($specialization_grade);
-                        $qualificationController->add_qualification($specialization_id, $grade_id);
                     }
                     $this->entityManager->flush();
                 }
@@ -203,7 +202,7 @@ class SpecializationController extends AppController
         try {
             $request = $this->transformJsonBody($request);
 
-            if ($gradeRepository->find($request->get('grade_id'))) {
+            if (!$gradeRepository->find($request->get('grade_id'))) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                     'error' => 'No grade with this id',

@@ -19,6 +19,12 @@ class Question
     #[ORM\Column(type: 'array')]
     private $rating = [];
 
+    #[ORM\Column(type: 'integer')]
+    private $specialization_id;
+
+    #[ORM\Column(type: 'integer')]
+    private $grade_id;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +50,30 @@ class Question
     public function setRating(array $rating): self
     {
         $this->rating = $rating;
+
+        return $this;
+    }
+
+    public function getSpecializationId(): ?int
+    {
+        return $this->specialization_id;
+    }
+
+    public function setSpecializationId(int $specialization_id): self
+    {
+        $this->specialization_id = $specialization_id;
+
+        return $this;
+    }
+
+    public function getGradeId(): ?int
+    {
+        return $this->grade_id;
+    }
+
+    public function setGradeId(int $grade_id): self
+    {
+        $this->grade_id = $grade_id;
 
         return $this;
     }

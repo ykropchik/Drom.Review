@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Question;
+use App\Repository\GradeRepository;
 use App\Repository\QuestionRepository;
+use App\Repository\SpecializationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,13 +21,13 @@ class QuestionController extends AppController
     }
 
     #[Route('/api/question', name: 'add_question', methods: ['POST'])]
-    public function add_question(Request $request, QuestionRepository $questionRepository): Response
+    public function add_question(Request $request, QuestionRepository $questionRepository, SpecializationRepository $specializationRepository, GradeRepository $gradeRepository): Response
     {
         try {
             $request = $this->transformJsonBody($request);
 
             if ($request->get('type') == 'validate') {
-                if ($questionRepository->findOneBy(['text' => $request->get('text')])) {
+                if ($questionRepository->findOneBy(['text' => $request->get('text'), 'specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')])) {
                     $data = [
                         'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                         'exist' => true,
@@ -37,17 +39,31 @@ class QuestionController extends AppController
                     ];
                 }
             } else {
-                $question = new Question();
-                $question->setText($request->get('text'));
-                $question->setRating($request->get('rating'));
+                if (!$specializationRepository->find($request->get('specialization_id'))) {
+                    $data = [
+                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                        'error' => 'No specialization with this id',
+                    ];
+                } elseif (!$gradeRepository->find($request->get('grade_id'))) {
+                    $data = [
+                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                        'error' => 'No grade with this id',
+                    ];
+                } else {
+                    $question = new Question();
+                    $question->setText($request->get('text'));
+                    $question->setRating($request->get('rating'));
+                    $question->setSpecializationId($request->get('specialization_id'));
+                    $question->setGradeId($request->get('grade_id'));
 
-                $this->entityManager->persist($question);
-                $this->entityManager->flush();
+                    $this->entityManager->persist($question);
+                    $this->entityManager->flush();
 
-                $data = [
-                    'status' => Response::HTTP_OK,
-                    'success' => 'Question added successfully',
-                ];
+                    $data = [
+                        'status' => Response::HTTP_OK,
+                        'success' => 'Question added successfully',
+                    ];
+                }
             }
             return $this->response($data);
         } catch (\Exception $e) {
@@ -59,24 +75,38 @@ class QuestionController extends AppController
         }
     }
 
-    #[Route('/api/question', name: 'get_all_questions', methods: ['GET'])]
-    public function get_questions(QuestionRepository $questionRepository): Response
+    #[Route('/api/question', name: 'get_questions', methods: ['GET'])]
+    public function get_questions(Request $request, QuestionRepository $questionRepository, SpecializationRepository $specializationRepository, GradeRepository $gradeRepository): Response
     {
         try {
-            $questions = $questionRepository->findAll();
+            $request = $this->transformJsonBody($request);
 
-            $questionArray = [];
-
-            foreach ($questions as $question) {
-                $temp_question = [
-                    'id' => $question->getId(),
-                    'name' => $question->getText(),
-                    'rating' => $question->getRating(),
+            if (!$specializationRepository->find($request->get('specialization_id'))) {
+                $data = [
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'error' => 'No specialization with this id',
                 ];
-                array_push($questionArray, $temp_question);
+            } elseif (!$gradeRepository->find($request->get('grade_id'))) {
+                $data = [
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'error' => 'No grade with this id',
+                ];
+            } else {
+                $questions = $questionRepository->findBy(['specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id'),]);
+
+                $data = [];
+
+                foreach ($questions as $question) {
+                    $temp_question = [
+                        'id' => $question->getId(),
+                        'name' => $question->getText(),
+                        'rating' => $question->getRating(),
+                    ];
+                    array_push($data, $temp_question);
+                }
             }
 
-            return $this->response($questionArray);
+            return $this->response($data);
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
@@ -93,17 +123,26 @@ class QuestionController extends AppController
         try {
             $request = $this->transformJsonBody($request);
 
-            $question = $questionRepository->find($id);
-            $question->setText($request->get('text'));
-            $question->setRating($request->get('rating'));
+            if (!$questionRepository->find($id)) {
+                $data = [
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'errors' => 'No question with this id',
+                ];
+            } else {
+                $question = $questionRepository->find($id);
+                $question->setText($request->get('text'));
+                $question->setRating($request->get('rating'));
+                $question->setSpecializationId($request->get('specialization_id'));
+                $question->setGradeId($request->get('grade_id'));
 
-            $this->entityManager->persist($question);
-            $this->entityManager->flush();
+                $this->entityManager->persist($question);
+                $this->entityManager->flush();
 
-            $data = [
-                'status' => Response::HTTP_OK,
-                'success' => 'Question updated successfully',
-            ];
+                $data = [
+                    'status' => Response::HTTP_OK,
+                    'success' => 'Question updated successfully',
+                ];
+            }
 
             return $this->response($data);
         } catch (\Exception $e) {
