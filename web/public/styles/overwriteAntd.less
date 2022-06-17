@@ -20,6 +20,14 @@ body {
   font-family: Arial,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',-apple-system,sans-serif;
 }
 
+.ant-btn-link:focus {
+  color: @link-color;
+}
+
+.ant-btn-link:hover {
+  color: @primary-color;
+}
+
 .ant-page-header-back-button:hover {
   color: @primary-color;
 }
@@ -44,4 +52,8 @@ body {
 .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title:after,
 .ant-steps-item-wait > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title::after{
   background-color: @border-color-base;
+}
+
+.ant-list-split .ant-list-item {
+  border-color: #C6C6C6;
 }

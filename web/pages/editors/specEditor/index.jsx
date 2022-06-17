@@ -36,7 +36,7 @@ export default function SpecEditor() {
 	};
 
 	return (
-		<PageHeader title="Специализации" onBack={() => router.push('/editors')}>
+		<PageHeader title="Редактор специализаций" onBack={() => router.push('/editors')}>
 			<div className={styles.content}>
 				{
 					specializations.isLoading

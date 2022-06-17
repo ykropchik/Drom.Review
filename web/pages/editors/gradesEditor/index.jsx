@@ -37,7 +37,7 @@ export default function GradesEditor() {
 	};
 
 	return (
-		<PageHeader title="Грейды" onBack={() => router.push('/editors')}>
+		<PageHeader title="Редактор грейдов" onBack={() => router.push('/editors')}>
 			<div className={styles.content}>
 				{
 					grades.isLoading

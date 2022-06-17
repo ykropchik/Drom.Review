@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
-export default function MarkdownRender({ className, mdText }) {
+export default function MarkdownRender({ mdText, forwardRef, ...props }) {
 	return (
-		<div className={className}>
+		<div ref={forwardRef} {...props}>
 			<ReactMarkdown>
 				{mdText}
 			</ReactMarkdown>
