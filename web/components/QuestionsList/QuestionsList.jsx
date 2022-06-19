@@ -6,6 +6,7 @@ import PanelExtra from '../PanelExtra/PanelExtra';
 import request from '../../scripts/api/request';
 import { EndPoints } from '../../scripts/api/EndPoints';
 import QuestionForm from '../QuestionForm/QuestionForm';
+import styles from './QuestionsList.module.scss';
 
 export default function QuestionsList({ className, questions, onChange }) {
 	const [editableQuestion, setEditableQuestion] = useState(null);
@@ -30,7 +31,7 @@ export default function QuestionsList({ className, questions, onChange }) {
 	return (
 		<>
 			<List className={className} style={{ width: '100%'}} dataSource={questions} renderItem={(item) => (
-				<List.Item extra={<PanelExtra onRemoveClick={() => onRemoveClickHandler(item)} onEditClick={() => onEditClickHandler(item)}/>}>
+				<List.Item className={styles.list_item} extra={<PanelExtra onRemoveClick={() => onRemoveClickHandler(item)} onEditClick={() => onEditClickHandler(item)}/>}>
 					<List.Item.Meta description={<Collapse><MarkdownRender mdText={item.text}/></Collapse>}/>
 				</List.Item>
 			)} />
