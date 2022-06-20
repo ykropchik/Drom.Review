@@ -1,0 +1,25 @@
+.content {
+
+}
+
+.subject_container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.question {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.question_text {
+  flex: 1 1;
+  min-width: 60%;
+}
+
+.question_rating {
+  flex: 0 0 200px;
+}
