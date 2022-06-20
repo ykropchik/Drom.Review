@@ -1,0 +1,26 @@
+@import 'public/styles/global';
+
+.content {
+  display: flex;
+}
+
+.title {
+  font-weight: 900;
+  margin-right: 8px;
+}
+
+.rating_item {
+  margin: 0 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remove_button {
+  color: $grey-900 !important;
+  transition: color 0.1s ease-out;
+
+  &:hover {
+    color: $main-color !important;
+  }
+}

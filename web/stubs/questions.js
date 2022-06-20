@@ -28,6 +28,6 @@ export const questions = [
 	{
 		id: 2,
 		text: 'Vidit de namque credo recingor celeremque illa\n',
-		rating: ['Не крут', 'Пойдет', 'Крут']
+		rating: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 	}
 ];

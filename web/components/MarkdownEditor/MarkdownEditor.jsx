@@ -6,7 +6,7 @@ import 'react-markdown-editor-lite/lib/index.css';
 import { MdEditorModeToggle } from '../MdEditorModeToggle/MdEditorModeToggle';
 import classNames from 'classnames';
 
-export default function MarkdownEditor({ className, onChange, value = '' }) {
+export default function MarkdownEditor({ className, onChange, value = '', ...props }) {
 	const [selfValue, setSelfValue] = useState(value);
 
 	function handleEditorChange({ text }) {
@@ -17,7 +17,7 @@ export default function MarkdownEditor({ className, onChange, value = '' }) {
 	Editor.useLocale('ru-RU');
     
 	return (
-		<div className={classNames(styles.content, className)}>
+		<div {...props} className={classNames(styles.content, className)}>
 			<Editor
 				value={selfValue}
 				style={{

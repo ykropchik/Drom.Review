@@ -9,12 +9,14 @@ import { PlusOutlined, SelectOutlined } from '@ant-design/icons';
 import Spinner from '../../../components/Spinner/Spinner';
 import QuestionsList from '../../../components/QuestionsList/QuestionsList';
 import { questions as questionsStub } from '../../../stubs/questions';
+import QuestionForm from '../../../components/QuestionForm/QuestionForm';
 
 export default function QuestionsEditor() {
 	const router = useRouter();
 	const specializations = useData(EndPoints.SPECIALIZATIONS_FULL);
 	const [selectedSpec, setSelectedSpec] = useState(null);
 	const [selectedGrade, setSelectedGrade] = useState(null);
+	const [creatingQuestion, setCreatingQuestion] = useState(false);
 	const questions = useRequest(EndPoints.QUESTIONS);
 
 	const onGradeSelectHandler = (grade) => {
@@ -24,6 +26,10 @@ export default function QuestionsEditor() {
 		} else {
 			setSelectedGrade(null);
 		}
+	};
+
+	const onSaveClickHandler = (data) => {
+		console.log(data);
 	};
 
 	return (
@@ -68,12 +74,17 @@ export default function QuestionsEditor() {
 									       description="Выберите специализацию и грейд"/>
 								:
 								<>
-									<Button type="dashed" icon={<PlusOutlined/>}>Добавить вопрос</Button>
+									<Button type="dashed" icon={<PlusOutlined/>} onClick={() => setCreatingQuestion(true)}>Добавить вопрос</Button>
 									<QuestionsList className={styles.questions_list} questions={questionsStub}/>
 								</>
 					}
 				</div>
 			</div>
+			<QuestionForm visible={creatingQuestion}
+			              title="Создание вопроса"
+			              onCancelClick={() => setCreatingQuestion(false)}
+			              saveButtonText="Создать"
+			              onSaveClick={onSaveClickHandler}/>
 		</>
 	);
 }

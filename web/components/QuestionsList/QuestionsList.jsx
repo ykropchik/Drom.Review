@@ -7,6 +7,7 @@ import request from '../../scripts/api/request';
 import { EndPoints } from '../../scripts/api/EndPoints';
 import QuestionForm from '../QuestionForm/QuestionForm';
 import styles from './QuestionsList.module.scss';
+import RatingScale from '../RatingScale/RatingScale';
 
 export default function QuestionsList({ className, questions, onChange }) {
 	const [editableQuestion, setEditableQuestion] = useState(null);
@@ -32,13 +33,23 @@ export default function QuestionsList({ className, questions, onChange }) {
 		<>
 			<List className={className} style={{ width: '100%'}} dataSource={questions} renderItem={(item) => (
 				<List.Item className={styles.list_item} extra={<PanelExtra onRemoveClick={() => onRemoveClickHandler(item)} onEditClick={() => onEditClickHandler(item)}/>}>
-					<List.Item.Meta description={<Collapse><MarkdownRender mdText={item.text}/></Collapse>}/>
+					<List.Item.Meta title={
+						<>
+							<Collapse>
+								<MarkdownRender mdText={item.text}/>
+							</Collapse>
+
+						</>
+					} description={<RatingScale title="Шкала оценки:" rating={item.rating}/>}/>
 				</List.Item>
 			)} />
-			<QuestionForm visible={!!editableQuestion}
+
+			<QuestionForm visible={editableQuestion !== null}
 			              title="Редактрирование вопроса"
-			              onCancelClick={() => setEditableQuestion(null)} onSaveClick={onSaveClickHandler}
-			              saveButtonText="Сохранить"/>
+			              onCancelClick={() => setEditableQuestion(null)}
+			              onSaveClick={onSaveClickHandler}
+			              saveButtonText="Сохранить"
+			              initialData={editableQuestion}/>
 		</>
 	);
 }
