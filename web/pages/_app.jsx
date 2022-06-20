@@ -5,12 +5,13 @@ import DefaultLayout from '../components/DefaultLayout/DefaultLayout';
 import Head from 'next/head';
 import { ConfigProvider } from 'antd';
 import ru_locale from 'antd/lib/locale/ru_RU';
-import { cache, SWRConfig} from 'swr';
+import { SWRConfig, useSWRConfig } from 'swr';
 
 import { useRouter } from 'next/router';
 
 export default function App({ Component, pageProps }) {
 	const router = useRouter();
+	const { cache } = useSWRConfig();
 	const getLayout = Component.getLayout || ((page) => <DefaultLayout>{page}</DefaultLayout>);
 
 	return getLayout(

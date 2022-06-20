@@ -1,0 +1,18 @@
+.content {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  gap: 16px;
+}
+
+.left_side {
+  flex: 1 1 300px;
+}
+
+.right_side {
+  flex: 2 1;
+  min-width: 300px;
+}
+
+.value_input {
+  width: calc(100% - 46px);
+}

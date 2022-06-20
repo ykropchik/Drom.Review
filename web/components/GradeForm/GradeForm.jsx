@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import request from '../../scripts/api/request';
 import { EndPoints } from '../../scripts/api/EndPoints';
 
-export default function GradeForm({ visible, onSaveClick, onCancelClick, isLoading, saveButtonText = '', initialData = null }) {
+export default function GradeForm({ visible, title, onSaveClick, onCancelClick, isLoading, saveButtonText = '', initialData = null }) {
 	const [form] = Form.useForm();
 
 	useEffect(() => {
@@ -39,7 +39,7 @@ export default function GradeForm({ visible, onSaveClick, onCancelClick, isLoadi
 
 	return (
 		<Modal className={styles.modal}
-		       title="Новый грейд"
+		       title={title}
 		       visible={visible}
 		       onCancel={onCancelClick}
 		       forceRender

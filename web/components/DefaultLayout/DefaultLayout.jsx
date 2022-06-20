@@ -5,9 +5,8 @@ import { Layout, Spin } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import styles from './DefaultLayout.module.scss';
 import { mainMenu, personalNavMenu } from '../../configs/navMenu';
-import { LoadingOutlined } from '@ant-design/icons';
 import usePageLoading from '../../scripts/hooks/usePageLoading';
-const indicator = <LoadingOutlined className={styles.spinner__indicator} spin/>;
+import Spinner from '../Spinner/Spinner';
 
 export default function DefaultLayout({ children }) {
 	const loading = usePageLoading();
@@ -19,7 +18,7 @@ export default function DefaultLayout({ children }) {
 				{
 					loading ?
 						<Spin className={styles.spinner}
-						      spinning={loading} indicator={indicator}/>
+						      spinning={loading} indicator={<Spinner size={56} />}/>
 						:
 						children
 				}
