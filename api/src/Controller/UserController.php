@@ -28,6 +28,7 @@ class UserController extends AppController
             $user = $this->getUser();
 
             $data = [
+                'id' => $user->getId(),
                 'email' => $user->getEmail(),
                 'full_name' => $user->getFullName(),
                 'qualifications' => []

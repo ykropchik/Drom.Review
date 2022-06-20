@@ -99,7 +99,7 @@ class QuestionController extends AppController
                 foreach ($questions as $question) {
                     $temp_question = [
                         'id' => $question->getId(),
-                        'name' => $question->getText(),
+                        'text' => $question->getText(),
                         'rating' => $question->getRating(),
                     ];
                     array_push($data, $temp_question);
