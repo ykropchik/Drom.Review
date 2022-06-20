@@ -130,10 +130,18 @@ class QuestionController extends AppController
                 ];
             } else {
                 $question = $questionRepository->find($id);
-                $question->setText($request->get('text'));
-                $question->setRating($request->get('rating'));
-                $question->setSpecializationId($request->get('specialization_id'));
-                $question->setGradeId($request->get('grade_id'));
+                if ($request->get('text')) {
+                    $question->setText($request->get('text'));
+                }
+                if ($request->get('rating')) {
+                    $question->setRating($request->get('rating'));
+                }
+                if ($request->get('specialization_id')) {
+                    $question->setSpecializationId($request->get('specialization_id'));
+                }
+                if ($request->get('grade_id')) {
+                    $question->setGradeId($request->get('grade_id'));
+                }
 
                 $this->entityManager->persist($question);
                 $this->entityManager->flush();
