@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AutoComplete, Button, Empty, PageHeader, Spin } from 'antd';
+import { AutoComplete, Button, Empty, message, PageHeader, Spin } from 'antd';
 import { useRouter } from 'next/router';
 import useData from '../../../scripts/hooks/useData';
 import { EndPoints } from '../../../scripts/api/EndPoints';
@@ -8,8 +8,8 @@ import useRequest from '../../../scripts/hooks/useRequest';
 import { PlusOutlined, SelectOutlined } from '@ant-design/icons';
 import Spinner from '../../../components/Spinner/Spinner';
 import QuestionsList from '../../../components/QuestionsList/QuestionsList';
-import { questions as questionsStub } from '../../../stubs/questions';
 import QuestionForm from '../../../components/QuestionForm/QuestionForm';
+import request from '../../../scripts/api/request';
 
 export default function QuestionsEditor() {
 	const router = useRouter();
@@ -17,19 +17,40 @@ export default function QuestionsEditor() {
 	const [selectedSpec, setSelectedSpec] = useState(null);
 	const [selectedGrade, setSelectedGrade] = useState(null);
 	const [creatingQuestion, setCreatingQuestion] = useState(false);
+	const [isFormVisible, setFormVisible] = useState(false);
 	const questions = useRequest(EndPoints.QUESTIONS);
 
 	const onGradeSelectHandler = (grade) => {
 		if (grade !== null) {
 			setSelectedGrade(grade);
-			questions.request();
+			questionsUpdate(grade);
 		} else {
 			setSelectedGrade(null);
 		}
 	};
 
 	const onSaveClickHandler = (data) => {
-		console.log(data);
+		setCreatingQuestion(true);
+		request(EndPoints.QUESTIONS, 'POST', {...data, 'specialization_id': selectedSpec.id, 'grade_id': selectedGrade.id })
+			.finally(() => {
+				setCreatingQuestion(false);
+			})
+			.then(() => onCreateSuccess())
+			.catch(() => onCreateFailure());
+	};
+
+	const onCreateSuccess = () => {
+		setFormVisible(false);
+		questionsUpdate();
+		message.success('Вопрос успешно создан');
+	};
+
+	const onCreateFailure = () => {
+		message.error('Произошла ошибка! Попробуйте позже.');
+	};
+
+	const questionsUpdate = (grade = null) => {
+		questions.request(null, { 'specialization_id': selectedSpec.id, 'grade_id': grade ? grade.id : selectedGrade.id });
 	};
 
 	return (
@@ -74,15 +95,16 @@ export default function QuestionsEditor() {
 									       description="Выберите специализацию и грейд"/>
 								:
 								<>
-									<Button type="dashed" icon={<PlusOutlined/>} onClick={() => setCreatingQuestion(true)}>Добавить вопрос</Button>
-									<QuestionsList className={styles.questions_list} questions={questionsStub}/>
+									<Button className={styles.add_button} type="dashed" icon={<PlusOutlined/>} onClick={() => setFormVisible(true)}>Добавить вопрос</Button>
+									<QuestionsList className={styles.questions_list} questions={questions.data} onChange={questionsUpdate}/>
 								</>
 					}
 				</div>
 			</div>
-			<QuestionForm visible={creatingQuestion}
+			<QuestionForm visible={isFormVisible}
 			              title="Создание вопроса"
-			              onCancelClick={() => setCreatingQuestion(false)}
+			              isLoading={creatingQuestion}
+			              onCancelClick={() => setFormVisible(false)}
 			              saveButtonText="Создать"
 			              onSaveClick={onSaveClickHandler}/>
 		</>
