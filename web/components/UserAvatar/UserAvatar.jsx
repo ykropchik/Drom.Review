@@ -1,18 +1,23 @@
 import * as React from 'react';
-import styles from './UserAvatar.module.scss';
 import { Avatar, Button, Dropdown, Menu } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
+import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
+import styles from './UserAvatar.module.scss';
 
-export default function UserAvatar({ avatarUrl, avatarPlaceholder, size, editable, ...props }) {
+export default function UserAvatar({ avatarUrl, userName, size, editable = false, ...props }) {
 	return (
-		<div className={styles.content}>
+		<div {...props} className={styles.content}>
 			{
 				avatarUrl
-					? <Avatar {...props} className={styles.avatar} src={avatarUrl} size={size}/>
+					?
+					<Avatar className={styles.avatar} src={avatarUrl} size={size}/>
 					:
-					<span {...props} className={styles.avatar} style={{ height: size, width: size }}>
-						<span className={styles.avatar__placeholder} style={{  fontSize: size / 2.5, lineHeight: `${size + 1}px`}}>{avatarPlaceholder}</span>
-					</span>
+					<>
+						<Avatar className={styles.avatar} size={size}/>
+						<span className={styles.avatar__placeholder} style={{ fontSize: `${size*0.5}px`, lineHeight: `${size}px` }}>
+							{userName ? getAvatarPlaceholder(userName) : 'D'}
+						</span>
+					</>
 			}
 			{
 				editable &&

@@ -3,10 +3,17 @@
 .content {
   display: flex;
   justify-content: center;
+  align-items: flex-start;
   align-content: flex-start;
   flex-wrap: wrap;
   height: 100%;
   gap: 32px;
+}
+
+.row {
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .left_side {
@@ -22,15 +29,4 @@
 
 .form {
   width: 100%;
-}
-
-.avatar {
-  margin: 0 auto;
-}
-
-.avatar_placeholder {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  font-size: 1rem;
 }

@@ -2,7 +2,6 @@ import React from 'react';
 import { Table, Tabs, Tag } from 'antd';
 import { Users as UsersStub } from '../../stubs/users';
 import UserAvatar from '../../components/UserAvatar/UserAvatar';
-import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
 import { OrderedListOutlined, UserAddOutlined } from '@ant-design/icons';
 import NewUserForm from '../../components/NewUserForm/NewUserForm';
 import TabPaneItem from '../../components/TabPaneItem/TabPaneItem';
@@ -32,8 +31,7 @@ const columns = [
 		dataIndex: 'avatarUrl',
 		key: 'avatarUrl',
 		width: 26,
-		render: (data, record) =>
-			data ? <UserAvatar avatarUrl={data} size={26}/> : <UserAvatar avatarPlaceholder={getAvatarPlaceholder(record.name)} size={26}/>,
+		render: (data, record) => <UserAvatar avatarUrl={data} userName={record.name} size={26}/>
 	},
 	{
 		title: 'Имя',
