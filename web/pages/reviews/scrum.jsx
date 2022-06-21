@@ -7,7 +7,6 @@ import {
 	OrderedListOutlined, SyncOutlined,
 } from '@ant-design/icons';
 import UserAvatar from '../../components/UserAvatar/UserAvatar';
-import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
 import { reviews } from '../../stubs/reviews';
 import Tag from '../../components/Tag/Tag';
 import NewReviewForm from '../../components/NewReviewForm/NewReviewForm';
@@ -37,8 +36,7 @@ const columns = [
 		dataIndex: 'subject',
 		key: 'avatarUrl',
 		width: 26,
-		render: (data) =>
-			data.avatar ? <UserAvatar avatarUrl={data} size={26}/> : <UserAvatar avatarPlaceholder={getAvatarPlaceholder(data.name)} size={26}/>,
+		render: (data) => <UserAvatar avatarUrl={data.avatarUrl} userName={data.name} size={26}/>
 	},
 	{
 		title: 'Имя',

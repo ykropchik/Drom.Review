@@ -6,7 +6,6 @@ import MarkdownRender from '../../components/MarkdownRender/MarkdownRender';
 import styles from '../../public/styles/pages/Opinion.module.scss';
 import MarkdownEditor from '../../components/MarkdownEditor/MarkdownEditor';
 import UserAvatar from '../../components/UserAvatar/UserAvatar';
-import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
 import { Users } from '../../stubs/users.js';
 
 export default function Opinion() {
@@ -17,7 +16,9 @@ export default function Opinion() {
 	};
 
 	return (
-		<PageHeader title="360-мнение" onBack={() => router.push('/')} subTitle={<div className={styles.subject_container}><UserAvatar avatarPlaceholder={getAvatarPlaceholder(Users[0].name)} size={32}/>{Users[0].name}</div>}>
+		<PageHeader title="360-мнение"
+		            onBack={() => router.push('/')}
+		            subTitle={<div className={styles.subject_container}><UserAvatar avatarUrl={Users[0].avatarUrl} userName={Users[0].name} size={32}/>{Users[0].name}</div>}>
 			<div className={styles.content}>
 				<Divider/>
 				{

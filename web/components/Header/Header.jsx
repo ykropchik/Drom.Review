@@ -61,7 +61,7 @@ export default function Header({ mainNavMenu, personalNavItems, clickableLogo = 
 							personalNavItems &&
 							<div className={styles.right_side}>
 								<Dropdown overlay={<NavMenu items={personalNavItems}/>} placement="bottomLeft" trigger={['click']} arrow>
-									<UserAvatar avatarUrl={null} size={40}/>
+									<UserAvatar avatarUrl={null} size={40} style={{ cursor: 'pointer' }}/>
 								</Dropdown>
 							</div>
 						}

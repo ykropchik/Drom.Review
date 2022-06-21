@@ -1,7 +1,6 @@
 import React from 'react';
 import { List, Divider } from 'antd';
 import UserAvatar from '../UserAvatar/UserAvatar';
-import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
 import Link from 'next/link';
 import RespondentStatusTag from '../RespondentStatusTag/RespondentStatusTag';
 
@@ -17,7 +16,7 @@ RespondentsList.Item = ({ data }) => {
 	return (
 		<List.Item>
 			<List.Item.Meta
-				avatar={<UserAvatar avatarPlaceholder={getAvatarPlaceholder(data.name)} size={32}/>}
+				avatar={<UserAvatar avatarUrl={data.avatarUrl} user={data.name} size={32}/>}
 				title={
 					<>
 						<Link href={`/user/${data.id}`}>

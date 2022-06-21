@@ -1,23 +1,23 @@
 @import 'public/styles/global';
 
 .content {
+  display: flex;
   position: relative;
-  height: fit-content;
+  height: max-content;
 }
 
 .avatar {
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  border-radius: 50%;
-  overflow: hidden;
-  cursor: pointer;
   background-color: $main-color;
 }
 
 .avatar__placeholder {
+  position: absolute;
+  left: 0;
+  top: 0;
   color: $default-white;
   font-weight: 700;
+  width: 100%;
+  text-align: center;
 }
 
 .avatar__img {

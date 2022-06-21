@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, Steps, Timeline } from 'antd';
 import UserAvatar from '../UserAvatar/UserAvatar';
-import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
 import { CheckOutlined, ClockCircleOutlined, CloseOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { reviewStatusInfo } from '../../configs/reviewStatus';
@@ -52,7 +51,7 @@ function UnfamiliarBrief({ review }) {
 
 	return (
 		<Card className={styles.content}
-		      title={<BriefHeader object={review.object} specialization={review.specialization} grade={review.grade} selfBrief={true}/>}
+		      title={<BriefHeader subject={review.subject} specialization={review.specialization} grade={review.grade} selfBrief={true}/>}
 		      onClick={onClickHandler}
 		      hoverable>
 			<Timeline>
@@ -76,10 +75,10 @@ function Missing() {
 	);
 }
 
-function BriefHeader({ object, specialization, grade }) {
+function BriefHeader({ subject, specialization, grade }) {
 	return (
-		<Card.Meta avatar={<UserAvatar avatarPlaceholder={getAvatarPlaceholder(object.name)} size={32}/>}
-		           title={object.name}
+		<Card.Meta avatar={<UserAvatar avatarUrl={subject.avatarUrl} userName={subject.name} size={32}/>}
+		           title={subject.name}
 		           description={`${specialization}: ${grade}`}>
 		</Card.Meta>
 	);

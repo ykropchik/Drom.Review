@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, List, Modal } from 'antd';
 import UserAvatar from '../UserAvatar/UserAvatar';
-import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
 import styles from './OpinionsList.module.scss';
 import MarkdownRender from '../MarkdownRender/MarkdownRender';
 
@@ -34,7 +33,7 @@ export default function OpinionsList({ list }) {
 OpinionsList.Item = ({ data, onClick }) => {
 	return (
 		<List.Item className={styles.item_content}>
-			<UserAvatar avatarPlaceholder={getAvatarPlaceholder(data.name)} size={32}/>
+			<UserAvatar avatarUrl={data.avatarUrl} userName={data.name} size={32}/>
 			<span className={styles.respondent_name} onClick={onClick}>{data.name}</span>
 		</List.Item>
 	);

@@ -4,7 +4,6 @@ import { Col, Divider, Form, Input, Row, Skeleton as AntSkeleton } from 'antd';
 import { useEffect, useState } from 'react';
 import timeout from '../../scripts/timeout';
 import UserAvatar from '../../components/UserAvatar/UserAvatar';
-import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
 import { Users } from '../../stubs/users';
 
 export default function Personal() {
@@ -30,13 +29,9 @@ export default function Personal() {
 
 function PersonalInfo({ userInfo }) {
 	return(
-		<Row gutter={[24, 0]} style={{ width: '100%', justifyContent: 'center' }}>
+		<Row gutter={[24, 0]} className={styles.row}>
 			<Col flex="0 0 auto" className={styles.left_side}>
-				{
-					userInfo.avatarUrl
-						? <UserAvatar className={styles.avatar} src={userInfo.avatarUrl} editable/>
-						: <UserAvatar className={styles.avatar} size={180} avatarPlaceholder={getAvatarPlaceholder(userInfo.name)} editable/>
-				}
+				<UserAvatar avatarUrl={userInfo.avatarUrl} size={180} userName={userInfo.name} editable/>
 			</Col>
 			<Col flex={0.5} className={styles.right_side}>
 				<Divider>Личная информация</Divider>
