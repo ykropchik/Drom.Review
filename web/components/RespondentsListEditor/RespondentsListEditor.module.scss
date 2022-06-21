@@ -1,0 +1,41 @@
+@import 'public/styles/global';
+
+.content {
+  display: flex;
+  gap: 12px;
+}
+
+.left_side,
+.right_side {
+  flex: 1 1;
+}
+
+.left_side__title {
+  height: 32px;
+  line-height: 32px;
+  margin: 0;
+}
+
+.selected_users_list,
+.searched_users {
+  padding-top: 12px;
+  max-height: 540px;
+  overflow-y: scroll;
+}
+
+.user {
+  cursor: pointer;
+
+  &:hover {
+    background-color: $grey-50;
+  }
+}
+
+.username {
+  margin-left: 12px;
+  margin-right: auto;
+}
+
+.selected_user {
+  background-color: $error-light-color;
+}

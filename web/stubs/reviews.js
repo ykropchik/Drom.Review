@@ -1,7 +1,7 @@
 export const reviews = [
 	{
 		id: 0,
-		object: {
+		subject: {
 			id: 1,
 			name: 'Петров Петр Петрович'
 		},
@@ -181,15 +181,57 @@ export const reviews = [
 					'premeret notissima sarisa, Byblis **mecumque** caedem, sed sors!',
 			}
 		],
-		status: [{
-			status: 'waiting',
-			user: '',
+		currentStatus: {
+			status: 'opinion_waiting',
+			user: {
+				id: 1,
+				name: 'Петров Петр Петрович'
+			},
 			comment: '',
-		}]
+		},
+		history: [
+			{
+				status: 'init',
+				user: {
+					id: 1,
+					name: 'Петров Петр Петрович'
+				},
+				comment: '1. Mixtos his tamen\n' +
+					'2. Ab clamore sinistra torvum et aristas deique\n' +
+					'3. At nam quem risi aut abrupta certe\n' +
+					'4. Didicit venerem\n',
+			},
+			{
+				status: 'review',
+				user: {
+					id: 1,
+					name: 'Петров Петр Петрович'
+				},
+				comment: 'Movit tantum est Iuno pugnat pendent maxime patriumque iuvenis. Nova ulterius\n' +
+					'pectora matris, puellam fecit, hac dempto? Umor modum, nota velit contra ut\n' +
+					'facta habetur lupis?\n',
+			},
+			{
+				status: 'correction',
+				user: {
+					id: 1,
+					name: 'Петров Петр Петрович'
+				},
+				comment: '',
+			},
+			{
+				status: 'opinion_waiting',
+				user: {
+					id: 1,
+					name: 'Петров Петр Петрович'
+				},
+				comment: '',
+			}
+		]
 	},
 	{
 		id: 1,
-		object: {
+		subject: {
 			id: 1,
 			name: 'Петров Петр Петрович'
 		},
@@ -217,15 +259,26 @@ export const reviews = [
 			}
 		],
 		opinionsList: null,
-		status: [{
+		currentStatus: {
 			status: 'completed',
-			user: '',
+			user: {
+				id: 1,
+				name: 'Петров Петр Петрович'
+			},
+			comment: '',
+		},
+		history: [{
+			status: 'completed',
+			user: {
+				id: 1,
+				name: 'Петров Петр Петрович'
+			},
 			comment: '',
 		}]
 	},
 	{
 		id: 2,
-		object: {
+		subject: {
 			id: 1,
 			name: 'Петров Петр Петрович'
 		},
@@ -234,15 +287,26 @@ export const reviews = [
 		selfReview: null,
 		respondentsList: null,
 		opinionsList: null,
-		status: [{
-			status: 'checking',
-			user: '',
+		currentStatus: {
+			status: 'review',
+			user: {
+				id: 1,
+				name: 'Петров Петр Петрович'
+			},
+			comment: '',
+		},
+		history: [{
+			status: 'review',
+			user: {
+				id: 1,
+				name: 'Петров Петр Петрович'
+			},
 			comment: '',
 		}]
 	},
 	{
 		id: 1,
-		object: {
+		subject: {
 			id: 1,
 			name: 'Петров Петр Петрович'
 		},
@@ -270,7 +334,12 @@ export const reviews = [
 			}
 		],
 		opinionsList: null,
-		status: [{
+		currentStatus: {
+			status: 'completed',
+			user: '',
+			comment: '',
+		},
+		history: [{
 			status: 'completed',
 			user: '',
 			comment: '',
@@ -278,7 +347,7 @@ export const reviews = [
 	},
 	{
 		id: 2,
-		object: {
+		subject: {
 			id: 1,
 			name: 'Петров Петр Петрович'
 		},
@@ -287,9 +356,20 @@ export const reviews = [
 		selfReview: null,
 		respondentsList: null,
 		opinionsList: null,
-		status: [{
-			status: 'fixing',
-			user: '',
+		currentStatus: {
+			status: 'init',
+			user: {
+				id: 1,
+				name: 'Петров Петр Петрович'
+			},
+			comment: '',
+		},
+		history: [{
+			status: 'init',
+			user: {
+				id: 1,
+				name: 'Петров Петр Петрович'
+			},
 			comment: '',
 		}]
 	}

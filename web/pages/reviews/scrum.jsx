@@ -34,7 +34,7 @@ export default function Reviews() {
 const columns = [
 	{
 		title: '',
-		dataIndex: 'object',
+		dataIndex: 'subject',
 		key: 'avatarUrl',
 		width: 26,
 		render: (data) =>
@@ -42,7 +42,7 @@ const columns = [
 	},
 	{
 		title: 'Имя',
-		dataIndex: 'object',
+		dataIndex: 'subject',
 		key: 'name',
 		sorter: (a, b) => a.name > b.name ? 1 : -1,
 		render: (data) => data.name

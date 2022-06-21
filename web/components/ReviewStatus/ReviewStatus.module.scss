@@ -1,0 +1,65 @@
+@import 'public/styles/global';
+
+.inner {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px 0;
+}
+
+.with_comment,
+.without_comment {
+  position: relative;
+  padding: 12px;
+
+  &:not(:last-child):after {
+    content: '';
+    position: absolute;
+    height: calc(100% - 32px);
+    border-right: 1px solid $grey-400;
+    top: 60px;
+    left: 28px;
+    z-index: 0;
+  }
+}
+
+.status_icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $grey-200;
+  height: 32px;
+  width: 32px;
+  border-radius: 32px;
+  overflow: hidden;
+  font-size: 16px;
+  color: $main-color;
+  margin-right: 12px;
+}
+
+.avatar_container {
+  margin-top: 4px;
+  margin-right: 12px;
+}
+
+.right_side {
+  flex: 1 1;
+  padding-top: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  flex: 1 1;
+}
+
+.author {
+  padding-right: 8px;
+  font-size: 12px;
+  color: #8e8f90;
+}
+
+.status {
+  padding-right: 8px;
+  font-size: 12px;
+  color: #ccc;
+}
