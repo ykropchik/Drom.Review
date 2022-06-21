@@ -5,10 +5,14 @@
   width: 100%;
 }
 
-.granted {
+.finish {
   color: $success-color;
 }
 
-.missing {
+.process {
+  color: $link-color;
+}
+
+.wait {
   color: $error-color;
 }
