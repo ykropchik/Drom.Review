@@ -1,10 +1,13 @@
 import React from 'react';
-import { Card, Timeline } from 'antd';
-import styles from './ReviewBrief.module.scss';
+import { Card, Steps, Timeline } from 'antd';
 import UserAvatar from '../UserAvatar/UserAvatar';
 import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { CheckOutlined, ClockCircleOutlined, CloseOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
+import { reviewStatusInfo } from '../../configs/reviewStatus';
+import styles from './ReviewBrief.module.scss';
+
+const { Step } = Steps;
 
 export default function ReviewBrief({ review, selfBrief }) {
 	return selfBrief ? <OwnBrief review={review}/> : <UnfamiliarBrief review={review}/>;
@@ -22,12 +25,20 @@ function OwnBrief({ review }) {
 		      title={`${review.specialization}: ${review.grade}`}
 		      onClick={onClickHandler}
 		      hoverable>
-			<Timeline>
-				<Timeline.Item dot={<Granted/>}>Self review</Timeline.Item>
-				<Timeline.Item dot={<Missing/>}>Список респондентов</Timeline.Item>
-				<Timeline.Item dot={<Missing/>}>360 мнения</Timeline.Item>
-				<Timeline.Item dot={<Missing/>}>Встреча</Timeline.Item>
-			</Timeline>
+			<Steps direction="vertical"
+			       current={reviewStatusInfo[review.currentStatus.status].step}
+			       progressDot={(iconDot, { status }) => {
+					   switch (status) {
+						   case 'finish': return <CheckOutlined className={styles.finish}/>;
+						   case 'process': return <ClockCircleOutlined className={styles.process}/>;
+						   case 'wait': return <CloseOutlined className={styles.wait}/>;
+					   }
+				   }}>
+				<Step title="Начало review"/>
+				<Step title="Проверка"/>
+				<Step title="Сбор 360 мнений"/>
+				<Step title="Встреча"/>
+			</Steps>
 		</Card>
 	);
 }
