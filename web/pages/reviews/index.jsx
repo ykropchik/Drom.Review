@@ -12,7 +12,7 @@ export default function Reviews() {
 			<Panel header={<Divider style={{ margin: 0 }} orientation="left">Активные review</Divider>} key="activeReviews">
 				<div className={styles.panel_content}>
 					{
-						reviews.map((review, i) => <ReviewBrief review={review} key={i} selfBrief={true}/>)
+						reviews.map((review, i) => <ReviewBrief review={review} key={i} selfBrief/>)
 					}
 				</div>
 			</Panel>

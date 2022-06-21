@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Steps, Timeline } from 'antd';
+import { Card, Divider, Steps } from 'antd';
 import UserAvatar from '../UserAvatar/UserAvatar';
 import { CheckOutlined, ClockCircleOutlined, CloseOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
@@ -9,10 +9,6 @@ import styles from './ReviewBrief.module.scss';
 const { Step } = Steps;
 
 export default function ReviewBrief({ review, selfBrief }) {
-	return selfBrief ? <OwnBrief review={review}/> : <UnfamiliarBrief review={review}/>;
-}
-
-function OwnBrief({ review }) {
 	const router = useRouter();
 
 	const onClickHandler = () => {
@@ -21,18 +17,20 @@ function OwnBrief({ review }) {
 
 	return (
 		<Card className={styles.content}
-		      title={`${review.specialization}: ${review.grade}`}
 		      onClick={onClickHandler}
 		      hoverable>
+			{selfBrief ? <OwnBriefHeader review={review}/> : <UnfamiliarBriefHeader review={review}/>}
+			<Divider/>
 			<Steps direction="vertical"
+			       size="small"
 			       current={reviewStatusInfo[review.currentStatus.status].step}
 			       progressDot={(iconDot, { status }) => {
-					   switch (status) {
-						   case 'finish': return <CheckOutlined className={styles.finish}/>;
-						   case 'process': return <ClockCircleOutlined className={styles.process}/>;
-						   case 'wait': return <CloseOutlined className={styles.wait}/>;
-					   }
-				   }}>
+				       switch (status) {
+					       case 'finish': return <CheckOutlined className={styles.finish}/>;
+					       case 'process': return <ClockCircleOutlined className={styles.process}/>;
+					       case 'wait': return <CloseOutlined className={styles.wait}/>;
+				       }
+			       }}>
 				<Step title="Начало review"/>
 				<Step title="Проверка"/>
 				<Step title="Сбор 360 мнений"/>
@@ -42,44 +40,15 @@ function OwnBrief({ review }) {
 	);
 }
 
-function UnfamiliarBrief({ review }) {
-	const router = useRouter();
-
-	const onClickHandler = () => {
-		router.push(`/reviews/${review.id}`);
-	};
-
-	return (
-		<Card className={styles.content}
-		      title={<BriefHeader subject={review.subject} specialization={review.specialization} grade={review.grade} selfBrief={true}/>}
-		      onClick={onClickHandler}
-		      hoverable>
-			<Timeline>
-				<Timeline.Item dot={<Granted/>}>Self review</Timeline.Item>
-				<Timeline.Item dot={<Missing/>}>Список респондентов</Timeline.Item>
-				<Timeline.Item dot={<Missing/>}>360 мнения</Timeline.Item>
-			</Timeline>
-		</Card>
-	);
+function OwnBriefHeader({ review }) {
+	return <span className={styles.own_header}>{`${review.specialization}: ${review.grade}`}</span>;
 }
 
-function Granted() {
+function UnfamiliarBriefHeader({ review }) {
 	return (
-		<CheckOutlined className={styles.granted} />
-	);
-}
-
-function Missing() {
-	return (
-		<CloseOutlined className={styles.missing} />
-	);
-}
-
-function BriefHeader({ subject, specialization, grade }) {
-	return (
-		<Card.Meta avatar={<UserAvatar avatarUrl={subject.avatarUrl} userName={subject.name} size={32}/>}
-		           title={subject.name}
-		           description={`${specialization}: ${grade}`}>
+		<Card.Meta avatar={<UserAvatar avatarUrl={review.subject.avatarUrl} userName={review.subject.name} size={32}/>}
+		           title={review.subject.name}
+		           description={`${review.specialization}: ${review.grade}`}>
 		</Card.Meta>
 	);
 }
