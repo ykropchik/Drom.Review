@@ -11,8 +11,6 @@ use App\Repository\UserQualificationRepository;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -57,7 +55,7 @@ class ReviewController extends AppController
                 $review->setUserId($request->get('user_id'));
                 $review->setDateStart(new DateTime());
                 $review->setQualification(['specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')]);
-                $review->setStatus(['user' => null, 'status' => 'self_review', 'comment' => null]);
+                $review->setStatus('self_review');
 
                 $this->entityManager->persist($review);
                 $this->entityManager->flush();
@@ -93,19 +91,20 @@ class ReviewController extends AppController
                     $user = $userRepository->find($review->getUserId());
                     $specialization = $specializationRepository->find($review->getQualification()['specialization_id']);
                     $grade = $gradeRepository->find($review->getQualification()['grade_id']);
-                    $temp_question = [
+                    $temp_review = [
                         'id' => $review->getId(),
-                        'date_start' => $review->getDateStart(),
-                        'date_end' => $review->getDateEnd(),
+                        'date_start' => $review->getDateStart()->format('Y M d H:i:s'),
+                        'date_end' => $review->getDateEnd()?->format('Y M d H:i:s'),
                         'subject' => ['id' => $user->getId(), 'email' => $user->getEmail(), 'full_name' => $user->getFullName()],
                         'self_review' => $review->getSelfReview(),
                         'qualification' => [
                             'specialization' => ['id' => $specialization->getId(), 'name' => $specialization->getName()],
                             'grade' => ['id' => $grade->getId(), 'name' => $grade->getName(), 'description' => $grade->getDescription()]],
-                        'status' => ['status' => $review->getStatus()['status']]
+                        'status' => $review->getStatus(),
+                        'history' => $review->getHistory()
 
                     ];
-                    array_push($data, $temp_question);
+                    array_push($data, $temp_review);
                 }
             }
 
@@ -120,7 +119,7 @@ class ReviewController extends AppController
         }
     }
 
-    #[Route('/api/review/status/{id}', name: 'set_review_status', methods: ['POST'])]
+    #[Route('/api/review/status/{id}', name: 'set_review_status', methods: ['PUT'])]
     public function set_review_status(Request $request, ReviewRepository $reviewRepository, $id): Response
     {
         try {
@@ -131,14 +130,22 @@ class ReviewController extends AppController
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                     'errors' => 'No review with this id',
                 ];
-            } elseif (!$request->get('user') or !$request->get('status') or !$request->get('comment')) {
+            } elseif (!$request->get('status')) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                     'errors' => 'Unprocessable entity',
                 ];
             } else {
                 $review = $reviewRepository->find($id);
-                $review->setStatus(['user' => $request->get('user'), 'status' => $request->get('status'), 'comment' => $request->get('comment')]);
+                $review->setStatus($request->get('status'));
+
+                $history = $review->getHistory();
+                $current_time = new DateTime();
+                array_push($history, [
+                    'user' => ['email' => $this->getUser()->getEmail(), 'full_name' => $this->getUser()->getFullName()],
+                    'comment' => 'Смена статуса: ' . $request->get('status'),
+                    'created_at' => $current_time->format('Y M d H:i:s')]);
+                $review->setHistory($history);
 
                 $this->entityManager->persist($review);
                 $this->entityManager->flush();
@@ -146,6 +153,52 @@ class ReviewController extends AppController
                 $data = [
                     'status' => Response::HTTP_OK,
                     'success' => 'Review status updated successfully',
+                ];
+            }
+
+            return $this->response($data);
+        } catch (\Exception $e) {
+            $data = [
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'errors' => $e->getMessage(),
+            ];
+            return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    #[Route('/api/review/comment/{id}', name: 'add_review_comment', methods: ['PUT'])]
+    public function add_review_comment(Request $request, ReviewRepository $reviewRepository, $id): Response
+    {
+        try {
+            $request = $this->transformJsonBody($request);
+            $user = $this->getUser();
+
+            if (!$reviewRepository->find($id)) {
+                $data = [
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'errors' => 'No review with this id',
+                ];
+            } elseif (!$request->get('comment')) {
+                $data = [
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'errors' => 'Unprocessable entity',
+                ];
+            } else {
+                $review = $reviewRepository->find($id);
+                $history = $review->getHistory();
+                $current_time = new DateTime();
+                array_push($history, [
+                    'user' => ['email' => $user->getEmail(), 'full_name' => $user->getFullName()],
+                    'comment' => $request->get('comment'),
+                    'created_at' => $current_time->format('Y M d H:i:s')]);
+                $review->setHistory($history);
+
+                $this->entityManager->persist($review);
+                $this->entityManager->flush();
+
+                $data = [
+                    'status' => Response::HTTP_OK,
+                    'success' => 'Review commented successfully',
                 ];
             }
 

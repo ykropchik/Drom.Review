@@ -31,8 +31,11 @@ class Review
     #[ORM\Column(type: 'array')]
     private $qualification = [];
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private $status = null;
+
     #[ORM\Column(type: 'array')]
-    private $status = [];
+    private $history = [];
 
     public function getId(): ?int
     {
@@ -111,14 +114,26 @@ class Review
         return $this;
     }
 
-    public function getStatus(): ?array
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    public function setStatus(array $status): self
+    public function setStatus(string $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getHistory(): ?array
+    {
+        return $this->history;
+    }
+
+    public function setHistory(array $history): self
+    {
+        $this->history = $history;
 
         return $this;
     }
