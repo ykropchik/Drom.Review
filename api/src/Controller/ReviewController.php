@@ -57,6 +57,14 @@ class ReviewController extends AppController
                 $review->setQualification(['specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')]);
                 $review->setStatus('self_review');
 
+                $history = [];
+                $current_time = new DateTime();
+                array_push($history, [
+                    'user' => ['email' => $this->getUser()->getEmail(), 'full_name' => $this->getUser()->getFullName()],
+                    'comment' => 'Создание ревью',
+                    'created_at' => $current_time->format('Y M d H:i:s')]);
+                $review->setHistory($history);
+
                 $this->entityManager->persist($review);
                 $this->entityManager->flush();
 
@@ -199,6 +207,53 @@ class ReviewController extends AppController
                 $data = [
                     'status' => Response::HTTP_OK,
                     'success' => 'Review commented successfully',
+                ];
+            }
+
+            return $this->response($data);
+        } catch (\Exception $e) {
+            $data = [
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'errors' => $e->getMessage(),
+            ];
+            return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    #[Route('/api/review/self-review/{id}', name: 'add_self_review', methods: ['PUT'])]
+    public function add_self_review(Request $request, ReviewRepository $reviewRepository, $id): Response
+    {
+        try {
+            $request = $this->transformJsonBody($request);
+
+            if (!$reviewRepository->find($id)) {
+                $data = [
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'errors' => 'No review with this id',
+                ];
+            } elseif (!$request->get('self_review')) {
+                $data = [
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'errors' => 'Unprocessable entity',
+                ];
+            } else {
+                $review = $reviewRepository->find($id);
+                $review->setSelfReview($request->get('self_review'));
+
+                $history = $review->getHistory();
+                $current_time = new DateTime();
+                array_push($history, [
+                    'user' => ['email' => $this->getUser()->getEmail(), 'full_name' => $this->getUser()->getFullName()],
+                    'comment' => 'Добавлено новое self-review',
+                    'created_at' => $current_time->format('Y M d H:i:s')]);
+                $review->setHistory($history);
+
+                $this->entityManager->persist($review);
+                $this->entityManager->flush();
+
+                $data = [
+                    'status' => Response::HTTP_OK,
+                    'success' => 'Self-review added successfully',
                 ];
             }
 
