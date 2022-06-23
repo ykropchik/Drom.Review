@@ -53,7 +53,7 @@ class ReviewController extends AppController
 				}
 
                 $review = new Review();
-                $review->setUser($user);
+                $review->setSubject($userRepository->find($request->get('user_id')));
                 $review->setDateStart(new DateTime());
 				$review->setSpecialization($specialization);
 				$review->setGrade($grade);
