@@ -53,7 +53,7 @@ export default function QuestionsList({ className, questions, onChange }) {
 					<List.Item.Meta title={
 						<>
 							<Collapse>
-								<MarkdownRender mdText={item.name}/>
+								<MarkdownRender mdText={item.text}/>
 							</Collapse>
 
 						</>
