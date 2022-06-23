@@ -7,10 +7,13 @@ use App\Repository\GradeRepository;
 use App\Repository\SpecializationGradesRepository;
 use App\Repository\SpecializationRepository;
 use App\Repository\UserQualificationRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 class UserController extends AppController
 {
@@ -20,6 +23,24 @@ class UserController extends AppController
     {
         $this->entityManager = $entityManager;
     }
+
+	#[Route('/api/users', name: 'get_user_list', methods: ['GET'])]
+	public function get_users(UserRepository $userRepository): Response
+	{
+		try {
+			$users = $this->jsonSerialize(
+				$userRepository->findAll(),
+				['password', 'userIdentifier', 'user']
+			);
+			return $this->response(json_decode($users), Response::HTTP_OK);
+		} catch (\Exception $e) {
+			$data = [
+				'status' => Response::HTTP_BAD_REQUEST,
+				'errors' => $e->getMessage(),
+			];
+			return $this->response($data, Response::HTTP_BAD_REQUEST);
+		}
+	}
 
     #[Route('/api/user', name: 'get_user_info', methods: ['GET'])]
     public function get_user(UserQualificationRepository $qualificationRepository, SpecializationRepository $specializationRepository, GradeRepository $gradeRepository): Response
@@ -75,7 +96,6 @@ class UserController extends AppController
                 $user = $this->getUser();
 
                 $users_qualification = new UserQualification();
-                $users_qualification->setUserId($user->getId());
                 $users_qualification->setSpecializationId($request->get('specialization_id'));
                 $users_qualification->setGradeId($request->get('grade_id'));
 

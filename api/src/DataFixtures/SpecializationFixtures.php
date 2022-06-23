@@ -13,10 +13,12 @@ class SpecializationFixtures extends Fixture
         $specialization1 = new Specialization();
         $specialization1->setName('Frontend-разработчик');
         $manager->persist($specialization1);
+		$this->addReference('specialization1', $specialization1);
 
         $specialization2 = new Specialization();
         $specialization2->setName('Backend-разработчик');
         $manager->persist($specialization2);
+		$this->addReference('specialization2', $specialization2);
 
         $manager->flush();
     }
