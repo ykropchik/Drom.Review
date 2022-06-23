@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AutoComplete, Button, Empty, message, PageHeader, Spin } from 'antd';
+import { AutoComplete, Button, Divider, Empty, message, PageHeader, Spin } from 'antd';
 import { useRouter } from 'next/router';
 import useData from '../../../scripts/hooks/useData';
 import { EndPoints } from '../../../scripts/api/EndPoints';
@@ -96,6 +96,7 @@ export default function QuestionsEditor() {
 								:
 								<>
 									<Button className={styles.add_button} type="dashed" icon={<PlusOutlined/>} onClick={() => setFormVisible(true)}>Добавить вопрос</Button>
+									<Divider/>
 									<QuestionsList className={styles.questions_list} questions={questions.data} onChange={questionsUpdate}/>
 								</>
 					}
