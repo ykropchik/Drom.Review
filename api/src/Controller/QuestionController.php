@@ -134,7 +134,7 @@ class QuestionController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Question updated successfully',
+                    'success' => 'Вопрос успешно обновлен',
                 ];
             }
 

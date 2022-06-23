@@ -64,7 +64,7 @@ class SpecializationController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Specialization added successfully',
+                    'success' => 'Специализация успешно добавлена',
                 ];
             }
             return $this->response($data);
