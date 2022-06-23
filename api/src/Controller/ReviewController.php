@@ -57,7 +57,7 @@ class ReviewController extends AppController
                 ];
             } else {
                 $review = new Review();
-                $review->setUserId($request->get('user_id'));
+                $review->setSubject($userRepository->find($request->get('user_id')));
                 $review->setDateStart(new DateTime());
                 $review->setQualification(['specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')]);
                 $review->setStatus('self_review');

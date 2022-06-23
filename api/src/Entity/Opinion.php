@@ -17,7 +17,7 @@ class Opinion
     private $question;
 
     #[ORM\Column(type: 'string', length: 1023, nullable: true)]
-    private $уы�estimate;
+    private $estimate;
 
     #[ORM\ManyToOne(targetEntity: Respondent::class, inversedBy: 'opinions')]
     #[ORM\JoinColumn(nullable: false)]
@@ -40,14 +40,14 @@ class Opinion
         return $this;
     }
 
-    public function getуы�estimate(): ?string
+    public function getEstimate(): ?string
     {
-        return $this->уы�estimate;
+        return $this->estimate;
     }
 
-    public function setуы�estimate(?string $уы�estimate): self
+    public function setEstimate(?string $estimate): self
     {
-        $this->уы�estimate = $уы�estimate;
+        $this->estimate = $estimate;
 
         return $this;
     }

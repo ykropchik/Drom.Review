@@ -21,10 +21,6 @@ class Review
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $date_end;
 
-	#[ORM\ManyToOne(targetEntity: User::class)]
-	#[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
-    private $user;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $self_review;
 
@@ -73,18 +69,6 @@ class Review
     public function setDateEnd(?\DateTimeInterface $date_end): self
     {
         $this->date_end = $date_end;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(User $user): self
-    {
-        $this->user = $user;
 
         return $this;
     }
