@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ReviewRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
@@ -23,9 +25,6 @@ class Review
 	#[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
     private $user;
 
-    #[ORM\Column(type: 'array', nullable: true)]
-    private $respondents = [];
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $self_review;
 
@@ -37,6 +36,17 @@ class Review
 
     #[ORM\Column(type: 'array')]
     private $history = [];
+
+    #[ORM\OneToMany(mappedBy: 'review', targetEntity: Respondent::class)]
+    private $respondents;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'qualifications')]
+    private $subject;
+
+    public function __construct()
+    {
+        $this->respondents = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -75,18 +85,6 @@ class Review
     public function setUser(User $user): self
     {
         $this->user = $user;
-
-        return $this;
-    }
-
-    public function getRespondents(): ?array
-    {
-        return $this->respondents;
-    }
-
-    public function setRespondents(?array $respondents): self
-    {
-        $this->respondents = $respondents;
 
         return $this;
     }
@@ -135,6 +133,48 @@ class Review
     public function setHistory(array $history): self
     {
         $this->history = $history;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Respondent>
+     */
+    public function getRespondents(): Collection
+    {
+        return $this->respondents;
+    }
+
+    public function addRespondent(Respondent $respondent): self
+    {
+        if (!$this->respondents->contains($respondent)) {
+            $this->respondents[] = $respondent;
+            $respondent->setReview($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRespondent(Respondent $respondent): self
+    {
+        if ($this->respondents->removeElement($respondent)) {
+            // set the owning side to null (unless already changed)
+            if ($respondent->getReview() === $this) {
+                $respondent->setReview(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSubject(): ?User
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(?User $subject): self
+    {
+        $this->subject = $subject;
 
         return $this;
     }
