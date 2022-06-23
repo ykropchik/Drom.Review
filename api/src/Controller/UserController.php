@@ -32,7 +32,7 @@ class UserController extends AppController
 				$userRepository->findAll(),
 				['password', 'userIdentifier', 'user']
 			);
-			return $this->response(json_decode($users), Response::HTTP_OK);
+			return $this->response($users, Response::HTTP_OK);
 		} catch (\Exception $e) {
 			$data = [
 				'status' => Response::HTTP_BAD_REQUEST,
@@ -47,20 +47,7 @@ class UserController extends AppController
     {
         try {
             $user = $this->getUser();
-
-            $data = [
-                'id' => $user->getId(),
-                'email' => $user->getEmail(),
-                'full_name' => $user->getFullName(),
-                'qualifications' => []
-            ];
-
-            foreach ($qualificationRepository->findBy(['user_id' => $user->getId()]) as $qualification) {
-                $specialization = $specializationRepository->find($qualification->getSpecializationId());
-                $grade = $gradeRepository->find($qualification->getGradeId());
-                array_push($data['qualifications'], ['specialization' => $specialization->getName(), 'grade' => ['name' => $grade->getName(), 'description' => $grade->getDescription()]]);
-            }
-
+			$data = $this->jsonSerialize($user, ['password', 'userIdentifier', 'user']);
             return $this->response($data);
         } catch (\Exception $e) {
             $data = [
@@ -94,13 +81,17 @@ class UserController extends AppController
                 ];
             } else {
                 $user = $this->getUser();
+				$grade = $gradeRepository->find($request->get('grade_id'));
+				$specialization = $specializationRepository->find($request->get('specialization_id'));
 
                 $users_qualification = new UserQualification();
-                $users_qualification->setSpecializationId($request->get('specialization_id'));
-                $users_qualification->setGradeId($request->get('grade_id'));
+                $users_qualification->setSpecialization($specialization);
+                $users_qualification->setGrade($grade);
 
                 $this->entityManager->persist($users_qualification);
                 $this->entityManager->flush();
+
+				$user->addQualification($users_qualification);
 
                 $data = [
                     'status' => Response::HTTP_OK,

@@ -19,11 +19,13 @@ class Question
     #[ORM\Column(type: 'array')]
     private $rating = [];
 
-    #[ORM\Column(type: 'integer')]
-    private $specialization_id;
+	#[ORM\ManyToOne(targetEntity: Specialization::class)]
+	#[ORM\JoinColumn(name: "specialization_id", referencedColumnName: "id")]
+    private $specialization;
 
-    #[ORM\Column(type: 'integer')]
-    private $grade_id;
+	#[ORM\ManyToOne(targetEntity: Grade::class)]
+	#[ORM\JoinColumn(name: "grade_id", referencedColumnName: "id")]
+    private $grade;
 
     public function getId(): ?int
     {
@@ -54,26 +56,26 @@ class Question
         return $this;
     }
 
-    public function getSpecializationId(): ?int
+    public function getSpecialization(): ?Specialization
     {
-        return $this->specialization_id;
+        return $this->specialization;
     }
 
-    public function setSpecializationId(int $specialization_id): self
+    public function setSpecialization(Specialization $specialization): self
     {
-        $this->specialization_id = $specialization_id;
+        $this->specialization = $specialization;
 
         return $this;
     }
 
-    public function getGradeId(): ?int
+    public function getGrade(): ?Grade
     {
-        return $this->grade_id;
+        return $this->grade;
     }
 
-    public function setGradeId(int $grade_id): self
+    public function setGrade(Grade $grade): self
     {
-        $this->grade_id = $grade_id;
+        $this->grade = $grade;
 
         return $this;
     }

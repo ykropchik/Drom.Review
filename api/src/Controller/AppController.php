@@ -14,7 +14,8 @@ class AppController extends AbstractController
 {
     public function response($data, $status = Response::HTTP_OK, $headers = []): JsonResponse
     {
-       return new JsonResponse($data, $status, $headers);
+		$result = is_array($data) ? $data : json_decode($data);
+	    return new JsonResponse($result, $status, $headers);
     }
 
     public function transformJsonBody(Request $request): Request

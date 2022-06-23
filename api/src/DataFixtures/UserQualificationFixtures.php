@@ -4,9 +4,10 @@ namespace App\DataFixtures;
 
 use App\Entity\UserQualification;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class UserQualificationFixtures extends Fixture
+class UserQualificationFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
@@ -36,4 +37,13 @@ class UserQualificationFixtures extends Fixture
 
         $manager->flush();
     }
+
+	public function getDependencies(): array
+	{
+		return [
+			SpecializationFixtures::class,
+			GradeFixtures::class,
+			UserFixtures::class
+		];
+	}
 }

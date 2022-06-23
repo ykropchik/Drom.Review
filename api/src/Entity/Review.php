@@ -19,8 +19,9 @@ class Review
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $date_end;
 
-    #[ORM\Column(type: 'integer')]
-    private $user_id;
+	#[ORM\ManyToOne(targetEntity: User::class)]
+	#[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
+    private $user;
 
     #[ORM\Column(type: 'array', nullable: true)]
     private $respondents = [];
@@ -66,14 +67,14 @@ class Review
         return $this;
     }
 
-    public function getUserId(): ?int
+    public function getUser(): ?User
     {
-        return $this->user_id;
+        return $this->user;
     }
 
-    public function setUserId(int $user_id): self
+    public function setUser(User $user): self
     {
-        $this->user_id = $user_id;
+        $this->user = $user;
 
         return $this;
     }
