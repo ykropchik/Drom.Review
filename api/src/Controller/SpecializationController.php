@@ -3,9 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Specialization;
-use App\Entity\SpecializationGrades;
 use App\Repository\GradeRepository;
-use App\Repository\SpecializationGradesRepository;
 use App\Repository\SpecializationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,21 +50,13 @@ class SpecializationController extends AppController
                 }
                 $specialization = new Specialization();
                 $specialization->setName($request->get('name'));
+	            if ($request->get('grades')) {
+		            $specialization->setGrades(array_map(fn ($grade_id
+		            ) => $gradeRepository->find($grade_id), $request->get('grades')));
+	            }
 
                 $this->entityManager->persist($specialization);
                 $this->entityManager->flush();
-
-                $specialization_id = $specializationRepository->findOneBy(['name' => $specialization->getName()])->getId();
-
-                if ($request->get('grades')) {
-                    foreach ($request->get('grades') as $grade_id) {
-                        $specialization_grade = new SpecializationGrades();
-                        $specialization_grade->setSpecializationId($specialization_id);
-                        $specialization_grade->setGradeId($grade_id);
-                        $this->entityManager->persist($specialization_grade);
-                    }
-                    $this->entityManager->flush();
-                }
 
                 $data = [
                     'status' => Response::HTTP_OK,
@@ -84,36 +74,15 @@ class SpecializationController extends AppController
     }
 
     #[Route('/api/specialization', name: 'get_all_specializations', methods: ['GET'])]
-    public function get_specializations(Request $request, SpecializationRepository $specializationRepository, SpecializationGradesRepository $specializationGradesRepository, GradeRepository $gradeRepository): Response
+    public function get_specializations(
+		Request $request,
+		SpecializationRepository $specializationRepository,
+	    GradeRepository $gradeRepository): Response
     {
         try {
             $specializations = $specializationRepository->findAll();
 
-            $specializationArray = [];
-
-            foreach ($specializations as $specialization) {
-                if ($request->get('type') == 'full') {
-                    $gradeArray = [];
-                    foreach ($specializationGradesRepository->findBy(['specialization_id' => $specialization->getId()]) as $spec_grade) {
-                        $grade = $gradeRepository->find($spec_grade->getGradeId());
-                        array_push($gradeArray, ['id' => $grade->getId(), 'name' => $grade->getName(), 'description' => $grade->getDescription()]);
-                    }
-                    $temp_specialization = [
-                        'id' => $specialization->getId(),
-                        'name' => $specialization->getName(),
-                        'grades' => $gradeArray
-                    ];
-                } else {
-                    $temp_specialization = [
-                        'id' => $specialization->getId(),
-                        'name' => $specialization->getName(),
-                    ];
-                }
-
-                array_push($specializationArray, $temp_specialization);
-            }
-
-            return $this->response($specializationArray);
+            return $this->response($this->jsonSerialize($specializations));
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
@@ -142,20 +111,20 @@ class SpecializationController extends AppController
                 }
             }
 
-            $specialization = $specializationRepository->find($id);
-            $specialization->setName($request->get('name'));
-            $this->entityManager->persist($specialization);
-            $this->entityManager->flush();
-
-            if ($request->get('grades')) {
-                foreach ($request->get('grades') as $grade_id) {
-                    $specialization_grade = new SpecializationGrades();
-                    $specialization_grade->setSpecializationId($id);
-                    $specialization_grade->setGradeId($grade_id);
-                    $this->entityManager->persist($specialization_grade);
-                }
-                $this->entityManager->flush();
-            }
+//            $specialization = $specializationRepository->find($id);
+//            $specialization->setName($request->get('name'));
+//            $this->entityManager->persist($specialization);
+//            $this->entityManager->flush();
+//
+//            if ($request->get('grades')) {
+//                foreach ($request->get('grades') as $grade_id) {
+//                    $specialization_grade = new SpecializationGrades();
+//                    $specialization_grade->setSpecializationId($id);
+//                    $specialization_grade->setGradeId($grade_id);
+//                    $this->entityManager->persist($specialization_grade);
+//                }
+//                $this->entityManager->flush();
+//            }
 
             $data = [
                 'status' => Response::HTTP_OK,
@@ -197,7 +166,7 @@ class SpecializationController extends AppController
     }
 
     #[Route('/api/specialization/grade/{id}', name: 'add_specializations_grade', methods: ['POST'])]
-    public function add_specializations_grade(Request $request, SpecializationGradesRepository $specializationGradesRepository, GradeRepository $gradeRepository, $id): Response
+    public function add_specializations_grade(Request $request, GradeRepository $gradeRepository, $id): Response
     {
         try {
             $request = $this->transformJsonBody($request);
@@ -207,29 +176,31 @@ class SpecializationController extends AppController
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                     'error' => 'No grade with this id',
                 ];
-            } else {
-                if ($specializationGradesRepository->findOneBy([
-                    'specialization_id' => $id,
-                    'grade_id' => $request->get('grade_id')
-                ])) {
-                    $data = [
-                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                        'error' => 'Specializations grade already exist',
-                    ];
-                } else {
-                    $specializationsGrade = new SpecializationGrades();
-                    $specializationsGrade->setSpecializationId($id);
-                    $specializationsGrade->setGradeId($request->get('grade_id'));
-
-                    $this->entityManager->persist($specializationsGrade);
-                    $this->entityManager->flush();
-
-                    $data = [
-                        'status' => Response::HTTP_OK,
-                        'success' => 'Specializations grade added successfully',
-                    ];
-                }
             }
+//			else {
+//                if ($specializationGradesRepository->findOneBy([
+//                    'specialization_id' => $id,
+//                    'grade_id' => $request->get('grade_id')
+//                ])) {
+//                    $data = [
+//                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+//                        'error' => 'Specializations grade already exist',
+//                    ];
+//                }
+//				else {
+//                    $specializationsGrade = new SpecializationGrades();
+//                    $specializationsGrade->setSpecializationId($id);
+//                    $specializationsGrade->setGradeId($request->get('grade_id'));
+//
+//                    $this->entityManager->persist($specializationsGrade);
+//                    $this->entityManager->flush();
+//
+//                    $data = [
+//                        'status' => Response::HTTP_OK,
+//                        'success' => 'Specializations grade added successfully',
+//                    ];
+//                }
+//            }
             return $this->response($data);
         } catch (\Exception $e) {
             $data = [
@@ -241,14 +212,14 @@ class SpecializationController extends AppController
     }
 
     #[Route('/api/specialization/grade/{id}', name: 'delete_specializations_grade', methods: ['DELETE'])]
-    public function delete_specializations_grade(Request $request, SpecializationGradesRepository $specializationGradesRepository, $id): Response
+    public function delete_specializations_grade(Request $request, $id): Response
     {
         try {
-            $specializationGrade = $specializationGradesRepository->findOneBy(['specialization_id' => $id, 'grade_id' => $request->get('grade_id')]);
-
-            $this->entityManager->remove($specializationGrade);
-            $this->entityManager->flush();
-
+//            $specializationGrade = $specializationGradesRepository->findOneBy(['specialization_id' => $id, 'grade_id' => $request->get('grade_id')]);
+//
+//            $this->entityManager->remove($specializationGrade);
+//            $this->entityManager->flush();
+//
             $data = [
                 'status' => Response::HTTP_OK,
                 'success' => 'Specialization grade deleted successfully',
@@ -265,24 +236,25 @@ class SpecializationController extends AppController
     }
 
     #[Route('/api/specialization/grade/{id}', name: 'get_specialization_grades', methods: ['GET'])]
-    public function get_specialization_grades(SpecializationGradesRepository $specializationGradesRepository, GradeRepository $gradeRepository, $id): Response
+    public function get_specialization_grades(GradeRepository $gradeRepository, $id): Response
     {
         try {
-            $specializationGrades = $specializationGradesRepository->findBy(['specialization_id' => $id]);
-
-            $specializationGradesArray = [];
-
-            foreach ($specializationGrades as $specializationGrade) {
-                $grade = $gradeRepository->find($specializationGrade->getGradeId());
-                $specializationGrade_temp = [
-                    'id' => $grade->getId(),
-                    'name' => $grade->getName(),
-                    'description' => $grade->getDescription()
-                ];
-                array_push($specializationGradesArray, $specializationGrade_temp);
-            }
-
-            return $this->response($specializationGradesArray);
+//            $specializationGrades = $specializationGradesRepository->findBy(['specialization_id' => $id]);
+//
+//            $specializationGradesArray = [];
+//
+//            foreach ($specializationGrades as $specializationGrade) {
+//                $grade = $gradeRepository->find($specializationGrade->getGradeId());
+//                $specializationGrade_temp = [
+//                    'id' => $grade->getId(),
+//                    'name' => $grade->getName(),
+//                    'description' => $grade->getDescription()
+//                ];
+//                array_push($specializationGradesArray, $specializationGrade_temp);
+//            }
+//
+//            return $this->response($specializationGradesArray);
+	        			return $this->response([]);
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,

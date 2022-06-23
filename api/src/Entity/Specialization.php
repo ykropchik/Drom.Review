@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\SpecializationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
 
 #[ORM\Entity(repositoryClass: SpecializationRepository::class)]
 class Specialization
@@ -16,15 +19,6 @@ class Specialization
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
-	/**
-	 * Many Users have Many Groups.
-	 * @ManyToMany(targetEntity="Grade")
-	 * @JoinTable(
-	 *     name="specialization_grades",
-	 *     joinColumns={},
-	 *     inverseJoinColumns={@JoinColumn(name="grades_id", referencedColumnName="id")}
-	 *     )
-	 */
 	#[ORM\ManyToMany(targetEntity: Grade::class)]
 	#[ORM\JoinTable(
 		name: 'specialization_grades',
@@ -32,6 +26,11 @@ class Specialization
 		inverseJoinColumns: [new ORM\JoinColumn(name: "grades_id", referencedColumnName: "id")]
 	)]
 	private $grades;
+
+	#[Pure] public function __construct()
+	{
+		$this->grades = new ArrayCollection();
+	}
 
     public function getId(): ?int
     {
@@ -50,14 +49,40 @@ class Specialization
         return $this;
     }
 
-	public function getGrades(): ?array
+	public function getGrades(): Collection
 	{
 		return $this->grades;
 	}
 
-	public function setGrades(array $grades): self
+	public function addGrade(Grade $grade): self
 	{
-		$this->grades = $grades;
+		if (!$this->grades->contains($grade)) {
+			$this->grades[] = $grade;
+		}
+
+		return $this;
+	}
+
+	public function removeGrade(Grade $grade): self
+	{
+		if ($this->grades->contains($grade)) {
+			$this->grades->removeElement($grade);
+		}
+
+		return $this;
+	}
+
+	public function setGrades(array $newGrades): self
+	{
+		$oldGrades = $this->getGrades();
+
+		foreach ($oldGrades as $grade) {
+			$this->removeGrade($grade);
+		}
+
+		foreach ($newGrades as $grade) {
+			$this->addGrade($grade);
+		}
 
 		return $this;
 	}
