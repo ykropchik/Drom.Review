@@ -24,9 +24,6 @@ class Review
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $self_review;
 
-    #[ORM\Column(type: 'array')]
-    private $qualification = [];
-
     #[ORM\Column(type: 'string', length: 255)]
     private $status = null;
 
@@ -38,6 +35,9 @@ class Review
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'qualifications')]
     private $subject;
+
+    #[ORM\ManyToOne(targetEntity: UserQualification::class)]
+    private $qualification;
 
     public function __construct()
     {
@@ -81,18 +81,6 @@ class Review
     public function setSelfReview(?string $self_review): self
     {
         $this->self_review = $self_review;
-
-        return $this;
-    }
-
-    public function getQualification(): ?array
-    {
-        return $this->qualification;
-    }
-
-    public function setQualification(array $qualification): self
-    {
-        $this->qualification = $qualification;
 
         return $this;
     }
@@ -159,6 +147,18 @@ class Review
     public function setSubject(?User $subject): self
     {
         $this->subject = $subject;
+
+        return $this;
+    }
+
+    public function getQualification(): ?UserQualification
+    {
+        return $this->qualification;
+    }
+
+    public function setQualification(?UserQualification $qualification): self
+    {
+        $this->qualification = $qualification;
 
         return $this;
     }

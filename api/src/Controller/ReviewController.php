@@ -36,30 +36,25 @@ class ReviewController extends AppController
             if (!$userRepository->find($request->get('user_id'))) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'No user with this id',
+                    'errors' => 'Такого пользователя не существует',
                 ];
             } elseif (!$specializationRepository->find($request->get('specialization_id'))) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'No specialization with this id',
+                    'errors' => 'Такой специализации не существует',
                 ];
-            }
-//			elseif (!$specializationGradesRepository->findBy(['specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')])) {
-//                $data = [
-//                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-//                    'errors' => 'No grade with this id in given specialization',
-//                ];
-//            }
-			elseif (!$userQualificationRepository->findBy(['user_id' => $request->get('user_id'), 'specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')])) {
+            } elseif (!$userQualificationRepository->findBy(['user_id' => $request->get('user_id'), 'specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')])) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'This user have not this qualification',
+                    'errors' => 'У пользователя нет такой квалификации',
                 ];
             } else {
                 $review = new Review();
                 $review->setSubject($userRepository->find($request->get('user_id')));
                 $review->setDateStart(new DateTime());
-                $review->setQualification(['specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')]);
+                $review->setQualification($userQualificationRepository->findOneBy([
+                    'specialization_id' => $request->get('specialization_id'),
+                    'grade_id' => $request->get('grade_id')]));
                 $review->setStatus('self_review');
 
                 $history = [];
@@ -75,7 +70,7 @@ class ReviewController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Review initialized successfully',
+                    'success' => 'Ревью успешно инициализированно',
                 ];
             }
 
@@ -101,9 +96,9 @@ class ReviewController extends AppController
                 $data = [];
 
                 foreach ($reviews as $review) {
-                    $user = $userRepository->find($review->getUserId());
-                    $specialization = $specializationRepository->find($review->getQualification()['specialization_id']);
-                    $grade = $gradeRepository->find($review->getQualification()['grade_id']);
+                    $user = $review->getSubject();
+                    $specialization = $review->getQualification()->getSpecialization();
+                    $grade = $review->getQualification()->getGrade();
                     $temp_review = [
                         'id' => $review->getId(),
                         'date_start' => $review->getDateStart()->format('Y M d H:i:s'),
@@ -141,7 +136,7 @@ class ReviewController extends AppController
             if (!$reviewRepository->find($id)) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'No review with this id',
+                    'errors' => 'Такого ревью не существует',
                 ];
             } elseif (!$request->get('status')) {
                 $data = [
@@ -165,7 +160,7 @@ class ReviewController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Review status updated successfully',
+                    'success' => 'Статус ревью успешно обновлен',
                 ];
             }
 
@@ -189,7 +184,7 @@ class ReviewController extends AppController
             if (!$reviewRepository->find($id)) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'No review with this id',
+                    'errors' => 'Такого ревью не существует',
                 ];
             } elseif (!$request->get('comment')) {
                 $data = [
@@ -211,7 +206,7 @@ class ReviewController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Review commented successfully',
+                    'success' => 'Комментарий успешно добавлен',
                 ];
             }
 
@@ -234,7 +229,7 @@ class ReviewController extends AppController
             if (!$reviewRepository->find($id)) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'No review with this id',
+                    'errors' => 'Такого ревью не существует',
                 ];
             } elseif (!$request->get('self_review')) {
                 $data = [
@@ -258,7 +253,7 @@ class ReviewController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Self-review added successfully',
+                    'success' => 'Self-review успешно добавлено',
                 ];
             }
 
