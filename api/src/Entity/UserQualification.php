@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserQualificationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserQualificationRepository::class)]
@@ -13,52 +15,55 @@ class UserQualification
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'integer')]
-    private $user_id;
+    #[ORM\ManyToOne(targetEntity: Specialization::class)]
+    #[ORM\JoinColumn(name: "specialization_id", referencedColumnName: "id")]
+    private $specialization;
 
-    #[ORM\Column(type: 'integer')]
-    private $specialization_id;
+	#[ORM\ManyToOne(targetEntity: Grade::class)]
+	#[ORM\JoinColumn(name: "grade_id", referencedColumnName: "id")]
+	private $grade;
 
-    #[ORM\Column(type: 'integer')]
-    private $grade_id;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'qualifications')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $user;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUserId(): ?int
+    public function getSpecialization(): ?Specialization
     {
-        return $this->user_id;
+        return $this->specialization;
     }
 
-    public function setUserId(int $user_id): self
+    public function setSpecialization(Specialization $specialization): self
     {
-        $this->user_id = $user_id;
+        $this->specialization = $specialization;
 
         return $this;
     }
 
-    public function getSpecializationId(): ?int
+    public function getGrade(): ?Grade
     {
-        return $this->specialization_id;
+        return $this->grade;
     }
 
-    public function setSpecializationId(int $specialization_id): self
+    public function setGrade(Grade $grade): self
     {
-        $this->specialization_id = $specialization_id;
+        $this->grade = $grade;
 
         return $this;
     }
 
-    public function getGradeId(): ?int
+    public function getUser(): ?User
     {
-        return $this->grade_id;
+        return $this->user;
     }
 
-    public function setGradeId(int $grade_id): self
+    public function setUser(?User $user): self
     {
-        $this->grade_id = $grade_id;
+        $this->user = $user;
 
         return $this;
     }

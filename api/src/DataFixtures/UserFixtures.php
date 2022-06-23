@@ -23,12 +23,14 @@ class UserFixtures extends Fixture
         $user1->setPassword($this->hasher->hashPassword($user1, 'password'));
         $user1->setFullName('Зыков Михаил Григорьевич');
         $manager->persist($user1);
+		$this->addReference('user1', $user1);
 
         $user2 = new User();
         $user2->setEmail('admin2@drom_review.ru');
         $user2->setPassword($this->hasher->hashPassword($user2, 'password'));
         $user2->setFullName('Лебедев Вячеслав Романович');
         $manager->persist($user2);
+	    $this->addReference('user2', $user2);
 
         $manager->flush();
     }

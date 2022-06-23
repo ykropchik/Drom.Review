@@ -4,36 +4,46 @@ namespace App\DataFixtures;
 
 use App\Entity\UserQualification;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class UserQualificationFixtures extends Fixture
+class UserQualificationFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
         $userQualification1 = new UserQualification();
-        $userQualification1->setUserId(1);
-        $userQualification1->setSpecializationId(1);
-        $userQualification1->setGradeId(1);
+        $userQualification1->setSpecialization($this->getReference('specialization1'));
+        $userQualification1->setGrade($this->getReference('grade1'));
+		$this->getReference('user1')->addQualification($userQualification1);
         $manager->persist($userQualification1);
 
         $userQualification2 = new UserQualification();
-        $userQualification2->setUserId(1);
-        $userQualification2->setSpecializationId(2);
-        $userQualification2->setGradeId(2);
+        $userQualification2->setSpecialization($this->getReference('specialization1'));
+        $userQualification2->setGrade($this->getReference('grade2'));
+		$this->getReference('user2')->addQualification($userQualification2);
         $manager->persist($userQualification2);
 
         $userQualification3 = new UserQualification();
-        $userQualification3->setUserId(2);
-        $userQualification3->setSpecializationId(1);
-        $userQualification3->setGradeId(2);
+        $userQualification3->setSpecialization($this->getReference('specialization2'));
+        $userQualification3->setGrade($this->getReference('grade1'));
+		$this->getReference('user1')->addQualification($userQualification3);
         $manager->persist($userQualification3);
 
         $userQualification4 = new UserQualification();
-        $userQualification4->setUserId(2);
-        $userQualification4->setSpecializationId(2);
-        $userQualification4->setGradeId(2);
+        $userQualification4->setSpecialization($this->getReference('specialization2'));
+        $userQualification4->setGrade($this->getReference('grade2'));
+		$this->getReference('user2')->addQualification($userQualification4);
         $manager->persist($userQualification4);
 
         $manager->flush();
     }
+
+	public function getDependencies(): array
+	{
+		return [
+			SpecializationFixtures::class,
+			GradeFixtures::class,
+			UserFixtures::class
+		];
+	}
 }

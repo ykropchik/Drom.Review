@@ -33,7 +33,7 @@ services:
     working_dir: /app
     restart: on-failure
     volumes:
-      - ./api:/app:delegated
+      - ./api:/app
     depends_on:
       - 'mysql'
     environment:

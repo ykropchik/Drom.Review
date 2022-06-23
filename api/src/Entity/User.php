@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -26,6 +28,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', length: 255)]
     private $full_name;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserQualification::class, orphanRemoval: true)]
+    private $qualifications;
+
+    public function __construct()
+    {
+        $this->qualifications = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -105,6 +115,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setFullName(string $full_name): self
     {
         $this->full_name = $full_name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserQualification>
+     */
+    public function getQualifications(): Collection
+    {
+        return $this->qualifications;
+    }
+
+    public function addQualification(UserQualification $qualification): self
+    {
+        if (!$this->qualifications->contains($qualification)) {
+            $this->qualifications[] = $qualification;
+            $qualification->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQualification(UserQualification $qualification): self
+    {
+        if ($this->qualifications->removeElement($qualification)) {
+            // set the owning side to null (unless already changed)
+            if ($qualification->getUser() === $this) {
+                $qualification->setUser(null);
+            }
+        }
 
         return $this;
     }

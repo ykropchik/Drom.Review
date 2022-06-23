@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Review;
 use App\Repository\GradeRepository;
 use App\Repository\ReviewRepository;
-use App\Repository\SpecializationGradesRepository;
 use App\Repository\SpecializationRepository;
 use App\Repository\UserQualificationRepository;
 use App\Repository\UserRepository;
@@ -25,7 +24,11 @@ class ReviewController extends AppController
     }
 
     #[Route('/api/review', name: 'initialize_review', methods: ['POST'])]
-    public function initialize_review(Request $request, UserRepository $userRepository, SpecializationRepository $specializationRepository, SpecializationGradesRepository $specializationGradesRepository, UserQualificationRepository $userQualificationRepository): Response
+    public function initialize_review(
+		Request $request,
+	    UserRepository $userRepository,
+		SpecializationRepository $specializationRepository,
+		UserQualificationRepository $userQualificationRepository): Response
     {
         try {
             $request = $this->transformJsonBody($request);
@@ -40,12 +43,14 @@ class ReviewController extends AppController
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                     'errors' => 'No specialization with this id',
                 ];
-            } elseif (!$specializationGradesRepository->findBy(['specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')])) {
-                $data = [
-                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'No grade with this id in given specialization',
-                ];
-            } elseif (!$userQualificationRepository->findBy(['user_id' => $request->get('user_id'), 'specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')])) {
+            }
+//			elseif (!$specializationGradesRepository->findBy(['specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')])) {
+//                $data = [
+//                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+//                    'errors' => 'No grade with this id in given specialization',
+//                ];
+//            }
+			elseif (!$userQualificationRepository->findBy(['user_id' => $request->get('user_id'), 'specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')])) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                     'errors' => 'This user have not this qualification',
