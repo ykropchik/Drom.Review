@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\UserQualification;
+use App\Entity\Qualification;
 use App\Repository\GradeRepository;
 use App\Repository\SpecializationRepository;
 use App\Repository\UserQualificationRepository;
@@ -25,10 +25,7 @@ class UserController extends AppController
 	public function get_users(UserRepository $userRepository): Response
 	{
 		try {
-			$users = $this->jsonSerialize(
-				$userRepository->findAll(),
-				['password', 'userIdentifier', 'user']
-			);
+			$users = $this->jsonSerialize($userRepository->findAll());
 			return $this->response($users, Response::HTTP_OK);
 		} catch (\Exception $e) {
 			$data = [
@@ -44,7 +41,7 @@ class UserController extends AppController
     {
         try {
             $user = $this->getUser();
-			$data = $this->jsonSerialize($user, ['password', 'userIdentifier', 'user']);
+			$data = $this->jsonSerialize($user);
             return $this->response($data);
         } catch (\Exception $e) {
             $data = [
@@ -64,26 +61,20 @@ class UserController extends AppController
             if (!$specializationRepository->find($request->get('specialization_id'))) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'error' => 'No specialization with this id',
+                    'error' => 'Специалиазация с таким id не найдена',
                 ];
             } elseif (!$gradeRepository->find($request->get('grade_id'))) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'error' => 'No grade with this id',
+                    'error' => 'Грейд с таким id не найден',
                 ];
             }
-//			elseif (!$specializationGradesRepository->findBy(['specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')])) {
-//                $data = [
-//                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-//                    'error' => 'No grade with this id in given specialization',
-//                ];
-//            }
 			else {
                 $user = $this->getUser();
 				$grade = $gradeRepository->find($request->get('grade_id'));
 				$specialization = $specializationRepository->find($request->get('specialization_id'));
 
-                $users_qualification = new UserQualification();
+                $users_qualification = new Qualification();
                 $users_qualification->setSpecialization($specialization);
                 $users_qualification->setGrade($grade);
 
@@ -94,7 +85,7 @@ class UserController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'User\'s qualification added successfully',
+                    'success' => 'Квалификация успешно добавлена',
                 ];
             }
 
