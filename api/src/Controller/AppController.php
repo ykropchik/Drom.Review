@@ -37,7 +37,7 @@ class AppController extends AbstractController
 
 		$context = [
 			'json_encode_options' => JSON_UNESCAPED_UNICODE,
-			'ignored_attributes' => array_merge(['__initializer__', '__cloner__', '__isInitialized__'], $ignoredAttributes),
+			'ignored_attributes' => array_merge(['__initializer__', '__cloner__', '__isInitialized__', 'userIdentifier', 'password'], $ignoredAttributes),
 		];
 
 		return $serializer->serialize($data, 'json', $context);

@@ -39,7 +39,7 @@ class QuestionController extends AppController
 				if (!$specializationGrades->contains($grade)) {
 					return $this->response([
 						'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-						'error' => 'No grade with this id',
+						'error' => 'Отсутсвует грейд с таким id',
 					]);
 				}
 

@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -29,7 +30,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255)]
     private $full_name;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserQualification::class, orphanRemoval: true)]
+	#[ORM\ManyToMany(targetEntity: Qualification::class)]
+	#[ORM\JoinTable(
+		name: 'user_qualifications',
+		joinColumns: [new ORM\JoinColumn(name: "user_id", referencedColumnName: "id")],
+		inverseJoinColumns: [new ORM\JoinColumn(name: "qualification_id", referencedColumnName: "id")]
+	)]
     private $qualifications;
 
     public function __construct()
@@ -120,31 +126,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, UserQualification>
+     * @return Collection<int, Qualification>
      */
     public function getQualifications(): Collection
     {
         return $this->qualifications;
     }
 
-    public function addQualification(UserQualification $qualification): self
+    public function addQualification(Qualification $qualification): self
     {
         if (!$this->qualifications->contains($qualification)) {
             $this->qualifications[] = $qualification;
-            $qualification->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeQualification(UserQualification $qualification): self
+    public function removeQualification(Qualification $qualification): self
     {
-        if ($this->qualifications->removeElement($qualification)) {
-            // set the owning side to null (unless already changed)
-            if ($qualification->getUser() === $this) {
-                $qualification->setUser(null);
-            }
-        }
+	    $this->qualifications->removeElement($qualification);
 
         return $this;
     }

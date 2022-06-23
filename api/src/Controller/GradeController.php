@@ -45,7 +45,7 @@ class GradeController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Grade added successfully',
+                    'success' => 'Грейд успешно добавлен',
                 ];
             }
             return $this->response($data);
@@ -90,7 +90,7 @@ class GradeController extends AppController
 
             $data = [
                 'status' => Response::HTTP_OK,
-                'success' => 'Grade updated successfully',
+                'success' => 'Грейд успешно обновлен',
             ];
 
             return $this->response($data);
@@ -114,7 +114,7 @@ class GradeController extends AppController
 
             $data = [
                 'status' => Response::HTTP_OK,
-                'success' => 'Grade deleted successfully',
+                'success' => 'Грейд успешно удален',
             ];
 
             return $this->response($data);

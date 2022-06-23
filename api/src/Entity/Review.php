@@ -29,8 +29,13 @@ class Review
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $self_review;
 
-    #[ORM\Column(type: 'array')]
-    private $qualification = [];
+	#[ORM\ManyToOne(targetEntity: Specialization::class)]
+	#[ORM\JoinColumn(name: "specialization_id", referencedColumnName: "id")]
+	private $specialization;
+
+	#[ORM\ManyToOne(targetEntity: Grade::class)]
+	#[ORM\JoinColumn(name: "grade_id", referencedColumnName: "id")]
+    private $grade;
 
     #[ORM\Column(type: 'string', length: 255)]
     private $status = null;
@@ -103,17 +108,29 @@ class Review
         return $this;
     }
 
-    public function getQualification(): ?array
-    {
-        return $this->qualification;
-    }
+	public function getSpecialization(): Specialization
+	{
+		return $this->specialization;
+	}
 
-    public function setQualification(array $qualification): self
-    {
-        $this->qualification = $qualification;
+	public function setSpecialization(Specialization $specialization): self
+	{
+		$this->specialization = $specialization;
 
-        return $this;
-    }
+		return $this;
+	}
+
+	public function getGrade(): Grade
+	{
+		return $this->grade;
+	}
+
+	public function setGrade(Grade $grade): self
+	{
+		$this->grade = $grade;
+
+		return $this;
+	}
 
     public function getStatus(): ?string
     {
@@ -131,6 +148,13 @@ class Review
     {
         return $this->history;
     }
+
+	public function addHistory($historyItem): self
+	{
+		$this->history[] = $historyItem;
+
+		return $this;
+	}
 
     public function setHistory(array $history): self
     {

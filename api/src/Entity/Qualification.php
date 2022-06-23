@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserQualificationRepository::class)]
-class UserQualification
+class Qualification
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,10 +22,6 @@ class UserQualification
 	#[ORM\ManyToOne(targetEntity: Grade::class)]
 	#[ORM\JoinColumn(name: "grade_id", referencedColumnName: "id")]
 	private $grade;
-
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'qualifications')]
-    #[ORM\JoinColumn(nullable: false)]
-    private $user;
 
     public function getId(): ?int
     {
@@ -52,18 +48,6 @@ class UserQualification
     public function setGrade(Grade $grade): self
     {
         $this->grade = $grade;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
 
         return $this;
     }

@@ -28,46 +28,44 @@ class ReviewController extends AppController
 		Request $request,
 	    UserRepository $userRepository,
 		SpecializationRepository $specializationRepository,
+		GradeRepository $gradeRepository,
 		UserQualificationRepository $userQualificationRepository): Response
     {
         try {
             $request = $this->transformJsonBody($request);
+			$user = $userRepository->find($request->get('user_id'));
 
-            if (!$userRepository->find($request->get('user_id'))) {
+            if (!$user) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'No user with this id',
-                ];
-            } elseif (!$specializationRepository->find($request->get('specialization_id'))) {
-                $data = [
-                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'No specialization with this id',
-                ];
-            }
-//			elseif (!$specializationGradesRepository->findBy(['specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')])) {
-//                $data = [
-//                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-//                    'errors' => 'No grade with this id in given specialization',
-//                ];
-//            }
-			elseif (!$userQualificationRepository->findBy(['user_id' => $request->get('user_id'), 'specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')])) {
-                $data = [
-                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'This user have not this qualification',
+                    'errors' => 'Отсутствует пользователь с таким id',
                 ];
             } else {
+				$specialization = $specializationRepository->find($request->get('specialization_id'));
+				$specializationGrades = $specialization->getGrades();
+				$grade = $gradeRepository->find($request->get('grade_id'));
+
+				if(!$specializationGrades->contains($grade)) {
+					return $this->response([
+						'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+						'errors' => 'У выбранной специализации отсутствует грейд с таким id',
+					]);
+				}
+
                 $review = new Review();
-                $review->setUserId($request->get('user_id'));
+                $review->setUser($user);
                 $review->setDateStart(new DateTime());
-                $review->setQualification(['specialization_id' => $request->get('specialization_id'), 'grade_id' => $request->get('grade_id')]);
+				$review->setSpecialization($specialization);
+				$review->setGrade($grade);
                 $review->setStatus('self_review');
 
                 $history = [];
                 $current_time = new DateTime();
-                array_push($history, [
-                    'user' => ['email' => $this->getUser()->getEmail(), 'full_name' => $this->getUser()->getFullName()],
-                    'comment' => 'Создание ревью',
-                    'created_at' => $current_time->format('Y M d H:i:s')]);
+                $history[] = [
+	                'user' => $this->getUser(),
+	                'comment' => null,
+	                'created_at' => $current_time->getTimestamp()
+                ];
                 $review->setHistory($history);
 
                 $this->entityManager->persist($review);
@@ -75,7 +73,7 @@ class ReviewController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Review initialized successfully',
+                    'success' => 'Review успешно инициализирован',
                 ];
             }
 
@@ -98,27 +96,10 @@ class ReviewController extends AppController
             if ($request->get('type') == 'all') {
                 $reviews = $reviewRepository->findAll();
 
-                $data = [];
-
-                foreach ($reviews as $review) {
-                    $user = $userRepository->find($review->getUserId());
-                    $specialization = $specializationRepository->find($review->getQualification()['specialization_id']);
-                    $grade = $gradeRepository->find($review->getQualification()['grade_id']);
-                    $temp_review = [
-                        'id' => $review->getId(),
-                        'date_start' => $review->getDateStart()->format('Y M d H:i:s'),
-                        'date_end' => $review->getDateEnd()?->format('Y M d H:i:s'),
-                        'subject' => ['id' => $user->getId(), 'email' => $user->getEmail(), 'full_name' => $user->getFullName()],
-                        'self_review' => $review->getSelfReview(),
-                        'qualification' => [
-                            'specialization' => ['id' => $specialization->getId(), 'name' => $specialization->getName()],
-                            'grade' => ['id' => $grade->getId(), 'name' => $grade->getName(), 'description' => $grade->getDescription()]],
-                        'status' => $review->getStatus(),
-                        'history' => $review->getHistory()
-
-                    ];
-                    array_push($data, $temp_review);
-                }
+                $data = $this->jsonSerialize($reviews);
+            } else {
+				$ownReviews = $reviewRepository->findBy(['user' => $this->getUser()]);
+				$data = $this->jsonSerialize($ownReviews);
             }
 
             return $this->response($data);
@@ -141,31 +122,31 @@ class ReviewController extends AppController
             if (!$reviewRepository->find($id)) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'No review with this id',
+                    'errors' => 'Отсутствует review с таким id',
                 ];
             } elseif (!$request->get('status')) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'Unprocessable entity',
+                    'errors' => 'Не указан статус',
                 ];
             } else {
                 $review = $reviewRepository->find($id);
                 $review->setStatus($request->get('status'));
 
-                $history = $review->getHistory();
-                $current_time = new DateTime();
-                array_push($history, [
-                    'user' => ['email' => $this->getUser()->getEmail(), 'full_name' => $this->getUser()->getFullName()],
-                    'comment' => 'Смена статуса: ' . $request->get('status'),
-                    'created_at' => $current_time->format('Y M d H:i:s')]);
-                $review->setHistory($history);
+                $review->addHistory(
+					[
+		                'user' => ['email' => $this->getUser()->getEmail(), 'full_name' => $this->getUser()->getFullName()],
+		                'comment' => 'Смена статуса: ' . $request->get('status'),
+		                'created_at' => (new DateTime())->getTimestamp()
+					]
+                );
 
                 $this->entityManager->persist($review);
                 $this->entityManager->flush();
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Review status updated successfully',
+                    'success' => 'Статус успешно изменен',
                 ];
             }
 
@@ -189,29 +170,29 @@ class ReviewController extends AppController
             if (!$reviewRepository->find($id)) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'No review with this id',
+                    'errors' => 'Review с таким id не найден',
                 ];
             } elseif (!$request->get('comment')) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'Unprocessable entity',
+                    'errors' => 'Не указан комментарий',
                 ];
             } else {
                 $review = $reviewRepository->find($id);
-                $history = $review->getHistory();
-                $current_time = new DateTime();
-                array_push($history, [
-                    'user' => ['email' => $user->getEmail(), 'full_name' => $user->getFullName()],
-                    'comment' => $request->get('comment'),
-                    'created_at' => $current_time->format('Y M d H:i:s')]);
-                $review->setHistory($history);
+                $review->addHistory(
+	                [
+		                'user' => ['email' => $user->getEmail(), 'full_name' => $user->getFullName()],
+		                'comment' => $request->get('comment'),
+		                'created_at' => (new DateTime())->getTimestamp()
+	                ]
+                );
 
                 $this->entityManager->persist($review);
                 $this->entityManager->flush();
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Review commented successfully',
+                    'success' => 'Комментарий успешно добавлен',
                 ];
             }
 
@@ -234,31 +215,31 @@ class ReviewController extends AppController
             if (!$reviewRepository->find($id)) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'No review with this id',
+                    'errors' => 'Review с таким id не найден',
                 ];
             } elseif (!$request->get('self_review')) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'Unprocessable entity',
+                    'errors' => 'Self review не указан',
                 ];
             } else {
                 $review = $reviewRepository->find($id);
                 $review->setSelfReview($request->get('self_review'));
 
-                $history = $review->getHistory();
-                $current_time = new DateTime();
-                array_push($history, [
-                    'user' => ['email' => $this->getUser()->getEmail(), 'full_name' => $this->getUser()->getFullName()],
-                    'comment' => 'Добавлено новое self-review',
-                    'created_at' => $current_time->format('Y M d H:i:s')]);
-                $review->setHistory($history);
+                $review->addHistory(
+	                [
+		                'user' => ['email' => $this->getUser()->getEmail(), 'full_name' => $this->getUser()->getFullName()],
+		                'comment' => 'Добавлено новое self-review',
+		                'created_at' => (new DateTime())->getTimestamp()
+	                ]
+                );
 
                 $this->entityManager->persist($review);
                 $this->entityManager->flush();
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Self-review added successfully',
+                    'success' => 'Self-review успешно добавлен',
                 ];
             }
 

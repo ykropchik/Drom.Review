@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\UserQualification;
+use App\Entity\Qualification;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<UserQualification>
+ * @extends ServiceEntityRepository<Qualification>
  *
- * @method UserQualification|null find($id, $lockMode = null, $lockVersion = null)
- * @method UserQualification|null findOneBy(array $criteria, array $orderBy = null)
- * @method UserQualification[]    findAll()
- * @method UserQualification[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Qualification|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Qualification|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Qualification[]    findAll()
+ * @method Qualification[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class UserQualificationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, UserQualification::class);
+        parent::__construct($registry, Qualification::class);
     }
 
-    public function add(UserQualification $entity, bool $flush = false): void
+    public function add(Qualification $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class UserQualificationRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(UserQualification $entity, bool $flush = false): void
+    public function remove(Qualification $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
