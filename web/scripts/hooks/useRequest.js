@@ -5,15 +5,19 @@ export default function useRequest(endPoint, method = 'GET') {
 	const [error, setError] = useState(null);
 	const [result, setResult] = useState(null);
 
-	const request = (data = {}) => {
+	const request = (data = {}, params = null,) => {
 		(async () => {
 			try {
 				setLoading(true);
+				let url = new URL(endPoint);
+				if (params) {
+					url.search = new URLSearchParams(params);
+				}
 				let res;
 				if (method === 'GET') {
-					res = await fetch(endPoint);
+					res = await fetch(url);
 				} else {
-					res = await fetch(endPoint, {
+					res = await fetch(url, {
 						method: method,
 						headers: { 'Content-Type': 'application/json' },
 						body: JSON.stringify(data)

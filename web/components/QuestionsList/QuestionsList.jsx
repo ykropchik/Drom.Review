@@ -11,6 +11,7 @@ import RatingScale from '../RatingScale/RatingScale';
 
 export default function QuestionsList({ className, questions, onChange }) {
 	const [editableQuestion, setEditableQuestion] = useState(null);
+	const [saving, setSaving] = useState(false);
 
 	const onRemoveClickHandler = (question) => {
 		request(EndPoints.QUESTIONS + `/${question.id}`, 'DELETE')
@@ -25,8 +26,24 @@ export default function QuestionsList({ className, questions, onChange }) {
 		setEditableQuestion(question);
 	};
 
-	const onSaveClickHandler = () => {
+	const onSaveClickHandler = (data) => {
+		setSaving(true);
+		request(EndPoints.QUESTIONS + `/${editableQuestion.id}`, 'PUT', data)
+			.finally(() => {
+				setSaving(false);
+			})
+			.then(() => onSaveSuccess())
+			.catch(() => onSaveFailure());
+	};
 
+	const onSaveSuccess = () => {
+		onChange();
+		setEditableQuestion(null);
+		message.success('Грейд успешно изменен!');
+	};
+
+	const onSaveFailure = () => {
+		message.error('Произошла ошибка! Попробуйте позже.');
 	};
 
 	return (
@@ -46,6 +63,7 @@ export default function QuestionsList({ className, questions, onChange }) {
 
 			<QuestionForm visible={editableQuestion !== null}
 			              title="Редактрирование вопроса"
+			              isLoading={saving}
 			              onCancelClick={() => setEditableQuestion(null)}
 			              onSaveClick={onSaveClickHandler}
 			              saveButtonText="Сохранить"
