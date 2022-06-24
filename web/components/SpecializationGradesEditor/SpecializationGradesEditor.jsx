@@ -10,7 +10,7 @@ export default function SpecializationGradesEditor({ value, onChange }) {
 	const [selectedValues, setSelectedValues] = useState(value || []);
 
 	const onItemsChangeHandler = (data) => {
-		let newValues = grades.list.filter((item) => data.includes(item.id));
+		let newValues = grades.data.filter((item) => data.includes(item.id));
 		setSelectedValues(newValues);
 		onChange(newValues.map((item) => item.id));
 	};
@@ -28,7 +28,7 @@ export default function SpecializationGradesEditor({ value, onChange }) {
 						:
 						<Checkbox.Group value={selectedValues.map((item) => item.id)} onChange={onItemsChangeHandler}>
 							{
-								grades.list.map((option, i) =>
+								grades.data.map((option, i) =>
 									<Row key={i}>
 										<Checkbox value={option.id}>
 											{option.name}

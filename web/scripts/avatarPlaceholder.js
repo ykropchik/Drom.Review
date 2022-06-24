@@ -4,7 +4,11 @@
  * @return {string}
  */
 export default function getAvatarPlaceholder(fullName) {
-	let nameArray = fullName.split(' ');
+	if (!fullName) {
+		return '';
+	}
+
+	const nameArray = fullName.split(' ');
 
 	return nameArray[0][0].toUpperCase() + nameArray[1][0].toUpperCase();
 }

@@ -1,0 +1,14 @@
+@import '../global';
+
+.user_info {
+  max-width: 400px;
+}
+
+.info_item {
+  margin: 8px 0;
+  padding: 8px 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid $grey-200;
+  }
+}

@@ -49,7 +49,7 @@ export default function SpecEditor() {
 						:
 						<>
 							<Button icon={<PlusOutlined />} type="dashed" style={{ margin: '8px 16px' }} onClick={() => setFormVisible(true)}>Создать новую</Button>
-							<SpecializationsList specializations={specializations.list} onEditSuccess={() => specializations.update()}/>
+							<SpecializationsList specializations={specializations.data} onEditSuccess={() => specializations.update()}/>
 						</>
 				}
 				<SpecializationForm visible={isFormVisible}

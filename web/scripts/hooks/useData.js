@@ -10,7 +10,7 @@ export default function useData(endPoint) {
 	};
 
 	return {
-		list: data,
+		data: data,
 		isLoading: !error && !data,
 		isError: error,
 		update: update
