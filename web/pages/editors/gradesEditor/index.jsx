@@ -50,7 +50,7 @@ export default function GradesEditor() {
 						:
 						<>
 							<Button icon={<PlusOutlined />} type="dashed" style={{ margin: '8px 16px' }} onClick={() => setFormVisible(true)}>Создать новый</Button>
-							<GradesList grades={grades.list} onEditSuccess={() => grades.update()}/>
+							<GradesList grades={grades.data} onEditSuccess={() => grades.update()}/>
 						</>
 				}
 				<GradeForm visible={isFormVisible}

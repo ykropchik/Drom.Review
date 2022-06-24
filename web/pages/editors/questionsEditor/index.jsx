@@ -61,7 +61,7 @@ export default function QuestionsEditor() {
 					<AutoComplete placeholder="Выберите специализацию"
 						              style={{ width: 200 }}
 						              value={selectedSpec?.name}
-						              options={specializations.list}
+						              options={specializations.data}
 						              filterOption={(inputValue, option) =>
 							              option?.name.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
 						              }

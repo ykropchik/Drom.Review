@@ -71,13 +71,13 @@ export default function NewUserForm() {
 			           className={styles.form_item}
 			           rules={[{ required: true, message: 'Укажите специализацию сотрудника' }]}
 			>
-				<Select placeholder="Специализация" options={specializations.list} fieldNames={{ label: 'name', value: 'id' }} loading={specializations.isLoading}/>
+				<Select placeholder="Специализация" options={specializations.data} fieldNames={{ label: 'name', value: 'id' }} loading={specializations.isLoading}/>
 			</Form.Item>
 			<Form.Item name="grade"
 			           className={styles.form_item}
 			           rules={[{ required: true, message: 'Укажите грейд сотрудника' }]}
 			>
-				<Select placeholder="Грейд" options={grades.list} fieldNames={{ label: 'name', value: 'id' }} loading={grades.isLoading}/>
+				<Select placeholder="Грейд" options={grades.data} fieldNames={{ label: 'name', value: 'id' }} loading={grades.isLoading}/>
 			</Form.Item>
 			<Form.Item name="role"
 			           className={styles.form_item}

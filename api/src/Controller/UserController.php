@@ -25,7 +25,7 @@ class UserController extends AppController
 	public function get_users(UserRepository $userRepository): Response
 	{
 		try {
-			$users = $this->jsonSerialize($userRepository->findAll());
+			$users = $this->jsonSerialize($userRepository->findAll(), ['grades']);
 			return $this->response($users, Response::HTTP_OK);
 		} catch (\Exception $e) {
 			$data = [
@@ -37,7 +37,7 @@ class UserController extends AppController
 	}
 
     #[Route('/api/user', name: 'get_user_info', methods: ['GET'])]
-    public function get_user(UserQualificationRepository $qualificationRepository, SpecializationRepository $specializationRepository, GradeRepository $gradeRepository): Response
+    public function get_user(): Response
     {
         try {
             $user = $this->getUser();
@@ -52,8 +52,28 @@ class UserController extends AppController
         }
     }
 
+	#[Route('/api/user/{id}', name: 'get_user_info', methods: ['GET'])]
+	public function get_user_info(UserRepository $userRepository, $id): Response
+	{
+		try {
+			$user = $userRepository->find($id);
+			$data = $this->jsonSerialize($user);
+			return $this->response($data);
+		} catch (\Exception $e) {
+			$data = [
+				'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+				'errors' => $e->getMessage(),
+			];
+			return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+		}
+	}
+
     #[Route('/api/user/qualification', name: 'add_users_qualification', methods: ['POST'])]
-    public function add_users_qualification(Request $request, SpecializationRepository $specializationRepository, GradeRepository $gradeRepository): Response
+    public function add_users_qualification(
+		Request $request,
+		SpecializationRepository $specializationRepository,
+		GradeRepository $gradeRepository
+    ): Response
     {
         try {
             $request = $this->transformJsonBody($request);
