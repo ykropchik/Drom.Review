@@ -41,6 +41,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'subject', targetEntity: Review::class, orphanRemoval: true)]
     private $reviews;
 
+    #[ORM\OneToMany(mappedBy: 'subject', targetEntity: Review::class, orphanRemoval: true)]
+    private $reviews;
+
     public function __construct()
     {
         $this->qualifications = new ArrayCollection();
@@ -149,6 +152,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeQualification(Qualification $qualification): self
     {
 	    $this->qualifications->removeElement($qualification);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Review>
+     */
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    public function addReview(Review $review): self
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews[] = $review;
+            $review->setSubject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): self
+    {
+        if ($this->reviews->removeElement($review)) {
+            // set the owning side to null (unless already changed)
+            if ($review->getSubject() === $this) {
+                $review->setSubject(null);
+            }
+        }
 
         return $this;
     }

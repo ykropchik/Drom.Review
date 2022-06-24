@@ -204,7 +204,7 @@ class ReviewController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Комментарий успешно добавлен',
+                    'success' => 'Review commented successfully',
                 ];
             }
 
