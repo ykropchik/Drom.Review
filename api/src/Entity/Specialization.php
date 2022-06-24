@@ -74,10 +74,8 @@ class Specialization
 
 	public function setGrades(array $newGrades): self
 	{
-		$oldGrades = $this->getGrades();
-
-		foreach ($oldGrades as $grade) {
-			$this->removeGrade($grade);
+		foreach ($this->grades as $oldGrade) {
+			$this->removeGrade($oldGrade);
 		}
 
 		foreach ($newGrades as $grade) {

@@ -120,16 +120,18 @@ class SpecializationController extends AppController
 
             $specialization = $specializationRepository->find($id);
             $specialization->setName($request->get('name'));
-            $this->entityManager->persist($specialization);
-            $this->entityManager->flush();
 
 	        if ($request->get('grades')) {
+				$grades = array_map(fn ($grade_id) => $gradeRepository->find($grade_id), $request->get('grades'));
 		        $specialization->setGrades(
-			        array_map(fn ($grade_id) => $gradeRepository->find($grade_id), $request->get('grades'))
+			        $grades
 		        );
 	        } else {
 				$specialization->setGrades([]);
 	        }
+
+	        $this->entityManager->persist($specialization);
+	        $this->entityManager->flush();
 
             $data = [
                 'status' => Response::HTTP_OK,
