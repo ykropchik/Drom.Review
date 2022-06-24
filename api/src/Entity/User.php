@@ -31,12 +31,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $full_name;
 
 	#[ORM\ManyToMany(targetEntity: Qualification::class)]
-	#[ORM\JoinTable(
-		name: 'user_qualifications',
-		joinColumns: [new ORM\JoinColumn(name: "user_id", referencedColumnName: "id")],
-		inverseJoinColumns: [new ORM\JoinColumn(name: "qualification_id", referencedColumnName: "id")]
-	)]
-    private $qualifications;
+               	#[ORM\JoinTable(
+               		name: 'user_qualifications',
+               		joinColumns: [new ORM\JoinColumn(name: "user_id", referencedColumnName: "id")],
+               		inverseJoinColumns: [new ORM\JoinColumn(name: "qualification_id", referencedColumnName: "id")]
+               	)]
+                   private $qualifications;
 
     #[ORM\OneToMany(mappedBy: 'subject', targetEntity: Review::class, orphanRemoval: true)]
     private $reviews;
@@ -44,6 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->qualifications = new ArrayCollection();
+        $this->respondents = new ArrayCollection();
     }
 
     public function getId(): ?int

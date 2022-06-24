@@ -98,4 +98,23 @@ class UserController extends AppController
             return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
+
+    #[Route('/api/user/list', name: 'get_user_list', methods: ['GET'])]
+    public function get_user_list(UserRepository $userRepository): Response
+    {
+        try {
+            $users = $userRepository->findAll();
+            $data = [];
+            foreach ($users as $user) {
+                array_push($data, ['id' => $user->getId(), 'email' => $user->getEmail(), 'full_name' => $user->getFullName()]);
+            }
+            return $this->response($data);
+        } catch (\Exception $e) {
+            $data = [
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'errors' => $e->getMessage(),
+            ];
+            return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
 }

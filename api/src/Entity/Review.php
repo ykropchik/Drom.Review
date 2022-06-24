@@ -15,22 +15,16 @@ class Review
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'datetime')]
-    private $date_start;
-
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private $date_end;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $self_review;
 
 	#[ORM\ManyToOne(targetEntity: Specialization::class)]
-	#[ORM\JoinColumn(name: "specialization_id", referencedColumnName: "id")]
-	private $specialization;
+                  	#[ORM\JoinColumn(name: "specialization_id", referencedColumnName: "id")]
+                  	private $specialization;
 
 	#[ORM\ManyToOne(targetEntity: Grade::class)]
-	#[ORM\JoinColumn(name: "grade_id", referencedColumnName: "id")]
-    private $grade;
+                  	#[ORM\JoinColumn(name: "grade_id", referencedColumnName: "id")]
+                      private $grade;
 
     #[ORM\Column(type: 'string', length: 255)]
     private $status = null;
@@ -44,6 +38,12 @@ class Review
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'qualifications')]
     private $subject;
 
+    #[ORM\Column(type: 'integer')]
+    private $date_start;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $date_end;
+
     public function __construct()
     {
         $this->respondents = new ArrayCollection();
@@ -52,30 +52,6 @@ class Review
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getDateStart(): ?\DateTimeInterface
-    {
-        return $this->date_start;
-    }
-
-    public function setDateStart(\DateTimeInterface $date_start): self
-    {
-        $this->date_start = $date_start;
-
-        return $this;
-    }
-
-    public function getDateEnd(): ?\DateTimeInterface
-    {
-        return $this->date_end;
-    }
-
-    public function setDateEnd(?\DateTimeInterface $date_end): self
-    {
-        $this->date_end = $date_end;
-
-        return $this;
     }
 
     public function getSelfReview(): ?string
@@ -91,28 +67,28 @@ class Review
     }
 
 	public function getSpecialization(): Specialization
-	{
-		return $this->specialization;
-	}
+                  	{
+                  		return $this->specialization;
+                  	}
 
 	public function setSpecialization(Specialization $specialization): self
-	{
-		$this->specialization = $specialization;
-
-		return $this;
-	}
+                  	{
+                  		$this->specialization = $specialization;
+                  
+                  		return $this;
+                  	}
 
 	public function getGrade(): Grade
-	{
-		return $this->grade;
-	}
+                  	{
+                  		return $this->grade;
+                  	}
 
 	public function setGrade(Grade $grade): self
-	{
-		$this->grade = $grade;
-
-		return $this;
-	}
+                  	{
+                  		$this->grade = $grade;
+                  
+                  		return $this;
+                  	}
 
     public function getStatus(): ?string
     {
@@ -132,11 +108,11 @@ class Review
     }
 
 	public function addHistory($historyItem): self
-	{
-		$this->history[] = $historyItem;
+    {
+        $this->history[] = $historyItem;
 
-		return $this;
-	}
+        return $this;
+    }
 
     public function setHistory(array $history): self
     {
@@ -183,6 +159,30 @@ class Review
     public function setSubject(?User $subject): self
     {
         $this->subject = $subject;
+
+        return $this;
+    }
+
+    public function getDateStart(): ?int
+    {
+        return $this->date_start;
+    }
+
+    public function setDateStart(int $date_start): self
+    {
+        $this->date_start = $date_start;
+
+        return $this;
+    }
+
+    public function getDateEnd(): ?int
+    {
+        return $this->date_end;
+    }
+
+    public function setDateEnd(?int $date_end): self
+    {
+        $this->date_end = $date_end;
 
         return $this;
     }

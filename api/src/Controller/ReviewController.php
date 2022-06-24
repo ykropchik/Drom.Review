@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Respondent;
 use App\Entity\Review;
 use App\Repository\GradeRepository;
+use App\Repository\RespondentRepository;
 use App\Repository\ReviewRepository;
 use App\Repository\SpecializationRepository;
 use App\Repository\UserQualificationRepository;
@@ -28,7 +30,7 @@ class ReviewController extends AppController
 		Request $request,
 	    UserRepository $userRepository,
 		SpecializationRepository $specializationRepository,
-		GradeRepository $gradeRepository,
+        GradeRepository $gradeRepository,
 		UserQualificationRepository $userQualificationRepository): Response
     {
         try {
@@ -53,18 +55,18 @@ class ReviewController extends AppController
 				}
 
                 $review = new Review();
+                $current_time = new DateTime();
                 $review->setSubject($userRepository->find($request->get('user_id')));
-                $review->setDateStart(new DateTime());
+                $review->setDateStart(date_timestamp_get($current_time));
 				$review->setSpecialization($specialization);
 				$review->setGrade($grade);
                 $review->setStatus('self_review');
 
                 $history = [];
-                $current_time = new DateTime();
                 $history[] = [
 	                'user' => $this->getUser(),
 	                'comment' => null,
-	                'created_at' => $current_time->getTimestamp()
+	                'created_at' => date_timestamp_get($current_time)
                 ];
                 $review->setHistory($history);
 
@@ -88,7 +90,7 @@ class ReviewController extends AppController
     }
 
     #[Route('/api/review', name: 'get_reviews', methods: ['GET'])]
-    public function get_reviews(Request $request, ReviewRepository $reviewRepository, UserRepository $userRepository, SpecializationRepository $specializationRepository, GradeRepository $gradeRepository): Response
+    public function get_reviews(Request $request, ReviewRepository $reviewRepository): Response
     {
         try {
             $request = $this->transformJsonBody($request);
@@ -132,14 +134,24 @@ class ReviewController extends AppController
             } else {
                 $review = $reviewRepository->find($id);
                 $review->setStatus($request->get('status'));
+                $date = (new DateTime())->getTimestamp();
 
                 $review->addHistory(
 					[
 		                'user' => ['email' => $this->getUser()->getEmail(), 'full_name' => $this->getUser()->getFullName()],
 		                'comment' => 'Смена статуса: ' . $request->get('status'),
-		                'created_at' => (new DateTime())->getTimestamp()
+		                'created_at' => $date
 					]
                 );
+                if ($request->get('status') == 'finished') {
+                    $review->setDateEnd($date);
+                } elseif ($request->get('status') == 'approved') {
+                    foreach ($review->getRespondents() as $respondent) {
+                        $respondent->setStatus('waiting');
+                        $review->addRespondent($respondent);
+                    }
+                }
+
 
                 $this->entityManager->persist($review);
                 $this->entityManager->flush();
@@ -240,6 +252,140 @@ class ReviewController extends AppController
                 $data = [
                     'status' => Response::HTTP_OK,
                     'success' => 'Self-review успешно добавлен',
+                ];
+            }
+
+            return $this->response($data);
+        } catch (\Exception $e) {
+            $data = [
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'errors' => $e->getMessage(),
+            ];
+            return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    #[Route('/api/review/respondents/{id}', name: 'add_respondents_review', methods: ['PUT'])]
+    public function add_respondents_review(
+        Request $request,
+        ReviewRepository $reviewRepository,
+        UserRepository $userRepository,
+        $id): Response
+    {
+        try {
+            $request = $this->transformJsonBody($request);
+
+            if (!$reviewRepository->find($id)) {
+                $data = [
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'errors' => 'Review с таким id не найден',
+                ];
+            } elseif (!$request->get('respondents')) {
+                $data = [
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'errors' => 'Респонденты не указаны',
+                ];
+            } else {
+                $review = $reviewRepository->find($id);
+                foreach ($request->get('respondents') as $respondent_id) {
+                    if (!$userRepository->find($respondent_id)) {
+                        $data = [
+                            'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                            'errors' => 'Потзователя с id ' . $respondent_id . ' не существует',
+                        ];
+                        return $this->response($data);
+                    }
+                }
+                foreach ($request->get('respondents') as $respondent_id) {
+                    $respondent = new Respondent();
+                    $respondent->setUser($userRepository->find($respondent_id));
+                    $respondent->setReview($review);
+                    $respondent->setActive(false);
+                    $respondent->setStatus('inactive');
+                    $review->addRespondent($respondent);
+                    $this->entityManager->persist($respondent);
+                }
+
+                $review->addHistory(
+                    [
+                        'user' => ['email' => $this->getUser()->getEmail(), 'full_name' => $this->getUser()->getFullName()],
+                        'comment' => 'Добавлены новые респонденты',
+                        'created_at' => (new DateTime())->getTimestamp()
+                    ]
+                );
+
+                $this->entityManager->persist($review);
+                $this->entityManager->flush();
+
+                $data = [
+                    'status' => Response::HTTP_OK,
+                    'success' => 'Респонденты успешно добавлены',
+                ];
+            }
+
+            return $this->response($data);
+        } catch (\Exception $e) {
+            $data = [
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'errors' => $e->getMessage(),
+            ];
+            return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    #[Route('/api/review/respondents/{id}', name: 'delete_respondents_review', methods: ['DELETE'])]
+    public function delete_respondents_review(
+        Request $request,
+        ReviewRepository $reviewRepository,
+        UserRepository $userRepository,
+        RespondentRepository $respondentRepository,
+        $id): Response
+    {
+        try {
+            $request = $this->transformJsonBody($request);
+
+            if (!$reviewRepository->find($id)) {
+                $data = [
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'errors' => 'Review с таким id не найден',
+                ];
+            } elseif (!$request->get('respondents')) {
+                $data = [
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'errors' => 'Респонденты не указаны',
+                ];
+            } else {
+                $review = $reviewRepository->find($id);
+                foreach ($request->get('respondents') as $respondent_id) {
+                    if (!$respondentRepository->find($respondent_id)) {
+                        $data = [
+                            'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                            'errors' => 'Респондента с id ' . $respondent_id . ' не существует',
+                        ];
+                        return $this->response($data);
+                    }
+                }
+                foreach ($request->get('respondents') as $respondent_id) {
+
+                    $respondent = $respondentRepository->find($respondent_id);
+                    $review->removeRespondent($respondent);
+                    $this->entityManager->remove($respondent);
+                }
+
+                $review->addHistory(
+                    [
+                        'user' => ['email' => $this->getUser()->getEmail(), 'full_name' => $this->getUser()->getFullName()],
+                        'comment' => 'Удалены респонденты',
+                        'created_at' => (new DateTime())->getTimestamp()
+                    ]
+                );
+
+                $this->entityManager->persist($review);
+                $this->entityManager->flush();
+
+                $data = [
+                    'status' => Response::HTTP_OK,
+                    'success' => 'Респонденты успешно удалены',
                 ];
             }
 
