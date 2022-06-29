@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { AutoComplete, Button, Form, Select } from 'antd';
-import { Users } from '../../stubs/users';
 import styles from './NewReviewForm.module.scss';
+import useData from '../../scripts/hooks/useData';
+import { EndPoints } from '../../scripts/api/EndPoints';
 
 const { Option } = Select;
 
 export default function NewReviewForm() {
+	const users = useData(EndPoints.USERS);
 	const [selectedUser, setSelectedUser] = useState(null);
 	const [form] = Form.useForm();
 
@@ -26,29 +28,43 @@ export default function NewReviewForm() {
 		>
 			<Form.Item className={styles.form_item} name="user">
 				<AutoComplete placeholder="Выберите сотрудника"
-				              options={Users}
+				              options={users.data}
+				              loading={users.isLoading}
 				              allowClear
 				              filterOption={(inputValue, option) =>
-					              option?.name.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+					              option?.fullName.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
 				              }
 				              onClear={() => onSelectHandler(null)}
 				              onSelect={(_, user) => onSelectHandler(user)}
-				              fieldNames={{ label: 'name', value: 'name' }}/>
+				              fieldNames={{ label: 'fullName', value: 'fullName' }}/>
 			</Form.Item>
 			<Form.Item className={styles.form_item} name="qualification">
 				<Select optionLabelProp="label"
 				        disabled={!selectedUser}
-				        placeholder="Выберите квалификацию сотрудника">
+				        placeholder="Выберите квалификацию сотрудника"
+				        onSelect={console.log}>
 					{
 						selectedUser?.qualifications.map((item, i) =>
-							<Option title={`${item.specialization} - ${item.grade}`}
-							        value={`${item.specialization} - ${item.grade}`}
+							<Option title={`${item.specialization.name} - ${item.grade.name}`}
+							        value={`${item.specialization.name} - ${item.grade.name}`}
+							        item={item}
 							        key={i}>
-								{`${item.specialization} - ${item.grade}`}
+								{`${item.specialization.name} - ${item.grade.name}`}
 							</Option>
 						)
 					}
 				</Select>
+			</Form.Item>
+			<Form.Item className={styles.form_item} name="lead">
+				<AutoComplete placeholder="Выберите ответственного за проверку"
+				              disabled={!selectedUser}
+				              options={users.data}
+				              isLoading={users.isLoading}
+				              allowClear
+				              filterOption={(inputValue, option) =>
+					              option?.fullName.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+				              }
+				              fieldNames={{ label: 'fullName', value: 'fullName' }}/>
 			</Form.Item>
 			<Form.Item className={styles.form_item}>
 				<Button htmlType="submit" type="primary" >Создать</Button>

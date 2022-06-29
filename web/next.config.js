@@ -7,15 +7,14 @@ module.exports = withLess({
 			{
 				source: '/logout',
 				destination: '/login',
-			}
-		]
-	},
-	async redirects() {
-		return [
+			},
 			{
-				source: '/api/:path*',
-				destination: 'http://localhost/:path*',
-				permanent: true
+				source: '/',
+				destination: '/reviews'
+			},
+			{
+				source: '/reviews',
+				destination: '/reviews/scrum'
 			}
 		]
 	}

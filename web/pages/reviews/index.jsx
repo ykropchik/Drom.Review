@@ -1,24 +1,126 @@
 import React from 'react';
-import { Divider, Collapse } from 'antd';
-import ReviewBrief from '../../components/ReviewBrief/ReviewBrief';
+import { Table, Tabs } from 'antd';
+import TabPaneItem from '../../components/TabPaneItem/TabPaneItem';
+import {
+	CheckCircleOutlined, ClockCircleOutlined,
+	FileAddOutlined, FileSearchOutlined,
+	OrderedListOutlined, SyncOutlined,
+} from '@ant-design/icons';
+import UserAvatar from '../../components/UserAvatar/UserAvatar';
 import { reviews } from '../../stubs/reviews';
-import styles from '../../public/styles/pages/Reviews.module.scss';
+import Tag from '../../components/Tag/Tag';
+import NewReviewForm from '../../components/NewReviewForm/NewReviewForm';
 
-const { Panel } = Collapse;
+const { TabPane } = Tabs;
 
 export default function Reviews() {
 	return (
-		<Collapse defaultActiveKey={['activeReviews']} ghost>
-			<Panel header={<Divider style={{ margin: 0 }} orientation="left">Активные review</Divider>} key="activeReviews">
-				<div className={styles.panel_content}>
-					{
-						reviews.map((review, i) => <ReviewBrief review={review} key={i} selfBrief/>)
-					}
-				</div>
-			</Panel>
-			<Panel header={<Divider style={{ margin: 0 }} orientation="left">Закрытые review</Divider>} key="closedReviews">
-
-			</Panel>
-		</Collapse>
+		<Tabs defaultActiveKey="list">
+			<TabPane key="list"
+			         tab={<TabPaneItem icon={<OrderedListOutlined/>} title="Список review"/>}
+			>
+				<Table dataSource={reviews} columns={columns}/>
+			</TabPane>
+			<TabPane key="newUsers"
+			         tab={<TabPaneItem icon={<FileAddOutlined/>} title="Создать"/>}
+			>
+				<NewReviewForm/>
+			</TabPane>
+		</Tabs>
 	);
 }
+
+const columns = [
+	{
+		title: '',
+		dataIndex: 'subject',
+		key: 'avatarUrl',
+		width: 26,
+		render: (data) => <UserAvatar avatarUrl={data.avatarUrl} userName={data.name} size={26}/>
+	},
+	{
+		title: 'Имя',
+		dataIndex: 'subject',
+		key: 'name',
+		sorter: (a, b) => a.name > b.name ? 1 : -1,
+		render: (data) => data.name
+	},
+	{
+		title: 'Специализация',
+		dataIndex: 'specialization',
+		key: 'specialization',
+		filters: [
+			{
+				text:  'Frontend',
+				value: 'Frontend'
+			},
+			{
+				text: 'Backend',
+				value: 'Backend'
+			},
+			{
+				text: 'IOS',
+				value: 'IOS'
+			},
+			{
+				text: 'Android',
+				value: 'Android'
+			},
+			{
+				text: 'DevOps',
+				value: 'DevOps'
+			},
+			{
+				text: 'Java',
+				value: 'Java'
+			}
+		],
+		sorter: (a, b) => a.specialization > b.specialization ? 1 : -1,
+		onFilter: (value, record) => record.specialization.indexOf(value) === 0
+	},
+	{
+		title: 'Грейд',
+		dataIndex: 'grade',
+		key: 'grade',
+		filters: [
+			{
+				text:  'Junior',
+				value: 'Junior'
+			},
+			{
+				text: 'Middle',
+				value: 'Middle'
+			},
+			{
+				text: 'Senior',
+				value: 'Senior'
+			},
+		],
+		sorter: (a, b) => a.grade > b.grade ? 1 : -1,
+		onFilter: (value, record) => record.grade.indexOf(value) === 0
+	},
+	{
+		title: 'Статус',
+		dataIndex: 'currentStatus',
+		key: 'currentStatus',
+		render: (data) => {
+			if (data === 'fixing') {
+				return <Tag icon={<SyncOutlined/>} type="warning">Исправление</Tag>;
+			}
+
+			if (data === 'completed') {
+				return <Tag icon={<CheckCircleOutlined/>} type="success">Завершен</Tag>;
+			}
+
+			if (data === 'review') {
+				return <Tag icon={<FileSearchOutlined/>} type="process">На проверке</Tag>;
+			}
+
+			if (data === 'init') {
+				return <Tag icon={<ClockCircleOutlined/>} type="process">В процессе</Tag>;
+			}
+
+			return <Tag icon={<ClockCircleOutlined/>} type="default">На редактировании</Tag>;
+		}
+	}
+];

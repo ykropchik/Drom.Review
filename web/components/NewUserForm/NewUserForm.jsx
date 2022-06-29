@@ -55,7 +55,7 @@ export default function NewUserForm() {
 				           { max: 50, message: 'Максимальная длина: 50 символов' },
 			           ]}
 			>
-				<Input placeHolder="ФИО"/>
+				<Input placeholder="ФИО"/>
 			</Form.Item>
 			<Form.Item name="password"
 			           className={styles.form_item}
@@ -65,7 +65,7 @@ export default function NewUserForm() {
 				           { max: 15, message: 'Максимальная длина: 15 символов' }
 			           ]}
 			           hasFeedback>
-				<Input.Password placeHolder="Пароль"/>
+				<Input.Password placeholder="Пароль"/>
 			</Form.Item>
 			<Form.Item name="specialization"
 			           className={styles.form_item}
