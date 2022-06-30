@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ReviewRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
@@ -13,18 +15,27 @@ class Review
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'integer')]
     private $date_start;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $date_end;
 
 	#[ORM\ManyToOne(targetEntity: User::class)]
-	#[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
-    private $user;
+	#[ORM\JoinColumn(name: "subject_id", referencedColumnName: "id")]
+    private $subject;
 
-    #[ORM\Column(type: 'array', nullable: true)]
-    private $respondents = [];
+	#[ORM\ManyToOne(targetEntity: User::class)]
+	#[ORM\JoinColumn(name: "lead_id", referencedColumnName: "id")]
+	private $lead;
+
+	#[ORM\ManyToMany(targetEntity: Respondent::class)]
+	#[ORM\JoinTable(
+		name: 'review_respondents',
+		joinColumns: [new ORM\JoinColumn(name: "review_id", referencedColumnName: "id")],
+		inverseJoinColumns: [new ORM\JoinColumn(name: "respondent_id", referencedColumnName: "id")]
+	)]
+    private $respondents;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $self_review;
@@ -37,64 +48,108 @@ class Review
 	#[ORM\JoinColumn(name: "grade_id", referencedColumnName: "id")]
     private $grade;
 
+	/**
+	 * @var string @see App\Types\ReviewStatus
+	 */
     #[ORM\Column(type: 'string', length: 255)]
-    private $status = null;
+    private string $status = 'init';
 
+	/**
+	 * @var array [ 'action' => @see ReviewActions, 'created_at' => 'date_time', 'comment' => null | string, 'author' => User ]
+	 */
     #[ORM\Column(type: 'array')]
     private $history = [];
+
+	public function __construct()
+	{
+		$this->respondents = new ArrayCollection();
+	}
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDateStart(): ?\DateTimeInterface
+    public function getDateStart(): ?int
     {
         return $this->date_start;
     }
 
-    public function setDateStart(\DateTimeInterface $date_start): self
+    public function setDateStart(int $date_start): self
     {
         $this->date_start = $date_start;
 
         return $this;
     }
 
-    public function getDateEnd(): ?\DateTimeInterface
+    public function getDateEnd(): ?int
     {
         return $this->date_end;
     }
 
-    public function setDateEnd(?\DateTimeInterface $date_end): self
+    public function setDateEnd(int $date_end): self
     {
         $this->date_end = $date_end;
 
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getSubject(): ?User
     {
-        return $this->user;
+        return $this->subject;
     }
 
-    public function setUser(User $user): self
+    public function setSubject(User $subject): self
     {
-        $this->user = $user;
+        $this->subject = $subject;
 
         return $this;
     }
 
-    public function getRespondents(): ?array
-    {
-        return $this->respondents;
-    }
+	public function getLead(): ?User
+	{
+		return $this->lead;
+	}
 
-    public function setRespondents(?array $respondents): self
-    {
-        $this->respondents = $respondents;
+	public function setLead(User $lead): self
+	{
+		$this->lead = $lead;
 
-        return $this;
-    }
+		return $this;
+	}
+
+	/**
+	 * @return Collection<int, Respondent>
+	 */
+	public function getRespondents(): Collection
+	{
+		return $this->respondents;
+	}
+
+	public function setRespondents(array $respondents): self
+	{
+		foreach ($respondents as $respondent) {
+			$this->addRespondent($respondent);
+		}
+
+		return $this;
+	}
+
+	public function addRespondent(Respondent $respondent): self
+	{
+		if (!$this->respondents->contains($respondent)) {
+			$this->respondents[] = $respondent;
+		}
+
+		return $this;
+	}
+
+	public function removeRespondent(Respondent $respondent): self
+	{
+		$this->respondents->removeElement($respondent);
+
+		return $this;
+	}
 
     public function getSelfReview(): ?string
     {
