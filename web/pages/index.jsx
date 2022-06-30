@@ -4,11 +4,17 @@ import ReviewBrief from '../components/ReviewBrief/ReviewBrief';
 import { reviews } from '../stubs/reviews';
 import styles from '../public/styles/pages/Reviews.module.scss';
 import { UserRoleContext } from './_app';
+import { useRouter } from 'next/router';
 
 const { Panel } = Collapse;
 
 export default function Reviews() {
+	const router = useRouter();
 	const userRole = useContext(UserRoleContext);
+
+	if (userRole === 'scrum') {
+		router.push('/reviews');
+	}
 
 	return (
 		<Collapse defaultActiveKey={['activeReviews']} ghost>

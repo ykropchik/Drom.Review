@@ -6,10 +6,13 @@ import Footer from '../../components/Footer/Footer';
 import styles from '../../public/styles/pages/Login.module.scss';
 import { useState } from 'react';
 import authenticate from '../../scripts/api/authenticate';
+import { useSWRConfig } from 'swr';
+import { EndPoints } from '../../scripts/api/EndPoints';
 
 const { Content } = Layout;
 
 export default function Login() {
+	const { mutate } = useSWRConfig();
 	const [isLoading, setLoading] = useState(false);
 	const [form] = Form.useForm();
 	const router = useRouter();
@@ -18,7 +21,10 @@ export default function Login() {
 		setLoading(true);
 		authenticate(data)
 			.finally(() => setLoading(false))
-			.then(() => router.push('/'))
+			.then(() => {
+				mutate(EndPoints.USER);
+				router.push('/');
+			})
 			.catch((err) => {
 				form.resetFields(['password']);
 				message.error(err);
