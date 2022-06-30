@@ -1,14 +1,14 @@
 export const roles = [
 	{
 		label: 'Обычные пользователь',
-		value: 'default'
+		value: 'ROLE_USER'
 	},
 	{
 		label: 'Техлид',
-		value: 'lead'
+		value: 'ROLE_LEADER'
 	},
 	{
-		label: 'Scrum',
-		value: 'admin'
+		label: 'Scrum мастер',
+		value: 'ROLE_SCRUM'
 	}
 ];

@@ -78,11 +78,11 @@ const columns = [
 		key: 'roles',
 		sorter: (a, b) => a.role > b.role ? 1 : -1,
 		render: (data) => {
-			if (data.includes('ROLE_ADMIN')) {
+			if (data.includes('ROLE_SCRUM')) {
 				return <Tag color="red">Скрам</Tag>;
 			}
 
-			if (data.includes('ROLE_LEAD')) {
+			if (data.includes('ROLE_LEADER')) {
 				return <Tag color="green">Техлид</Tag>;
 			}
 

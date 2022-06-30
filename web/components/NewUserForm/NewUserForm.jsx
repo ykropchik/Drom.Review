@@ -9,9 +9,9 @@ import { roles } from '../../configs/roles';
 import request from '../../scripts/api/request';
 
 export default function NewUserForm() {
-	const grades = useData(EndPoints.GRADES);
 	const specializations = useData(EndPoints.SPECIALIZATIONS);
 	const [isLoading, setLoading] = useState(false);
+	const [selectedSpec, setSelectedSpec] = useState(null);
 	const [form] = Form.useForm();
 
 	const createUser = (data) => {
@@ -36,7 +36,7 @@ export default function NewUserForm() {
 		      style={{ width: 'auto' }}
 		      initialValues={{
 			      email: '@drom.ru',
-			      role: roles[0]
+			      role: roles[0].value
 		      }}
 		      validateTrigger="onBlur"
 		      autoComplete="off"
@@ -48,7 +48,7 @@ export default function NewUserForm() {
 			>
 				<MailInput placeholder="Электронная почта"/>
 			</Form.Item>
-			<Form.Item name="name"
+			<Form.Item name="fullName"
 			           className={styles.form_item}
 			           rules={[
 				           { required: true, message: 'Укажите ФИО сотрудника' },
@@ -71,18 +71,23 @@ export default function NewUserForm() {
 			           className={styles.form_item}
 			           rules={[{ required: true, message: 'Укажите специализацию сотрудника' }]}
 			>
-				<Select placeholder="Специализация" options={specializations.data} fieldNames={{ label: 'name', value: 'id' }} loading={specializations.isLoading}/>
+				<Select placeholder="Специализация"
+				        options={specializations.data}
+				        onSelect={(value, item) => setSelectedSpec(item)}
+				        fieldNames={{ label: 'name', value: 'id' }}
+				        loading={specializations.isLoading}/>
 			</Form.Item>
 			<Form.Item name="grade"
 			           className={styles.form_item}
 			           rules={[{ required: true, message: 'Укажите грейд сотрудника' }]}
 			>
-				<Select placeholder="Грейд" options={grades.data} fieldNames={{ label: 'name', value: 'id' }} loading={grades.isLoading}/>
+				<Select placeholder="Грейд" options={selectedSpec?.grades} fieldNames={{ label: 'name', value: 'id' }} disabled={!selectedSpec}/>
 			</Form.Item>
 			<Form.Item name="role"
 			           className={styles.form_item}
 			           rules={[{ required: true, message: 'Укажите роль сотрудника' }]}
 			>
+				{/*<RoleSelect roles={roles}/>*/}
 				<Select placeholder="Роль" options={roles}/>
 			</Form.Item>
 			<Form.Item className={styles.form_item}>

@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Qualification;
+use App\Entity\User;
 use App\Repository\GradeRepository;
 use App\Repository\SpecializationRepository;
-use App\Repository\UserQualificationRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,13 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AppController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
 	#[Route('/api/users', name: 'get_user_list', methods: ['GET'])]
 	public function get_users(UserRepository $userRepository): Response
 	{
@@ -36,7 +29,7 @@ class UserController extends AppController
 		}
 	}
 
-    #[Route('/api/user', name: 'get_user_info', methods: ['GET'])]
+    #[Route('/api/user', name: 'get_user_info_by_token', methods: ['GET'])]
     public function get_user(): Response
     {
         try {
@@ -52,7 +45,7 @@ class UserController extends AppController
         }
     }
 
-	#[Route('/api/user/{id}', name: 'get_user_info', methods: ['GET'])]
+	#[Route('/api/user/{id}', name: 'get_user_info_by_id', methods: ['GET'])]
 	public function get_user_info(UserRepository $userRepository, $id): Response
 	{
 		try {
@@ -68,54 +61,98 @@ class UserController extends AppController
 		}
 	}
 
-    #[Route('/api/user/qualification', name: 'add_users_qualification', methods: ['POST'])]
-    public function add_users_qualification(
+    #[Route('/api/user', name: 'create_user', methods: ['POST'])]
+	public function create_user(
 		Request $request,
-		SpecializationRepository $specializationRepository,
-		GradeRepository $gradeRepository
-    ): Response
-    {
-        try {
-            $request = $this->transformJsonBody($request);
+	    SpecializationRepository $specializationRepository,
+		GradeRepository $gradeRepository,
+		UserRepository $userRepository,
+	    EntityManagerInterface $entityManager): Response
+	{
+		try {
+			$request = $this->transformJsonBody($request);
+			$email = $request->get('email');
 
-            if (!$specializationRepository->find($request->get('specialization_id'))) {
-                $data = [
-                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'error' => 'Специалиазация с таким id не найдена',
-                ];
-            } elseif (!$gradeRepository->find($request->get('grade_id'))) {
-                $data = [
-                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'error' => 'Грейд с таким id не найден',
-                ];
-            }
-			else {
-                $user = $this->getUser();
-				$grade = $gradeRepository->find($request->get('grade_id'));
-				$specialization = $specializationRepository->find($request->get('specialization_id'));
+			if ($userRepository->findBy(['email' => $email])) {
+				return $this->response([
+					'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+					'errors' => 'Пользователь с таким email уже существует',
+				], Response::HTTP_UNPROCESSABLE_ENTITY);
+			}
 
-                $users_qualification = new Qualification();
-                $users_qualification->setSpecialization($specialization);
-                $users_qualification->setGrade($grade);
+			$user = new User();
+			$user->setEmail($email);
+			$user->setPassword($request->get('password'));
+			$user->setFullName($request->get('fullName'));
+			$role = $request->get('role');
+			if ($role !== 'ROLE_USER') {
+				$user->setRoles([$role]);
+			}
 
-                $this->entityManager->persist($users_qualification);
-                $this->entityManager->flush();
+			$specialization = $specializationRepository->find($request->get('specialization'));
+			$grade = $gradeRepository->find($request->get('grade'));
 
-				$user->addQualification($users_qualification);
+			if (!$specialization->getGrades()->contains($grade)) {
+				return $this->response([
+					'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+					'errors' => 'Такого грейда не существует в этой специализации',
+				], Response::HTTP_UNPROCESSABLE_ENTITY);
+			}
 
-                $data = [
-                    'status' => Response::HTTP_OK,
-                    'success' => 'Квалификация успешно добавлена',
-                ];
-            }
+			$qualification = new Qualification();
+			$qualification->setSpecialization($specialization);
+			$qualification->setGrade($grade);
+			$entityManager->persist($qualification);
 
-            return $this->response($data);
-        } catch (\Exception $e) {
-            $data = [
-                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                'errors' => $e->getMessage(),
-            ];
-            return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-    }
+			$user->addQualification($qualification);
+
+			$entityManager->persist($user);
+			$entityManager->flush();
+
+			return $this->response([
+				'status' => Response::HTTP_CREATED,
+				'data' => 'Пользователь успешно создан',
+			], Response::HTTP_CREATED);
+		} catch (\Exception $e) {
+			$data = [
+				'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+				'errors' => $e->getMessage(),
+			];
+			return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+		}
+	}
+
+	#[Route('/api/user/{id}', name: 'update_user', methods: ['PUT'])]
+	public function update_user(Request $request, UserRepository $userRepository, $id): Response
+	{
+		try {
+			$data = $request->request->all();
+			$user = $userRepository->find($id);
+			$userRepository->updateUser($user, $data);
+			$data = $this->jsonSerialize($user);
+			return $this->response($data, Response::HTTP_OK);
+		} catch (\Exception $e) {
+			$data = [
+				'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+				'errors' => $e->getMessage(),
+			];
+			return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+		}
+	}
+
+	#[Route('/api/user/{id}', name: 'delete_user', methods: ['DELETE'])]
+	public function delete_user(UserRepository $userRepository, $id): Response
+	{
+		try {
+			$user = $userRepository->find($id);
+			$userRepository->deleteUser($user);
+			return $this->response(null, Response::HTTP_OK);
+		} catch (\Exception $e) {
+			$data = [
+				'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+				'errors' => $e->getMessage(),
+			];
+			return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+		}
+	}
 }
