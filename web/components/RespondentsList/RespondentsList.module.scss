@@ -1,0 +1,15 @@
+@import "public/styles/global";
+
+.item_content {
+  display: flex;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+.respondent_name {
+  cursor: pointer;
+
+  &:hover {
+    color: $main-color;
+  }
+}

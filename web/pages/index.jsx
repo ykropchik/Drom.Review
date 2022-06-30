@@ -1,8 +1,31 @@
-import * as React from 'react';
-import { Content } from 'antd/lib/layout/layout';
+import React, { useContext } from 'react';
+import { Divider, Collapse } from 'antd';
+import ReviewBrief from '../components/ReviewBrief/ReviewBrief';
+import { reviews } from '../stubs/reviews';
+import styles from '../public/styles/pages/Reviews.module.scss';
+import { UserRoleContext } from './_app';
 
-export default function Main() {
+const { Panel } = Collapse;
+
+export default function Reviews() {
+	const userRole = useContext(UserRoleContext);
+
 	return (
-		<Content>content</Content>
+		<Collapse defaultActiveKey={['activeReviews']} ghost>
+			<Panel header={<Divider style={{ margin: 0 }} orientation="left">Активные review</Divider>} key="activeReviews">
+				<div className={styles.panel_content}>
+					{
+						reviews.filter((review) => review.currentStatus !== 'completed').map((review, i) => <ReviewBrief review={review} key={i} selfBrief={userRole === 'default'}/>)
+					}
+				</div>
+			</Panel>
+			<Panel header={<Divider style={{ margin: 0 }} orientation="left">Закрытые review</Divider>} key="closedReviews">
+				<div className={styles.panel_content}>
+					{
+						reviews.filter((review) => review.currentStatus === 'completed').map((review, i) => <ReviewBrief review={review} key={i} selfBrief={userRole === 'default'}/>)
+					}
+				</div>
+			</Panel>
+		</Collapse>
 	);
 }

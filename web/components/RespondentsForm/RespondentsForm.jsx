@@ -3,7 +3,7 @@ import { Button, Form, Modal } from 'antd';
 import RespondentsListEditor from '../RespondentsListEditor/RespondentsListEditor';
 import styles from './RespondentsForm.module.scss';
 
-export default function RespondentsForm({ visible, isLoading, title, onCancel, onSave, initialData = null }) {
+export default function RespondentsForm({ visible, isLoading, title, onCancel, onSave, initialData = [] }) {
 	return (
 		<Modal className={styles.modal}
 		       visible={visible}

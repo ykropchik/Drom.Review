@@ -22,7 +22,7 @@ export default function MarkdownEditor({ className, onChange, value = '', ...pro
 				value={selfValue}
 				style={{
 					minHeight: 200,
-					maxHeight: 500,
+					height: '100%',
 					border: 'none',
 					borderBottom: '1px solid var(--dark-accent)'
 				}}

@@ -6,7 +6,7 @@ export default function StatusesTimeline({ data }) {
 		<div>
 			{
 				data.map((item, i) => (
-					<ReviewStatus key={i} step={item.status} author={item.user} comment={item.comment}/>
+					<ReviewStatus key={i} action={item.action} author={item.user} comment={item.comment}/>
 				))
 			}
 		</div>

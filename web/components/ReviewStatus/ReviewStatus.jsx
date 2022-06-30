@@ -3,9 +3,9 @@ import UserAvatar from '../UserAvatar/UserAvatar';
 import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
 import MarkdownRender from '../MarkdownRender/MarkdownRender';
 import styles from './ReviewStatus.module.scss';
-import { reviewStatusInfo } from '../../configs/reviewStatus';
+import { reviewHistoryInfo } from '../../configs/reviewInfo';
 
-export default function ReviewStatus({ author, step, comment }) {
+export default function ReviewStatus({ author, action, comment }) {
 	// if (comment === '') {
 	// 	return (
 	// 		<div className={styles.without_comment}>
@@ -36,14 +36,16 @@ export default function ReviewStatus({ author, step, comment }) {
 	return (
 		<div className={styles.without_comment}>
 			<div className={styles.inner}>
-				<div className={styles.status_icon}>{reviewStatusInfo[step].icon}</div>
+				<div className={styles.status_icon}>{reviewHistoryInfo[action]?.icon}</div>
 				<div className={styles.avatar_container}>
-					<UserAvatar avatarPlaceholder={getAvatarPlaceholder(author.name)} size={24}/>
+					<UserAvatar size={24}>
+						{getAvatarPlaceholder(author.name)}
+					</UserAvatar>
 				</div>
 				<div className={styles.right_side}>
 					<div className={styles.header}>
 						<span className={styles.author}>{author.name}</span>
-						<span className={styles.status}>{reviewStatusInfo[step].description}</span>
+						<span className={styles.status}>{reviewHistoryInfo[action]?.description}</span>
 					</div>
 					<MarkdownRender mdText={comment}/>
 				</div>
