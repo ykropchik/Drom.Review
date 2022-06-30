@@ -3,7 +3,7 @@ import { Card, Divider, Steps } from 'antd';
 import UserAvatar from '../UserAvatar/UserAvatar';
 import { CheckOutlined, ClockCircleOutlined, CloseOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
-import { reviewStatusStep } from '../../configs/reviewInfo';
+import { reviewStatusInfo } from '../../configs/reviewInfo';
 import styles from './ReviewBrief.module.scss';
 
 const { Step } = Steps;
@@ -23,7 +23,7 @@ export default function ReviewBrief({ review, selfBrief }) {
 			<Divider/>
 			<Steps direction="vertical"
 			       size="small"
-			       current={reviewStatusStep[review.currentStatus]}
+			       current={reviewStatusInfo[review.currentStatus].step}
 			       progressDot={(iconDot, { status }) => {
 				       switch (status) {
 					       case 'finish': return <CheckOutlined className={styles.finish}/>;

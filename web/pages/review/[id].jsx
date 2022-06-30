@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { reviews } from '../../stubs/reviews';
 import { Button, Card, Collapse, Divider, Dropdown, Empty, Layout, Menu, PageHeader, Steps } from 'antd';
 import styles from '../../public/styles/pages/Review.module.scss';
-import { reviewStatusStep } from '../../configs/reviewInfo';
+import { reviewStatusInfo } from '../../configs/reviewInfo';
 import {
 	CaretDownOutlined,
 	CheckCircleOutlined,
@@ -87,7 +87,7 @@ export default function ReviewPage() {
 	return (
 		<PageHeader {...pageHeaderProps} onBack={() => router.back()}>
 			<Card>
-				<Steps className={styles.steps} current={reviewStatusStep[review.currentStatus]} direction="horizontal">
+				<Steps className={styles.steps} current={reviewStatusInfo[review.currentStatus].step} direction="horizontal">
 					<Step title="Начало review" icon={<FileTextOutlined />} description="Сбор self-review и списка респондентов"/>
 					<Step title="Проверка" icon={<FileDoneOutlined />} description="Проверка self-review и списка респондентов" />
 					<Step title="Сбор 360 мнений" icon={<SyncOutlined />} description="Респонденты отказываются или пишут 360-мнение" />
@@ -99,7 +99,7 @@ export default function ReviewPage() {
 						<Panel header={
 							<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>
 								Self review
-								{reviewStatusStep[review.currentStatus] < 2 && userRole === 'default' &&
+								{reviewStatusInfo[review.currentStatus].step < 2 && userRole === 'default' &&
 									<span className={styles.edit_button}
 									      onClick={onSelfReviewEditClickHandler}><EditOutlined/></span>
 								}
@@ -114,7 +114,7 @@ export default function ReviewPage() {
 						<Panel header={
 							<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>
 								Список респондентов
-								{reviewStatusStep[review.currentStatus] < 2 && userRole === 'default' &&
+								{reviewStatusInfo[review.currentStatus].step < 2 && userRole === 'default' &&
 									<span className={styles.edit_button}
 									      onClick={onRespondentsListEditClickHandler}><EditOutlined/></span>
 								}

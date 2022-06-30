@@ -1,34 +1,43 @@
 import React from 'react';
 import { Table, Tabs } from 'antd';
 import TabPaneItem from '../../components/TabPaneItem/TabPaneItem';
-import {
-	CheckCircleOutlined, ClockCircleOutlined,
-	FileAddOutlined, FileSearchOutlined,
-	OrderedListOutlined, SyncOutlined,
-} from '@ant-design/icons';
+import { FileAddOutlined, OrderedListOutlined } from '@ant-design/icons';
 import UserAvatar from '../../components/UserAvatar/UserAvatar';
-import { reviews } from '../../stubs/reviews';
 import Tag from '../../components/Tag/Tag';
 import NewReviewForm from '../../components/NewReviewForm/NewReviewForm';
+import useData from '../../scripts/hooks/useData';
+import { EndPoints } from '../../scripts/api/EndPoints';
+import { reviewStatusInfo } from '../../configs/reviewInfo';
+import dateFormatter from '../../scripts/dateFormatter';
 
 const { TabPane } = Tabs;
 
 export default function Reviews() {
+	const reviews = useData(EndPoints.REVIEWS);
+
 	return (
 		<Tabs defaultActiveKey="list">
 			<TabPane key="list"
 			         tab={<TabPaneItem icon={<OrderedListOutlined/>} title="Список review"/>}
 			>
-				<Table dataSource={reviews} columns={columns}/>
+				<Table dataSource={reviews.data} loading={reviews.isLoading} columns={columns}/>
 			</TabPane>
 			<TabPane key="newUsers"
 			         tab={<TabPaneItem icon={<FileAddOutlined/>} title="Создать"/>}
 			>
-				<NewReviewForm/>
+				<NewReviewForm onCreate={reviews.update}/>
 			</TabPane>
 		</Tabs>
 	);
 }
+
+const statusFilters = () => {
+	let result = [];
+	for (let [key, value] of Object.entries(reviewStatusInfo)) {
+		result.push({ text: value.title, value: key });
+	}
+	return result;
+};
 
 const columns = [
 	{
@@ -41,9 +50,9 @@ const columns = [
 	{
 		title: 'Имя',
 		dataIndex: 'subject',
-		key: 'name',
-		sorter: (a, b) => a.name > b.name ? 1 : -1,
-		render: (data) => data.name
+		key: 'subject',
+		sorter: (a, b) => a.fullName > b.fullName ? 1 : -1,
+		render: (data) => data.fullName
 	},
 	{
 		title: 'Специализация',
@@ -75,8 +84,9 @@ const columns = [
 				value: 'Java'
 			}
 		],
-		sorter: (a, b) => a.specialization > b.specialization ? 1 : -1,
-		onFilter: (value, record) => record.specialization.indexOf(value) === 0
+		sorter: (a, b) => a.specialization.name > b.specialization.name ? 1 : -1,
+		onFilter: (value, record) => record.specialization.name.toLowerCase().indexOf(value) === 0,
+		render: (data) => data.name
 	},
 	{
 		title: 'Грейд',
@@ -96,31 +106,26 @@ const columns = [
 				value: 'Senior'
 			},
 		],
-		sorter: (a, b) => a.grade > b.grade ? 1 : -1,
-		onFilter: (value, record) => record.grade.indexOf(value) === 0
+		sorter: (a, b) => a.grade.name > b.grade.name ? 1 : -1,
+		onFilter: (value, record) => record.grade.name.toLowerCase().indexOf(value) === 0,
+		render: (data) => data.name
+	},
+	{
+		title: 'Дата начала',
+		dataIndex: 'dateStart',
+		key: 'dateStart',
+		sorter: (a, b) => a > b ? 1 : -1,
+		render: (data) => dateFormatter(data)
 	},
 	{
 		title: 'Статус',
-		dataIndex: 'currentStatus',
-		key: 'currentStatus',
+		dataIndex: 'status',
+		key: 'status',
+		filters: statusFilters(),
+		onFilter: (value, record) => record.status.indexOf(value) === 0,
 		render: (data) => {
-			if (data === 'fixing') {
-				return <Tag icon={<SyncOutlined/>} type="warning">Исправление</Tag>;
-			}
-
-			if (data === 'completed') {
-				return <Tag icon={<CheckCircleOutlined/>} type="success">Завершен</Tag>;
-			}
-
-			if (data === 'review') {
-				return <Tag icon={<FileSearchOutlined/>} type="process">На проверке</Tag>;
-			}
-
-			if (data === 'init') {
-				return <Tag icon={<ClockCircleOutlined/>} type="process">В процессе</Tag>;
-			}
-
-			return <Tag icon={<ClockCircleOutlined/>} type="default">На редактировании</Tag>;
+			const statusData = reviewStatusInfo[data];
+			return <Tag icon={statusData.icon} type={statusData.type}>{statusData.title}</Tag>;
 		}
 	}
 ];

@@ -47,18 +47,19 @@ class ReviewController extends AppController
             if (!$subject || !$lead) {
                 return $this->response([
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'Отсутствует пользователь с таким id',
+                    'message' => 'Отсутствует пользователь с таким id',
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-			$specialization = $specializationRepository->find($request->get('specialization'));
+			$qualification = $request->get('qualification');
+			$specialization = $specializationRepository->find($qualification['specialization']);
 			$specializationGrades = $specialization->getGrades();
-			$grade = $gradeRepository->find($request->get('grade'));
+			$grade = $gradeRepository->find($qualification['grade']);
 
 			if(!$specializationGrades->contains($grade)) {
 				return $this->response([
 					'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-					'errors' => 'У выбранной специализации отсутствует грейд с таким id',
+					'message' => 'У выбранной специализации отсутствует грейд с таким id',
 				], Response::HTTP_UNPROCESSABLE_ENTITY);
 			}
 
@@ -83,12 +84,12 @@ class ReviewController extends AppController
 
             return $this->response([
 	            'status' => Response::HTTP_OK,
-	            'success' => 'Review успешно инициализирован',
+	            'message' => 'Review успешно инициализирован',
             ]);
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                'errors' => $e->getMessage(),
+                'message' => $e->getMessage(),
             ];
             return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -116,7 +117,7 @@ class ReviewController extends AppController
         } catch (\Exception $e) {
             return $this->response([
 	            'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-	            'errors' => $e->getMessage(),
+	            'message' => $e->getMessage(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
@@ -130,12 +131,12 @@ class ReviewController extends AppController
             if (!$reviewRepository->find($id)) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'Отсутствует review с таким id',
+                    'message' => 'Отсутствует review с таким id',
                 ];
             } elseif (!$request->get('status')) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'Не указан статус',
+                    'message' => 'Не указан статус',
                 ];
             } else {
                 $review = $reviewRepository->find($id);
@@ -155,7 +156,7 @@ class ReviewController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Статус успешно изменен',
+                    'message' => 'Статус успешно изменен',
                 ];
             }
 
@@ -163,7 +164,7 @@ class ReviewController extends AppController
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                'errors' => $e->getMessage(),
+                'message' => $e->getMessage(),
             ];
             return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -179,12 +180,12 @@ class ReviewController extends AppController
             if (!$reviewRepository->find($id)) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'Review с таким id не найден',
+                    'message' => 'Review с таким id не найден',
                 ];
             } elseif (!$request->get('comment')) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'Не указан комментарий',
+                    'message' => 'Не указан комментарий',
                 ];
             } else {
                 $review = $reviewRepository->find($id);
@@ -202,7 +203,7 @@ class ReviewController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Комментарий успешно добавлен',
+                    'message' => 'Комментарий успешно добавлен',
                 ];
             }
 
@@ -210,7 +211,7 @@ class ReviewController extends AppController
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                'errors' => $e->getMessage(),
+                'message' => $e->getMessage(),
             ];
             return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -225,12 +226,12 @@ class ReviewController extends AppController
             if (!$reviewRepository->find($id)) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'Review с таким id не найден',
+                    'message' => 'Review с таким id не найден',
                 ];
             } elseif (!$request->get('self_review')) {
                 $data = [
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'errors' => 'Self review не указан',
+                    'message' => 'Self review не указан',
                 ];
             } else {
                 $review = $reviewRepository->find($id);
@@ -250,7 +251,7 @@ class ReviewController extends AppController
 
                 $data = [
                     'status' => Response::HTTP_OK,
-                    'success' => 'Self-review успешно добавлен',
+                    'message' => 'Self-review успешно добавлен',
                 ];
             }
 
@@ -258,7 +259,7 @@ class ReviewController extends AppController
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                'errors' => $e->getMessage(),
+                'message' => $e->getMessage(),
             ];
             return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -277,12 +278,12 @@ class ReviewController extends AppController
 			if (!$reviewRepository->find($id)) {
 				return $this->response([
 					'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-					'errors' => 'Review с таким id не найден',
+					'message' => 'Review с таким id не найден',
 				], Response::HTTP_UNPROCESSABLE_ENTITY);
 			} elseif (!$request->get('respondents')) {
 				return $this->response([
 					'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-					'errors' => 'Не указаны респонденты',
+					'message' => 'Не указаны респонденты',
 				], Response::HTTP_UNPROCESSABLE_ENTITY);
 			}
 
@@ -313,12 +314,12 @@ class ReviewController extends AppController
 			$this->entityManager->flush();
 			return $this->response([
 				'status' => Response::HTTP_OK,
-				'success' => 'Респонденты успешно добавлены',
+				'message' => 'Респонденты успешно добавлены',
 			]);
 		} catch (\Exception $e) {
 			return $this->response([
 				'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-				'errors' => $e->getMessage(),
+				'message' => $e->getMessage(),
 			], Response::HTTP_UNPROCESSABLE_ENTITY);
 		}
 	}

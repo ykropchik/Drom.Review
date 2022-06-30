@@ -9,5 +9,6 @@ export class EndPoints {
 	static USER = this.BASE_PATH + '/user';
 	static USERS = this.BASE_PATH + '/users';
 	static QUESTIONS = this.BASE_PATH + '/question';
-	static REVIEWS = this.BASE_PATH + '/review?type=all';
+	static REVIEW = this.BASE_PATH + '/review';
+	static REVIEWS = this.BASE_PATH + '/reviews';
 }

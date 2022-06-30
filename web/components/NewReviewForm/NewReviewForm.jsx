@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { AutoComplete, Button, Form, Select } from 'antd';
+import { Button, Form, message } from 'antd';
 import styles from './NewReviewForm.module.scss';
 import useData from '../../scripts/hooks/useData';
 import { EndPoints } from '../../scripts/api/EndPoints';
+import request from '../../scripts/api/request';
+import QualificationSelect from '../QualificationSelect/QualificationSelect';
+import UserSelect from '../UserSelect/UserSelect';
 
-const { Option } = Select;
-
-export default function NewReviewForm() {
+export default function NewReviewForm({ onCreate }) {
 	const users = useData(EndPoints.USERS);
 	const [selectedUser, setSelectedUser] = useState(null);
+	const [creating, setCreating] = useState(false);
 	const [form] = Form.useForm();
 
 	const onSelectHandler = (user) => {
@@ -19,55 +21,44 @@ export default function NewReviewForm() {
 		setSelectedUser(user);
 	};
 
+	const onFinish = (data) => {
+		setCreating(true);
+		request(EndPoints.REVIEW, 'POST', data)
+			.finally(() => setCreating(false))
+			.then((res) => {
+				form.resetFields();
+				message.success(res.message);
+				onCreate();
+			})
+			.catch((err) => message.error(err.message));
+	};
+
 	return (
 		<Form wrapperCol={{ flex: '0 1 400px' }}
 		      style={{ width: 'auto' }}
 		      form={form}
 		      validateTrigger="onBlur"
 		      autoComplete="off"
+		      onFinish={onFinish}
 		>
-			<Form.Item className={styles.form_item} name="user">
-				<AutoComplete placeholder="Выберите сотрудника"
-				              options={users.data}
-				              loading={users.isLoading}
-				              allowClear
-				              filterOption={(inputValue, option) =>
-					              option?.fullName.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-				              }
-				              onClear={() => onSelectHandler(null)}
-				              onSelect={(_, user) => onSelectHandler(user)}
-				              fieldNames={{ label: 'fullName', value: 'fullName' }}/>
+			<Form.Item className={styles.form_item} name="subject">
+				<UserSelect isLoading={users.isLoading}
+				            data={users.data}
+				            placeholder="Выберите сотрудника"
+				            onSelect={onSelectHandler}/>
 			</Form.Item>
 			<Form.Item className={styles.form_item} name="qualification">
-				<Select optionLabelProp="label"
-				        disabled={!selectedUser}
-				        placeholder="Выберите квалификацию сотрудника"
-				        onSelect={console.log}>
-					{
-						selectedUser?.qualifications.map((item, i) =>
-							<Option title={`${item.specialization.name} - ${item.grade.name}`}
-							        value={`${item.specialization.name} - ${item.grade.name}`}
-							        item={item}
-							        key={i}>
-								{`${item.specialization.name} - ${item.grade.name}`}
-							</Option>
-						)
-					}
-				</Select>
+				<QualificationSelect data={selectedUser?.qualifications} disabled={!selectedUser}/>
 			</Form.Item>
 			<Form.Item className={styles.form_item} name="lead">
-				<AutoComplete placeholder="Выберите ответственного за проверку"
-				              disabled={!selectedUser}
-				              options={users.data}
-				              isLoading={users.isLoading}
-				              allowClear
-				              filterOption={(inputValue, option) =>
-					              option?.fullName.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-				              }
-				              fieldNames={{ label: 'fullName', value: 'fullName' }}/>
+				<UserSelect isLoading={users.isLoading}
+				            disabled={!selectedUser}
+				            data={users.data}
+				            placeholder="Выберите ответственного за проверку"
+				            onSelect={onSelectHandler}/>
 			</Form.Item>
 			<Form.Item className={styles.form_item}>
-				<Button htmlType="submit" type="primary" >Создать</Button>
+				<Button htmlType="submit" type="primary" loading={creating}>Создать</Button>
 			</Form.Item>
 		</Form>
 	);
