@@ -106,7 +106,7 @@ class ReviewController extends AppController
 	            $ownReviews = $reviewRepository->findBy(['lead' => $this->getUser()]);
 	            $data = $this->jsonSerialize($ownReviews, ['qualifications', 'grades']);
             } elseif ($requestType === 'self') {
-				$ownReviews = $reviewRepository->findBy(['user' => $this->getUser()]);
+				$ownReviews = $reviewRepository->findBy(['subject' => $this->getUser()]);
 				$data = $this->jsonSerialize($ownReviews, ['qualifications', 'grades']);
             } else {
 	            $reviews = $reviewRepository->findAll();
@@ -122,7 +122,29 @@ class ReviewController extends AppController
         }
     }
 
-    #[Route('/api/review/status/{id}', name: 'set_review_status', methods: ['PUT'])]
+	#[Route('/api/review/{id}', name: 'get_review', methods: ['GET'])]
+	public function get_review(ReviewRepository $reviewRepository, $id): Response
+	{
+		try {
+			$result = $reviewRepository->find($id);
+
+			if (!$result) {
+				return $this->response([
+					'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+					'message' => 'Отсутствует review с таким id',
+				], Response::HTTP_UNPROCESSABLE_ENTITY);
+			}
+
+			return $this->response($this->jsonSerialize($result, ['qualifications', 'grades']));
+		} catch (\Exception $e) {
+			return $this->response([
+				'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+				'message' => $e->getMessage(),
+			], Response::HTTP_UNPROCESSABLE_ENTITY);
+		}
+	}
+
+    #[Route('/api/review/{id}/status', name: 'set_review_status', methods: ['PUT'])]
     public function set_review_status(Request $request, ReviewRepository $reviewRepository, $id): Response
     {
         try {
@@ -170,7 +192,7 @@ class ReviewController extends AppController
         }
     }
 
-    #[Route('/api/review/comment/{id}', name: 'add_review_comment', methods: ['PUT'])]
+    #[Route('/api/review/{id}/comment', name: 'add_review_comment', methods: ['PUT'])]
     public function add_review_comment(Request $request, ReviewRepository $reviewRepository, $id): Response
     {
         try {
@@ -218,42 +240,44 @@ class ReviewController extends AppController
     }
 
     #[Route('/api/review/{id}/self-review', name: 'add_self_review', methods: ['PUT'])]
-    public function add_self_review(Request $request, ReviewRepository $reviewRepository, $id): Response
+    public function change_self_review(Request $request, ReviewRepository $reviewRepository, $id): Response
     {
         try {
             $request = $this->transformJsonBody($request);
 
             if (!$reviewRepository->find($id)) {
-                $data = [
-                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                    'message' => 'Review с таким id не найден',
-                ];
-            } elseif (!$request->get('self_review')) {
-                $data = [
+	            return $this->response([
+		            'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+		            'message' => 'Review с таким id не найден',
+	            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+			if (!$request->get('selfReview')) {
+                return $this->response([
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
                     'message' => 'Self review не указан',
-                ];
-            } else {
-                $review = $reviewRepository->find($id);
-                $review->setSelfReview($request->get('self_review'));
-
-                $review->addHistory(
-	                [
-						'action' => ReviewActions::$ADD_SELF_REVIEW,
-		                'user' => $this->getUser(),
-		                'comment' => 'Добавлено новое self-review',
-		                'created_at' => date_timestamp_get(new DateTime())
-	                ]
-                );
-
-                $this->entityManager->persist($review);
-                $this->entityManager->flush();
-
-                $data = [
-                    'status' => Response::HTTP_OK,
-                    'message' => 'Self-review успешно добавлен',
-                ];
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
+
+	        $review = $reviewRepository->find($id);
+	        $review->setSelfReview($request->get('selfReview'));
+
+	        $review->addHistory(
+		        [
+			        'action' => ReviewActions::$ADD_SELF_REVIEW,
+			        'user' => $this->getUser(),
+			        'comment' => null,
+			        'created_at' => date_timestamp_get(new DateTime())
+		        ]
+	        );
+
+	        $this->entityManager->persist($review);
+	        $this->entityManager->flush();
+
+	        $data = [
+		        'status' => Response::HTTP_OK,
+		        'message' => 'Self-review успешно добавлен',
+	        ];
 
             return $this->response($data);
         } catch (\Exception $e) {
@@ -266,7 +290,7 @@ class ReviewController extends AppController
     }
 
 	#[Route('/api/review/{id}/respondents', name: 'add_respondents', methods: ['PUT'])]
-	function add_respondents(
+	function change_respondents(
 		Request $request,
 		ReviewRepository $reviewRepository,
 		UserRepository $userRepository,
@@ -274,23 +298,26 @@ class ReviewController extends AppController
 	{
 		try {
 			$request = $this->transformJsonBody($request);
+			$review = $reviewRepository->find($id);
 
-			if (!$reviewRepository->find($id)) {
+			if (!$review) {
 				return $this->response([
 					'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
 					'message' => 'Review с таким id не найден',
 				], Response::HTTP_UNPROCESSABLE_ENTITY);
-			} elseif (!$request->get('respondents')) {
+			}
+
+			$respondentsId = $request->get('respondents');
+
+			if (!$respondentsId) {
 				return $this->response([
 					'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-					'message' => 'Не указаны респонденты',
+					'message' => 'Не задан список респондентов',
 				], Response::HTTP_UNPROCESSABLE_ENTITY);
 			}
 
-			$review = $reviewRepository->find($id);
-			$respondentsId = $request->get('respondents');
 			$respondents = [];
-
+			$review->removeRespondents();
 			foreach ($respondentsId as $respondentId) {
 				$newRespondent = new Respondent();
 				$newRespondent->setUser($userRepository->find($respondentId));
@@ -314,7 +341,7 @@ class ReviewController extends AppController
 			$this->entityManager->flush();
 			return $this->response([
 				'status' => Response::HTTP_OK,
-				'message' => 'Респонденты успешно добавлены',
+				'message' => 'Респонденты успешно изменены',
 			]);
 		} catch (\Exception $e) {
 			return $this->response([

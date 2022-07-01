@@ -72,11 +72,11 @@ export const reviewHistoryInfo = {
 		icon: <CheckCircleOutlined />
 	},
 	'add_self_review': {
-		description: 'добавил self-review',
+		description: 'изменил self-review',
 		icon: <FileAddOutlined />
 	},
 	'add_respondents_list': {
-		description: 'добавил список респондентов',
+		description: 'изменил список респондентов',
 		icon: <UsergroupAddOutlined />
 	},
 	'edit_self_review': {

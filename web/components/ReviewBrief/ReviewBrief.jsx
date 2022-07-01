@@ -23,7 +23,7 @@ export default function ReviewBrief({ review, selfBrief }) {
 			<Divider/>
 			<Steps direction="vertical"
 			       size="small"
-			       current={reviewStatusInfo[review.currentStatus].step}
+			       current={reviewStatusInfo[review.status].step}
 			       progressDot={(iconDot, { status }) => {
 				       switch (status) {
 					       case 'finish': return <CheckOutlined className={styles.finish}/>;
@@ -41,7 +41,7 @@ export default function ReviewBrief({ review, selfBrief }) {
 }
 
 function OwnBriefHeader({ review }) {
-	return <span className={styles.own_header}>{`${review.specialization}: ${review.grade}`}</span>;
+	return <span className={styles.own_header}>{`${review.specialization.name}: ${review.grade.name}`}</span>;
 }
 
 function UnfamiliarBriefHeader({ review }) {
