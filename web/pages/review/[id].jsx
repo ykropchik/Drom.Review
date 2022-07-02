@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { reviews } from '../../stubs/reviews';
-import { Button, Card, Collapse, Divider, Dropdown, Empty, Layout, Menu, PageHeader, Steps } from 'antd';
+import { Button, Card, Collapse, Divider, Dropdown, Empty, Layout, Menu, message, PageHeader, Spin, Steps } from 'antd';
 import styles from '../../public/styles/pages/Review.module.scss';
-import { reviewStatusStep } from '../../configs/reviewInfo';
+import { reviewStatusInfo } from '../../configs/reviewInfo';
 import {
 	CaretDownOutlined,
 	CheckCircleOutlined,
@@ -15,12 +14,15 @@ import {
 import MarkdownRender from '../../components/MarkdownRender/MarkdownRender';
 import RespondentsList from '../../components/RespondentsList/RespondentsList';
 import OpinionsList from '../../components/OpinionsList/OpinionsList';
-import StatusesTimeline from '../../components/StatusesTimeline/StatusesTimeline';
+import HistoryTimeline from '../../components/HistoryTimeline/HistoryTimeline';
 import SelfReviewForm from '../../components/SelfReviewForm/SelfReviewForm';
 import RespondentsForm from '../../components/RespondentsForm/RespondentsForm';
-import { UserRoleContext } from '../_app';
 import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
 import MarkdownEditor from '../../components/MarkdownEditor/MarkdownEditor';
+import useData from '../../scripts/hooks/useData';
+import { EndPoints } from '../../scripts/api/EndPoints';
+import request from '../../scripts/api/request';
+import { useSession } from '../../scripts/SessionProvider';
 
 const { Content } = Layout;
 const { Step } = Steps;
@@ -29,32 +31,31 @@ const { Panel } = Collapse;
 export default function ReviewPage() {
 	const router = useRouter();
 	const { id } = router.query;
-	const [review, setReview] = useState(reviews[id]);
+	const review = useData(EndPoints.REVIEW + '/' + id ?? 0);
 	const [selfReviewFormVisible, setSelfReviewFormVisible] = useState(false);
 	const [respondentsFormVisible, setRespondentsFormVisible] = useState(false);
-	const userRole = useContext(UserRoleContext);
+	const { role } = useSession();
 	const [pageHeaderProps, setPageHeaderProps] = useState({});
 	const [comment, setComment] = useState('');
+	const [saving, setSaving] = useState(false);
+	const [statusChanging, setStatusChanging] = useState(false);
+	const [commentSending, setCommentSending] = useState(false);
 
 	useEffect(() => {
-		setPageHeaderProps(getPageHeaderProps(userRole));
-	}, [userRole]);
-
-	useEffect(() => {
-		setReview(reviews[id]);
-	}, []);
+		setPageHeaderProps(getPageHeaderProps(role));
+	}, [role, review.data]);
 
 	const getPageHeaderProps = (role) => {
-		if (role === 'default') {
+		if (role === 'ROLE_LEAD') {
 			return {
-				title: `${review?.specialization}: ${review?.grade}`
+				title: review.data?.subject.fullName,
+				avatar: { style: { backgroundColor: '#DB011A'}, children: getAvatarPlaceholder(review.data?.subject.fullName) },
+				subTitle: `${review.data?.specialization.name}: ${review.data?.grade.name}`
 			};
 		}
 
 		return {
-			title: review?.subject.name,
-			avatar: { style: { backgroundColor: '#DB011A'}, children: getAvatarPlaceholder(review?.subject.name) },
-			subTitle: `${review?.specialization}: ${review?.grade}`
+			title: `${review.data?.specialization.name}: ${review.data?.grade.name}`
 		};
 	};
 
@@ -81,13 +82,62 @@ export default function ReviewPage() {
 	};
 
 	const onCommentClickHandler = () => {
+		setCommentSending(true);
+		request(EndPoints.REVIEW + `/${id}/comment`, 'PUT', { comment: comment })
+			.finally(() => {
+				setCommentSending(false);
+				review.update();
+			})
+			.then(() => {
+				setComment('');
+				message.success('Комментарий отправлен');
+			})
+			.catch((err) => message.error(err.message));
+	};
 
+	const setNewStatus = (newStatus) => {
+		setStatusChanging(true);
+		request(EndPoints.REVIEW + `/${id}/status`, 'PUT', { status: newStatus, comment: comment !== '' ? comment : null })
+			.finally(() => {
+				setStatusChanging(false);
+				review.update();
+			})
+			.then(() => message.success('Статус изменен'))
+			.catch((err) => message.error(err.message));
+	};
+
+	const onSaveSelfReviewHandler = (data) => {
+		setSaving(true);
+		request(EndPoints.REVIEW + `/${id}/self-review`, 'PUT', data)
+			.finally(() => {
+				setSaving(false);
+				review.update();
+			})
+			.then(() => {
+				message.success('Изменения сохранены');
+				setSelfReviewFormVisible(false);
+			})
+			.catch((err) => message.error(err.message));
+	};
+
+	const onSaveRespondentsHandler = (data) => {
+		setSaving(true);
+		request(EndPoints.REVIEW + `/${id}/respondents`, 'PUT', data)
+			.finally(() => {
+				setSaving(false);
+				review.update();
+			})
+			.then(() => {
+				message.success('Изменения сохранены');
+				setRespondentsFormVisible(false);
+			})
+			.catch((err) => message.error(err.message));
 	};
 
 	return (
 		<PageHeader {...pageHeaderProps} onBack={() => router.back()}>
 			<Card>
-				<Steps className={styles.steps} current={reviewStatusStep[review.currentStatus]} direction="horizontal">
+				<Steps className={styles.steps} current={reviewStatusInfo[review.data?.status]?.step} direction="horizontal">
 					<Step title="Начало review" icon={<FileTextOutlined />} description="Сбор self-review и списка респондентов"/>
 					<Step title="Проверка" icon={<FileDoneOutlined />} description="Проверка self-review и списка респондентов" />
 					<Step title="Сбор 360 мнений" icon={<SyncOutlined />} description="Респонденты отказываются или пишут 360-мнение" />
@@ -99,14 +149,15 @@ export default function ReviewPage() {
 						<Panel header={
 							<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>
 								Self review
-								{reviewStatusStep[review.currentStatus] < 2 && userRole === 'default' &&
+								{
+									reviewStatusInfo[review.data?.status]?.step < 2 && role === 'ROLE_USER' &&
 									<span className={styles.edit_button}
 									      onClick={onSelfReviewEditClickHandler}><EditOutlined/></span>
 								}
 							</Divider>} key="selfReview">
 							{
-								review.selfReview ?
-									<MarkdownRender mdText={review.selfReview}/>
+								review.data?.selfReview ?
+									<MarkdownRender mdText={review.data?.selfReview}/>
 									:
 									<Empty image={Empty.PRESENTED_IMAGE_SIMPLE}/>
 							}
@@ -114,57 +165,71 @@ export default function ReviewPage() {
 						<Panel header={
 							<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>
 								Список респондентов
-								{reviewStatusStep[review.currentStatus] < 2 && userRole === 'default' &&
+								{
+									reviewStatusInfo[review.data?.status]?.step < 2 && role === 'ROLE_USER' &&
 									<span className={styles.edit_button}
 									      onClick={onRespondentsListEditClickHandler}><EditOutlined/></span>
 								}
 							</Divider>}
 						       key="respondentsList">
-							<RespondentsList list={review.respondentsList}/>
+							<RespondentsList list={review.data?.respondents}/>
 						</Panel>
 						{
-							userRole !== 'default' &&
+							role !== 'ROLE_USER' &&
 							<Panel header={<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>360 мнения</Divider>}
 							       key="opinions">
-								<OpinionsList list={review.opinionsList}/>
+								<OpinionsList list={review.data?.opinionsList}/>
 							</Panel>
 						}
 						{/*<Panel header={<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>История статусов и комментарии</Divider>}*/}
 						{/*       key="history">*/}
-						{/*	<StatusesTimeline data={review.history}/>*/}
+						{/*	<HistoryTimeline data={review.history}/>*/}
 						{/*</Panel>*/}
 					</Collapse>
 				</Content>
 			</Card>
 			<h2 className={styles.history_title}>История изменений:</h2>
-			<StatusesTimeline data={review.history}/>
-			{
-				review.currentStatus !== 'completed' &&
-				<>
-					<Divider/>
-					<div>
-						<MarkdownEditor value={comment} onChange={onCommentChangeHandler}/>
-						<div className={styles.new_comment_buttons}>
-							{
-								userRole !== 'default' &&
-								<>
-									<LeaderButtons reviewStatus={review.currentStatus} onClick={onLeaderButtonsClickHandler} withComment={comment}/>
-									<Divider type="vertical"/>
-								</>
-							}
-							<Button type="primary" onClick={onCommentClickHandler} disabled={!comment}>Комментарий</Button>
+			<HistoryTimeline data={review.data?.history}/>
+			<Spin spinning={statusChanging || commentSending}>
+				{
+					review.data?.status !== 'completed' &&
+					<>
+						<Divider/>
+						<div>
+							<MarkdownEditor value={comment} onChange={onCommentChangeHandler}/>
+							<div className={styles.new_comment_buttons}>
+								{
+									role !== 'ROLE_USER' &&
+									<>
+										<LeaderButtons reviewStatus={review.data?.status} onClick={onLeaderButtonsClickHandler} withComment={comment}/>
+										<Divider type="vertical"/>
+									</>
+								}
+								{
+									role === 'ROLE_USER' && reviewStatusInfo[review.data?.status]?.step === 0 &&
+									<>
+										<Button onClick={() => setNewStatus('review')}>{comment ? 'Отправить на проверку с комментарием' : 'Отправить на проверку'}</Button>
+										<Divider type="vertical"/>
+									</>
+								}
+								<Button type="primary" onClick={onCommentClickHandler} disabled={!comment}>Комментарий</Button>
+							</div>
 						</div>
-					</div>
-				</>
-			}
+					</>
+				}
+			</Spin>
 			<SelfReviewForm visible={selfReviewFormVisible}
+			                isLoading={saving}
 			                onCancel={() => setSelfReviewFormVisible(false)}
-			                title={review.respondentsList === null ? 'Создание self-review' : 'Редактирование self-review'}
-			                initialData={{ review: review.selfReview || '' }}/>
+			                title={review.data?.selfReview === null ? 'Создание self-review' : 'Редактирование self-review'}
+			                onSave={onSaveSelfReviewHandler}
+			                initialData={{ selfReview: review.data?.selfReview || '' }}/>
 			<RespondentsForm visible={respondentsFormVisible}
+			                 isLoading={saving}
 			                 onCancel={() => setRespondentsFormVisible(false)}
-			                 title={review.respondentsList === null ? 'Создание списка респондентов' : 'Редактирование списка респондентов'}
-			                 initialData={{ respondents: review.respondentsList || [] }}/>
+			                 title={review.data?.respondentsList === null ? 'Создание списка респондентов' : 'Редактирование списка респондентов'}
+			                 onSave={onSaveRespondentsHandler}
+			                 initialData={{ respondents: review.data?.respondents.map((item) => item.id) || [] }}/>
 		</PageHeader>
 	);
 }

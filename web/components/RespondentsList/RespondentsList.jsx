@@ -33,9 +33,9 @@ RespondentsList.Item = ({ data }) => {
 	// </List.Item>
 
 		<List.Item className={styles.item_content}>
-			<UserAvatar avatarUrl={data.avatarUrl} userName={data.name} size={32}/>
-			<Link href={`/user/${data.id}`}>
-				<span className={styles.respondent_name}>{data.name}</span>
+			<UserAvatar avatarUrl={data.user.avatarUrl} userName={data.user.fullName} size={32}/>
+			<Link href={`/user/${data.user.id}`}>
+				<span className={styles.respondent_name}>{data.user.fullName}</span>
 			</Link>
 			<Divider type="vertical"/>
 			<RespondentStatusTag status={data.status}/>

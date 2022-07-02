@@ -18,7 +18,7 @@ class UserController extends AppController
 	public function get_users(UserRepository $userRepository): Response
 	{
 		try {
-			$users = $this->jsonSerialize($userRepository->findAll(), ['grades']);
+			$users = $this->jsonSerialize($userRepository->findAllExcept($this->getUser()), ['grades']);
 			return $this->response($users, Response::HTTP_OK);
 		} catch (\Exception $e) {
 			$data = [

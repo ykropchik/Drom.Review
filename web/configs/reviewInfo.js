@@ -7,13 +7,43 @@ import {
 	SyncOutlined, UsergroupAddOutlined,
 } from '@ant-design/icons';
 
-export const reviewStatusStep = {
-	'init': 0,
-	'review': 1,
-	'correction': 0,
-	'opinion_waiting': 2,
-	'meeting_waiting': 3,
-	'completed': 4,
+export const reviewStatusInfo = {
+	'init': {
+		step: 0,
+		title: 'Новый',
+		icon: <FileTextOutlined />,
+		type: 'default'
+	},
+	'review': {
+		step: 1,
+		title: 'Проверка',
+		icon: <FileDoneOutlined />,
+		type: 'default'
+	},
+	'correction': {
+		step: 0,
+		title: 'Редактирование',
+		icon: <EditOutlined />,
+		type: 'warning'
+	},
+	'opinion_waiting': {
+		step: 2,
+		title: 'Ожидание 360 мнений',
+		icon: <SyncOutlined />,
+		type: 'process'
+	},
+	'meeting_waiting': {
+		step: 3,
+		title: 'Ожидание встречи',
+		icon: <SyncOutlined />,
+		type: 'process'
+	},
+	'completed': {
+		step: 4,
+		title: 'Завершено',
+		icon: <CheckCircleOutlined />,
+		type: 'success'
+	},
 };
 
 export const reviewHistoryInfo = {
@@ -42,11 +72,11 @@ export const reviewHistoryInfo = {
 		icon: <CheckCircleOutlined />
 	},
 	'add_self_review': {
-		description: 'добавил self-review',
+		description: 'изменил self-review',
 		icon: <FileAddOutlined />
 	},
 	'add_respondents_list': {
-		description: 'добавил список респондентов',
+		description: 'изменил список респондентов',
 		icon: <UsergroupAddOutlined />
 	},
 	'edit_self_review': {

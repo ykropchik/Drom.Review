@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Header as AntHeader } from 'antd/lib/layout/layout';
 import styles from './Header.module.scss';
 import MainLogo from '../MainLogo/MainLogo';
@@ -10,12 +10,12 @@ import { Button, Dropdown } from 'antd';
 import classNames from 'classnames';
 import UserAvatar from '../UserAvatar/UserAvatar';
 import NavMenu from '../NavMenu/NavMenu';
-import { UserRoleContext } from '../../pages/_app';
+import { useSession } from '../../scripts/SessionProvider';
 
 export default function Header({ mainNavMenu, personalNavItems, clickableLogo = true}) {
-	const userRole = useContext(UserRoleContext);
 	const [isCollapsed, setCollapsed] = useState(true);
 	const { width } = useWindowSize();
+	const { user, role } = useSession();
 
 	const toggleCollapsed = () => {
 		setCollapsed(!isCollapsed);
@@ -43,7 +43,7 @@ export default function Header({ mainNavMenu, personalNavItems, clickableLogo = 
 					{
 						width > 720 &&
 						clickableLogo ?
-							<Link href={userRole === 'scrum' ? '/reviews' : '/'}>
+							<Link href={role === 'ROLE_SCRUM' ? '/reviews' : '/'}>
 								<span className={styles.app_name}>Drom.Review</span>
 							</Link>
 							:
@@ -63,7 +63,7 @@ export default function Header({ mainNavMenu, personalNavItems, clickableLogo = 
 							personalNavItems &&
 							<div className={styles.right_side}>
 								<Dropdown overlay={<NavMenu items={personalNavItems}/>} placement="bottomLeft" trigger={['click']} arrow>
-									<UserAvatar avatarUrl={null} size={40} style={{ cursor: 'pointer' }}/>
+									<UserAvatar avatarUrl={null} size={40} style={{ cursor: 'pointer' }} userName={user?.fullName}/>
 								</Dropdown>
 							</div>
 						}

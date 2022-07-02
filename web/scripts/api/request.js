@@ -22,14 +22,14 @@ export default async function request(endPoint, method = 'GET', data = {}, param
 	}
 
 	if (!res.ok) {
-		return Promise.reject(res.status);
+		return Promise.reject(await res.json());
 	}
 
 	let result = await res.json();
 
 	if (result?.status >= 400) {
-		return Promise.reject(result.status);
+		return Promise.reject(result);
 	}
 
-	return Promise.resolve();
+	return Promise.resolve(result);
 }

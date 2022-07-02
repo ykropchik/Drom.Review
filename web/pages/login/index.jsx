@@ -5,29 +5,26 @@ import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import styles from '../../public/styles/pages/Login.module.scss';
 import { useState } from 'react';
-import authenticate from '../../scripts/api/authenticate';
-import { useSWRConfig } from 'swr';
-import { EndPoints } from '../../scripts/api/EndPoints';
+import { useSession } from '../../scripts/SessionProvider';
 
 const { Content } = Layout;
 
 export default function Login() {
-	const { mutate } = useSWRConfig();
 	const [isLoading, setLoading] = useState(false);
 	const [form] = Form.useForm();
 	const router = useRouter();
+	const { signIn } = useSession();
 
 	const onFinish = (data) => {
 		setLoading(true);
-		authenticate(data)
+		signIn(data)
 			.finally(() => setLoading(false))
 			.then(() => {
-				mutate(EndPoints.USER);
 				router.push('/');
 			})
 			.catch((err) => {
 				form.resetFields(['password']);
-				message.error(err);
+				message.error(err.message);
 			});
 	};
 

@@ -55,10 +55,10 @@ export default function QuestionsEditor() {
 
 	return (
 		<>
-			<PageHeader title="Редактор вопросов" onBack={() => router.push('/editors')}/>
-			<div className={styles.content}>
-				<div className={styles.filters}>
-					<AutoComplete placeholder="Выберите специализацию"
+			<PageHeader title="Редактор вопросов" onBack={() => router.push('/editors')}>
+				<div className={styles.content}>
+					<div className={styles.filters}>
+						<AutoComplete placeholder="Выберите специализацию"
 						              style={{ width: 200 }}
 						              value={selectedSpec?.name}
 						              options={specializations.data}
@@ -72,7 +72,7 @@ export default function QuestionsEditor() {
 						              allowClear
 						              onSelect={(_, item) => setSelectedSpec(item)}
 						              fieldNames={{ label: 'name', value: 'name' }}/>
-					<AutoComplete placeholder="Выберите грейд"
+						<AutoComplete placeholder="Выберите грейд"
 						              value={selectedGrade?.name}
 						              style={{ width: 200 }}
 						              options={selectedSpec?.grades}
@@ -84,30 +84,31 @@ export default function QuestionsEditor() {
 						              allowClear
 						              onSelect={(_, item) => onGradeSelectHandler(item)}
 						              fieldNames={{ label: 'name', value: 'name' }}/>
-				</div>
-				<div className={styles.questions__container}>
-					{
-						questions.isLoading ?
-							<Spin indicator={<Spinner size={48}/>} spinning/>
-							:
-							selectedGrade === null ?
-								<Empty className={styles.empty_container} image={<SelectOutlined style={{ fontSize: 86 }}/>}
-									       description="Выберите специализацию и грейд"/>
+					</div>
+					<div className={styles.questions__container}>
+						{
+							questions.isLoading ?
+								<Spin indicator={<Spinner size={48}/>} spinning/>
 								:
-								<>
-									<Button className={styles.add_button} type="dashed" icon={<PlusOutlined/>} onClick={() => setFormVisible(true)}>Добавить вопрос</Button>
-									<Divider/>
-									<QuestionsList className={styles.questions_list} questions={questions.data} onChange={questionsUpdate}/>
-								</>
-					}
+								selectedGrade === null ?
+									<Empty className={styles.empty_container} image={<SelectOutlined style={{ fontSize: 86 }}/>}
+									       description="Выберите специализацию и грейд"/>
+									:
+									<>
+										<Button className={styles.add_button} type="dashed" icon={<PlusOutlined/>} onClick={() => setFormVisible(true)}>Добавить вопрос</Button>
+										<Divider/>
+										<QuestionsList className={styles.questions_list} questions={questions.data} onChange={questionsUpdate}/>
+									</>
+						}
+					</div>
 				</div>
-			</div>
-			<QuestionForm visible={isFormVisible}
-			              title="Создание вопроса"
-			              isLoading={creatingQuestion}
-			              onCancelClick={() => setFormVisible(false)}
-			              saveButtonText="Создать"
-			              onSaveClick={onSaveClickHandler}/>
+				<QuestionForm visible={isFormVisible}
+				              title="Создание вопроса"
+				              isLoading={creatingQuestion}
+				              onCancelClick={() => setFormVisible(false)}
+				              saveButtonText="Создать"
+				              onSaveClick={onSaveClickHandler}/>
+			</PageHeader>
 		</>
 	);
 }

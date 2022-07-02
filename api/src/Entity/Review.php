@@ -29,11 +29,11 @@ class Review
 	#[ORM\JoinColumn(name: "lead_id", referencedColumnName: "id")]
 	private $lead;
 
-	#[ORM\ManyToMany(targetEntity: Respondent::class)]
+	#[ORM\ManyToMany(targetEntity: Respondent::class, orphanRemoval: true)]
 	#[ORM\JoinTable(
 		name: 'review_respondents',
 		joinColumns: [new ORM\JoinColumn(name: "review_id", referencedColumnName: "id")],
-		inverseJoinColumns: [new ORM\JoinColumn(name: "respondent_id", referencedColumnName: "id")]
+		inverseJoinColumns: [new ORM\JoinColumn(name: "respondent_id", referencedColumnName: "id", onDelete: 'CASCADE')]
 	)]
     private $respondents;
 
@@ -49,7 +49,7 @@ class Review
     private $grade;
 
 	/**
-	 * @var string @see App\Types\ReviewStatus
+	 * @var string @see App\Types\HistoryItem
 	 */
     #[ORM\Column(type: 'string', length: 255)]
     private string $status = 'init';
@@ -147,6 +147,15 @@ class Review
 	public function removeRespondent(Respondent $respondent): self
 	{
 		$this->respondents->removeElement($respondent);
+
+		return $this;
+	}
+
+	public function removeRespondents(): self
+	{
+		foreach ($this->respondents as $respondent) {
+			$this->removeRespondent($respondent);
+		}
 
 		return $this;
 	}
