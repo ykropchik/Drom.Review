@@ -213,7 +213,7 @@ class ReviewController extends AppController
                 $review = $reviewRepository->find($id);
                 $review->addHistory(
 	                [
-						'actions' => ReviewActions::$ADD_COMMENT,
+						'action' => ReviewActions::$ADD_COMMENT,
 		                'user' => $this->getUser(),
 		                'comment' => $request->get('comment'),
 		                'created_at' => date_timestamp_get(new DateTime())

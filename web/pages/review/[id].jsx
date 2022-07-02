@@ -39,7 +39,7 @@ export default function ReviewPage() {
 	const [comment, setComment] = useState('');
 	const [saving, setSaving] = useState(false);
 	const [statusChanging, setStatusChanging] = useState(false);
-	const [commentSending] = useState(false);
+	const [commentSending, setCommentSending] = useState(false);
 
 	useEffect(() => {
 		setPageHeaderProps(getPageHeaderProps(role));
@@ -82,7 +82,17 @@ export default function ReviewPage() {
 	};
 
 	const onCommentClickHandler = () => {
-
+		setCommentSending(true);
+		request(EndPoints.REVIEW + `/${id}/comment`, 'PUT', { comment: comment })
+			.finally(() => {
+				setCommentSending(false);
+				review.update();
+			})
+			.then(() => {
+				setComment('');
+				message.success('Комментарий отправлен');
+			})
+			.catch((err) => message.error(err.message));
 	};
 
 	const setNewStatus = (newStatus) => {

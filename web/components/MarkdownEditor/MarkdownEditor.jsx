@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Editor, { Plugins } from 'react-markdown-editor-lite';
 import styles from './MarkdownEditor.module.scss';
 import MarkdownRender from '../MarkdownRender/MarkdownRender';
@@ -6,8 +6,12 @@ import 'react-markdown-editor-lite/lib/index.css';
 import { MdEditorModeToggle } from '../MdEditorModeToggle/MdEditorModeToggle';
 import classNames from 'classnames';
 
-export default function MarkdownEditor({ className, onChange, value = '', ...props }) {
-	const [selfValue, setSelfValue] = useState(value);
+export default function MarkdownEditor({ className, onChange, value, ...props }) {
+	const [selfValue, setSelfValue] = useState(value || '');
+
+	useEffect(() => {
+		setSelfValue(value || '');
+	}, [value]);
 
 	function handleEditorChange({ text }) {
 		setSelfValue(text);
