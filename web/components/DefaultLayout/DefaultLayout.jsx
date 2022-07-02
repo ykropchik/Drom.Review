@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import { Layout, Spin } from 'antd';
@@ -7,14 +7,14 @@ import styles from './DefaultLayout.module.scss';
 import { mainMenu, personalNavMenu } from '../../configs/navMenu';
 import usePageLoading from '../../scripts/hooks/usePageLoading';
 import Spinner from '../Spinner/Spinner';
-import { UserRoleContext } from '../../pages/_app';
+import { useSession } from '../../scripts/SessionProvider';
 
 export default function DefaultLayout({ children }) {
-	const userRole = useContext(UserRoleContext);
 	const loading = usePageLoading();
+	const { role } = useSession();
 
 	const getNavMenuConfig = () => {
-		if (userRole === 'scrum') {
+		if (role === 'ROLE_SCRUM') {
 			return mainMenu;
 		}
 

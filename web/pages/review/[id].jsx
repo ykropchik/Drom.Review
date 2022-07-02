@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button, Card, Collapse, Divider, Dropdown, Empty, Layout, Menu, message, PageHeader, Spin, Steps } from 'antd';
 import styles from '../../public/styles/pages/Review.module.scss';
@@ -17,12 +17,12 @@ import OpinionsList from '../../components/OpinionsList/OpinionsList';
 import HistoryTimeline from '../../components/HistoryTimeline/HistoryTimeline';
 import SelfReviewForm from '../../components/SelfReviewForm/SelfReviewForm';
 import RespondentsForm from '../../components/RespondentsForm/RespondentsForm';
-import { UserRoleContext } from '../_app';
 import getAvatarPlaceholder from '../../scripts/avatarPlaceholder';
 import MarkdownEditor from '../../components/MarkdownEditor/MarkdownEditor';
 import useData from '../../scripts/hooks/useData';
 import { EndPoints } from '../../scripts/api/EndPoints';
 import request from '../../scripts/api/request';
+import { useSession } from '../../scripts/SessionProvider';
 
 const { Content } = Layout;
 const { Step } = Steps;
@@ -34,7 +34,7 @@ export default function ReviewPage() {
 	const review = useData(EndPoints.REVIEW + '/' + id ?? 0);
 	const [selfReviewFormVisible, setSelfReviewFormVisible] = useState(false);
 	const [respondentsFormVisible, setRespondentsFormVisible] = useState(false);
-	const userRole = useContext(UserRoleContext);
+	const { role } = useSession();
 	const [pageHeaderProps, setPageHeaderProps] = useState({});
 	const [comment, setComment] = useState('');
 	const [saving, setSaving] = useState(false);
@@ -42,20 +42,20 @@ export default function ReviewPage() {
 	const [commentSending] = useState(false);
 
 	useEffect(() => {
-		setPageHeaderProps(getPageHeaderProps(userRole));
-	}, [userRole]);
+		setPageHeaderProps(getPageHeaderProps(role));
+	}, [role, review.data]);
 
 	const getPageHeaderProps = (role) => {
-		if (role === 'default') {
+		if (role === 'ROLE_LEAD') {
 			return {
-				title: `${review.data?.specialization.name}: ${review.data?.grade.name}`
+				title: review.data?.subject.fullName,
+				avatar: { style: { backgroundColor: '#DB011A'}, children: getAvatarPlaceholder(review.data?.subject.fullName) },
+				subTitle: `${review.data?.specialization.name}: ${review.data?.grade.name}`
 			};
 		}
 
 		return {
-			title: review.data?.subject.fullName,
-			avatar: { style: { backgroundColor: '#DB011A'}, children: getAvatarPlaceholder(review.data?.subject.fullName) },
-			subTitle: `${review.data?.specialization.name}: ${review.data?.grade.name}`
+			title: `${review.data?.specialization.name}: ${review.data?.grade.name}`
 		};
 	};
 
@@ -139,7 +139,8 @@ export default function ReviewPage() {
 						<Panel header={
 							<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>
 								Self review
-								{reviewStatusInfo[review.data?.status]?.step < 2 && userRole === 'default' &&
+								{
+									reviewStatusInfo[review.data?.status]?.step < 2 && role === 'ROLE_USER' &&
 									<span className={styles.edit_button}
 									      onClick={onSelfReviewEditClickHandler}><EditOutlined/></span>
 								}
@@ -155,7 +156,7 @@ export default function ReviewPage() {
 							<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>
 								Список респондентов
 								{
-									reviewStatusInfo[review.data?.status]?.step < 2 && userRole === 'default' &&
+									reviewStatusInfo[review.data?.status]?.step < 2 && role === 'ROLE_USER' &&
 									<span className={styles.edit_button}
 									      onClick={onRespondentsListEditClickHandler}><EditOutlined/></span>
 								}
@@ -164,7 +165,7 @@ export default function ReviewPage() {
 							<RespondentsList list={review.data?.respondents}/>
 						</Panel>
 						{
-							userRole !== 'default' &&
+							role !== 'ROLE_USER' &&
 							<Panel header={<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>360 мнения</Divider>}
 							       key="opinions">
 								<OpinionsList list={review.data?.opinionsList}/>
@@ -188,14 +189,14 @@ export default function ReviewPage() {
 							<MarkdownEditor value={comment} onChange={onCommentChangeHandler}/>
 							<div className={styles.new_comment_buttons}>
 								{
-									userRole !== 'default' &&
+									role !== 'ROLE_USER' &&
 									<>
 										<LeaderButtons reviewStatus={review.data?.status} onClick={onLeaderButtonsClickHandler} withComment={comment}/>
 										<Divider type="vertical"/>
 									</>
 								}
 								{
-									userRole === 'default' && reviewStatusInfo[review.data?.status]?.step === 0 &&
+									role === 'ROLE_USER' && reviewStatusInfo[review.data?.status]?.step === 0 &&
 									<>
 										<Button onClick={() => setNewStatus('review')}>{comment ? 'Отправить на проверку с комментарием' : 'Отправить на проверку'}</Button>
 										<Divider type="vertical"/>
