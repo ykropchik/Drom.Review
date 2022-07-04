@@ -4,7 +4,7 @@ import {
 	CommentOutlined, EditOutlined, FileAddOutlined,
 	FileDoneOutlined,
 	FileTextOutlined, MessageOutlined,
-	SyncOutlined, UsergroupAddOutlined,
+	SyncOutlined, UsergroupAddOutlined, UserSwitchOutlined,
 } from '@ant-design/icons';
 
 export const reviewStatusInfo = {
@@ -14,22 +14,22 @@ export const reviewStatusInfo = {
 		icon: <FileTextOutlined />,
 		type: 'default'
 	},
-	'review': {
-		step: 1,
-		title: 'Проверка',
-		icon: <FileDoneOutlined />,
-		type: 'default'
-	},
 	'correction': {
 		step: 0,
 		title: 'Редактирование',
 		icon: <EditOutlined />,
 		type: 'warning'
 	},
+	'review': {
+		step: 1,
+		title: 'Проверка',
+		icon: <FileDoneOutlined />,
+		type: 'default'
+	},
 	'opinion_waiting': {
 		step: 2,
 		title: 'Ожидание 360 мнений',
-		icon: <SyncOutlined />,
+		icon: <UserSwitchOutlined />,
 		type: 'process'
 	},
 	'meeting_waiting': {
@@ -61,7 +61,7 @@ export const reviewHistoryInfo = {
 	},
 	'set_opinion_waiting_status': {
 		description: 'отправил респондентам приглашения',
-		icon: <SyncOutlined/>
+		icon: <UserSwitchOutlined/>
 	},
 	'set_meeting_waiting_status': {
 		description: 'назначил дату личной встречи',

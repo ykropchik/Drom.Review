@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\QuestionRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
 class Question
@@ -11,20 +12,25 @@ class Question
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['question-default', 'question-full'])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 1024)]
+    #[Groups(['question-default', 'question-full'])]
     private $text;
 
     #[ORM\Column(type: 'array')]
+    #[Groups(['question-default', 'question-full'])]
     private $rating = [];
 
 	#[ORM\ManyToOne(targetEntity: Specialization::class)]
 	#[ORM\JoinColumn(name: "specialization_id", referencedColumnName: "id")]
+	#[Groups(['question-full'])]
     private $specialization;
 
 	#[ORM\ManyToOne(targetEntity: Grade::class)]
 	#[ORM\JoinColumn(name: "grade_id", referencedColumnName: "id")]
+	#[Groups(['question-full'])]
     private $grade;
 
     public function getId(): ?int

@@ -14,7 +14,7 @@ export default function UserAvatar({ avatarUrl, userName, size, editable = false
 					:
 					<>
 						<Avatar className={styles.avatar} size={size}/>
-						<span className={styles.avatar__placeholder} style={{ fontSize: `${size*0.5}px`, lineHeight: `${size}px` }}>
+						<span className={styles.avatar__placeholder} style={{ fontSize: `${size*0.4}px`, lineHeight: `${size+1}px` }}>
 							{userName && getAvatarPlaceholder(userName)}
 						</span>
 					</>

@@ -64,7 +64,7 @@ class GradeController extends AppController
         try {
             $grades = $gradeRepository->findAll();
 
-            return $this->response($this->jsonSerialize($grades));
+            return $this->response($this->jsonSerialize($grades, ['grades-default']));
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,

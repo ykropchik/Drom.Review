@@ -86,7 +86,7 @@ class SpecializationController extends AppController
         try {
             $specializations = $specializationRepository->findAll();
 
-            return $this->response($this->jsonSerialize($specializations));
+            return $this->response($this->jsonSerialize($specializations, ['spec-default']));
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
@@ -178,7 +178,7 @@ class SpecializationController extends AppController
         try {
             $specializationGrades = $specializationRepository->find($id)->getGrades();
 
-            return $this->response($this->jsonSerialize($specializationGrades));
+            return $this->response($this->jsonSerialize($specializationGrades, ['grade-default']));
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,

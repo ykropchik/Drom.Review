@@ -10,7 +10,13 @@ const { Panel } = Collapse;
 
 export default function Reviews() {
 	const { role } = useSession();
-	const reviews = useData(EndPoints.REVIEWS + '?type=self');
+	const reviews = useData(() => {
+		if (!role) {
+			return false;
+		}
+
+		return EndPoints.REVIEWS + `?type=${role === 'ROLE_LEADER' ? 'lead' : 'self'}`;
+	});
 
 	return (
 		<Collapse defaultActiveKey={['activeReviews']} ghost>
@@ -19,7 +25,7 @@ export default function Reviews() {
 					{
 						reviews.data?.filter(
 							(review) => review.currentStatus !== 'completed').map((review, i) =>
-							<ReviewBrief review={review} key={i} selfBrief={role !== 'ROLE_LEAD'}/>
+							<ReviewBrief review={review} key={i} selfBrief={role !== 'ROLE_LEADER'}/>
 						)
 					}
 					{
@@ -33,7 +39,7 @@ export default function Reviews() {
 					{
 						reviews.data?.filter(
 							(review) => review.currentStatus === 'completed').map((review, i) =>
-							<ReviewBrief review={review} key={i} selfBrief={role !== 'ROLE_LEAD'}/>
+							<ReviewBrief review={review} key={i} selfBrief={role !== 'ROLE_LEADER'}/>
 						)
 					}
 				</div>

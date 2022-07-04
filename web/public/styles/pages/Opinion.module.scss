@@ -1,11 +1,25 @@
-.content {
-
-}
+@import "public/styles/global";
 
 .subject_container {
   display: flex;
-  gap: 16px;
-  align-items: center;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.subject_info {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+}
+
+.subject_name {
+  font-size: 18px;
+  font-weight: 700;
+  color: $default-black
+}
+
+.subject_qualification {
+  color: $grey-600;
 }
 
 .question {
@@ -22,4 +36,8 @@
 
 .question_rating {
   flex: 0 0 200px;
+}
+
+.spinner_wrapper {
+  background-color: $grey-50;
 }

@@ -6,7 +6,6 @@ import { EndPoints } from '../../../scripts/api/EndPoints';
 import styles from '../../../public/styles/pages/QuestionsEditor.module.scss';
 import useRequest from '../../../scripts/hooks/useRequest';
 import { PlusOutlined, SelectOutlined } from '@ant-design/icons';
-import Spinner from '../../../components/Spinner/Spinner';
 import QuestionsList from '../../../components/QuestionsList/QuestionsList';
 import QuestionForm from '../../../components/QuestionForm/QuestionForm';
 import request from '../../../scripts/api/request';
@@ -88,7 +87,7 @@ export default function QuestionsEditor() {
 					<div className={styles.questions__container}>
 						{
 							questions.isLoading ?
-								<Spin indicator={<Spinner size={48}/>} spinning/>
+								<Spin/>
 								:
 								selectedGrade === null ?
 									<Empty className={styles.empty_container} image={<SelectOutlined style={{ fontSize: 86 }}/>}

@@ -6,6 +6,7 @@ use App\Repository\ReviewRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 class Review
@@ -13,51 +14,62 @@ class Review
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['review-default', 'review-full'])]
     private $id;
 
     #[ORM\Column(type: 'integer')]
-    private $date_start;
+    #[Groups(['review-default', 'review-full'])]
+    private $dateStart;
 
     #[ORM\Column(type: 'integer', nullable: true)]
-    private $date_end;
+    #[Groups(['review-default', 'review-full'])]
+    private $dateEnd;
 
 	#[ORM\ManyToOne(targetEntity: User::class)]
 	#[ORM\JoinColumn(name: "subject_id", referencedColumnName: "id")]
+	#[Groups(['review-default', 'review-full', 'respondent-full'])]
     private $subject;
 
 	#[ORM\ManyToOne(targetEntity: User::class)]
 	#[ORM\JoinColumn(name: "lead_id", referencedColumnName: "id")]
+	#[Groups(['review-default', 'review-full'])]
 	private $lead;
 
-	#[ORM\ManyToMany(targetEntity: Respondent::class, orphanRemoval: true)]
-	#[ORM\JoinTable(
-		name: 'review_respondents',
-		joinColumns: [new ORM\JoinColumn(name: "review_id", referencedColumnName: "id")],
-		inverseJoinColumns: [new ORM\JoinColumn(name: "respondent_id", referencedColumnName: "id", onDelete: 'CASCADE')]
-	)]
+	#[ORM\OneToMany(mappedBy: "review", targetEntity: Respondent::class, orphanRemoval: true)]
+//	#[ORM\JoinTable(
+//		name: 'review_respondents',
+//		joinColumns: [new ORM\JoinColumn(name: "review_id", referencedColumnName: "id")],
+//		inverseJoinColumns: [new ORM\JoinColumn(name: "respondent_id", referencedColumnName: "id", onDelete: 'CASCADE')]
+//	)]]
+	#[Groups(['review-full'])]
     private $respondents;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private $self_review;
+    #[Groups(['review-full'])]
+    private $selfReview;
 
 	#[ORM\ManyToOne(targetEntity: Specialization::class)]
 	#[ORM\JoinColumn(name: "specialization_id", referencedColumnName: "id")]
+	#[Groups(['review-default', 'review-full', 'respondent-full', 'respondent-invite'])]
 	private $specialization;
 
 	#[ORM\ManyToOne(targetEntity: Grade::class)]
 	#[ORM\JoinColumn(name: "grade_id", referencedColumnName: "id")]
+	#[Groups(['review-default', 'review-full', 'respondent-full', 'respondent-invite'])]
     private $grade;
 
 	/**
 	 * @var string @see App\Types\HistoryItem
 	 */
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['review-default', 'review-full'])]
     private string $status = 'init';
 
 	/**
 	 * @var array [ 'action' => @see ReviewActions, 'created_at' => 'date_time', 'comment' => null | string, 'author' => User ]
 	 */
     #[ORM\Column(type: 'array')]
+    #[Groups(['review-full'])]
     private $history = [];
 
 	public function __construct()
@@ -72,24 +84,24 @@ class Review
 
     public function getDateStart(): ?int
     {
-        return $this->date_start;
+        return $this->dateStart;
     }
 
-    public function setDateStart(int $date_start): self
+    public function setDateStart(int $dateStart): self
     {
-        $this->date_start = $date_start;
+        $this->dateStart = $dateStart;
 
         return $this;
     }
 
     public function getDateEnd(): ?int
     {
-        return $this->date_end;
+        return $this->dateEnd;
     }
 
-    public function setDateEnd(int $date_end): self
+    public function setDateEnd(int $dateEnd): self
     {
-        $this->date_end = $date_end;
+        $this->dateEnd = $dateEnd;
 
         return $this;
     }
@@ -139,6 +151,7 @@ class Review
 	{
 		if (!$this->respondents->contains($respondent)) {
 			$this->respondents[] = $respondent;
+			$respondent->setReview($this);
 		}
 
 		return $this;
@@ -162,12 +175,12 @@ class Review
 
     public function getSelfReview(): ?string
     {
-        return $this->self_review;
+        return $this->selfReview;
     }
 
-    public function setSelfReview(?string $self_review): self
+    public function setSelfReview(?string $selfReview): self
     {
-        $this->self_review = $self_review;
+        $this->selfReview = $selfReview;
 
         return $this;
     }

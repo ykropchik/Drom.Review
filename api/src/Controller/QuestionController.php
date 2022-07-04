@@ -95,7 +95,7 @@ class QuestionController extends AppController
 				}
 
                 $questions = $questionRepository->findBy(['specialization' => $specialization, 'grade' => $grade,]);
-				$data = $this->jsonSerialize($questions, ['specialization', 'grade']);
+				$data = $this->jsonSerialize($questions, ['question-default']);
             }
 
             return $this->response($data);

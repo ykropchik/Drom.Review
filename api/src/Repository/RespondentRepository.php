@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Respondent;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -38,6 +39,17 @@ class RespondentRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+	public function findAllApprovedByUser(User $user): array
+	{
+		return $this->createQueryBuilder('r')
+			->where('r.user = :user')
+			->andWhere('r.status != :status')
+			->setParameter('user', $user)
+			->setParameter('status', 'inactive')
+			->getQuery()
+			->getResult();
+	}
 
 //    /**
 //     * @return Respondent[] Returns an array of Respondent objects

@@ -18,7 +18,7 @@ class UserController extends AppController
 	public function get_users(UserRepository $userRepository): Response
 	{
 		try {
-			$users = $this->jsonSerialize($userRepository->findAllExcept($this->getUser()), ['grades']);
+			$users = $this->jsonSerialize($userRepository->findAllExcept($this->getUser()), ['user-full', 'qualification-default', 'spec-default', 'grade-default']);
 			return $this->response($users, Response::HTTP_OK);
 		} catch (\Exception $e) {
 			$data = [
@@ -34,7 +34,7 @@ class UserController extends AppController
     {
         try {
             $user = $this->getUser();
-			$data = $this->jsonSerialize($user);
+			$data = $this->jsonSerialize($user, ['user-full', 'qualification-default', 'spec-default', 'grade-default']);
             return $this->response($data);
         } catch (\Exception $e) {
             $data = [
@@ -50,7 +50,7 @@ class UserController extends AppController
 	{
 		try {
 			$user = $userRepository->find($id);
-			$data = $this->jsonSerialize($user);
+			$data = $this->jsonSerialize($user, ['user-full', 'qualification-default', 'spec-default', 'grade-default']);
 			return $this->response($data);
 		} catch (\Exception $e) {
 			$data = [
@@ -126,15 +126,18 @@ class UserController extends AppController
 	public function update_user(Request $request, UserRepository $userRepository, $id): Response
 	{
 		try {
-			$data = $request->request->all();
-			$user = $userRepository->find($id);
-			$userRepository->updateUser($user, $data);
-			$data = $this->jsonSerialize($user);
-			return $this->response($data, Response::HTTP_OK);
+//			$data = $request->request->all();
+//			$user = $userRepository->find($id);
+//			$userRepository->updateUser($user, $data);
+//			$data = $this->jsonSerialize($user);
+			return $this->response([
+				'status' => Response::HTTP_OK,
+				'message' => 'Пользователь успешно обновлен',
+			], Response::HTTP_OK);
 		} catch (\Exception $e) {
 			$data = [
 				'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-				'errors' => $e->getMessage(),
+				'message' => $e->getMessage(),
 			];
 			return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
 		}

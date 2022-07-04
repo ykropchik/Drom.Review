@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JetBrains\PhpStorm\Pure;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SpecializationRepository::class)]
 class Specialization
@@ -14,9 +15,11 @@ class Specialization
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['spec-default', 'spec-full'])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['spec-default', 'spec-full'])]
     private $name;
 
 	#[ORM\ManyToMany(targetEntity: Grade::class)]
@@ -25,6 +28,7 @@ class Specialization
 		joinColumns: [new ORM\JoinColumn(name: "specialization_id", referencedColumnName: "id")],
 		inverseJoinColumns: [new ORM\JoinColumn(name: "grades_id", referencedColumnName: "id")]
 	)]
+	#[Groups(['spec-full'])]
 	private $grades;
 
 	#[Pure] public function __construct()
