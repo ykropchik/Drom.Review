@@ -173,6 +173,17 @@ class Review
 		return $this;
 	}
 
+    public function isRespondent(int $userId): bool
+    {
+        $respondents = $this->getRespondents();
+        foreach ($respondents as $respondent) {
+            if ($respondent->getUser()->getId() == $userId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function getSelfReview(): ?string
     {
         return $this->selfReview;
