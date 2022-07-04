@@ -174,7 +174,7 @@ export default function ReviewPage() {
 							role !== 'ROLE_USER' &&
 							<Panel header={<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>360 мнения</Divider>}
 							       key="opinions">
-								<OpinionsList list={review.data?.opinionsList}/>
+								<OpinionsList list={review.data?.opinions}/>
 							</Panel>
 						}
 						{/*<Panel header={<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>История статусов и комментарии</Divider>}*/}

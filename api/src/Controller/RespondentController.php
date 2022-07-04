@@ -32,13 +32,28 @@ class RespondentController extends AppController
 		}
 	}
 
-	#[Route('/api/respondent/{id}', name: 'get_invitation_info', methods: ['GET'])]
-	public function get_invitation_info(RespondentRepository $respondentRepository, $id): Response
+	#[Route('/api/respondent/{id}', name: 'get_respondent_info', methods: ['GET'])]
+	public function get_respondent_info(RespondentRepository $respondentRepository, $id): Response
 	{
 		try {
 			$invitation = $respondentRepository->find($id);
 			return $this->response($this->jsonSerialize($invitation,
-				['respondent-full', 'user-default', 'spec-default', 'grade-default', 'opinion-default', 'question-default', 'user-default']));
+				['respondent-full', 'user-default', 'spec-default', 'grade-default', 'opinion-default', 'question-default']));
+		} catch (\Exception $e) {
+			return $this->response([
+				'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+				'message' => $e->getMessage(),
+			], Response::HTTP_UNPROCESSABLE_ENTITY);
+		}
+	}
+
+	#[Route('/api/respondent/{id}/opinion', name: 'get_respondent_opinion', methods: ['GET'])]
+	public function get_respondent_opinion(RespondentRepository $respondentRepository, $id): Response
+	{
+		try {
+			$invitation = $respondentRepository->find($id);
+			return $this->response($this->jsonSerialize($invitation,
+				['respondent-opinion', 'opinion-default', 'question-default']));
 		} catch (\Exception $e) {
 			return $this->response([
 				'status' => Response::HTTP_UNPROCESSABLE_ENTITY,

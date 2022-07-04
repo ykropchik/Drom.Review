@@ -12,7 +12,7 @@ export default function ReviewBrief({ review, selfBrief }) {
 	const router = useRouter();
 
 	const onClickHandler = () => {
-		router.push(`/review/${review.id}`);
+		router.push(`/reviews/${review.id}`);
 	};
 
 	return (

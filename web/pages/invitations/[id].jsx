@@ -17,7 +17,7 @@ export default function Opinion() {
 			return false;
 		}
 
-		return EndPoints.RESPONDENT + `/${id}`;
+		return EndPoints.RESPONDENTS + `/${id}`;
 	});
 
 	return (

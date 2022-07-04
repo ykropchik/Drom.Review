@@ -9,7 +9,7 @@ import { EndPoints } from '../../scripts/api/EndPoints';
 import request from '../../scripts/api/request';
 
 export default function Invitations() {
-	const { data: invitations, isLoading, update} = useData(EndPoints.RESPONDENT);
+	const { data: invitations, isLoading, update} = useData(EndPoints.RESPONDENTS);
 	const [waitingDecision, setWaitingDecision] = useState([]);
 	const [waitingOpinion, setWaitingOpinion] = useState([]);
 	const [completed, setCompleted] = useState([]);

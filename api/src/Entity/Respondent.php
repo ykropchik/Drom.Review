@@ -15,7 +15,7 @@ class Respondent
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['respondent-default', 'respondent-full', 'respondent-invite'])]
+    #[Groups(['respondent-default', 'respondent-full', 'respondent-invite', 'respondent-opinion'])]
     private $id;
 
 	#[ORM\ManyToOne(targetEntity: Review::class)]
@@ -29,6 +29,7 @@ class Respondent
     private $user;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['respondent-opinion'])]
     private $comment;
 
     #[ORM\Column(type: 'string', length: 20)]
@@ -42,7 +43,7 @@ class Respondent
 		joinColumns: [new ORM\JoinColumn(name: "respondent_id", referencedColumnName: "id")],
 		inverseJoinColumns: [new ORM\JoinColumn(name: "opinion_id", referencedColumnName: "id", onDelete: 'CASCADE')]
 	)]
-	#[Groups(['respondent-full'])]
+	#[Groups(['respondent-full', 'respondent-opinion'])]
     private $opinions;
 
 	public function __construct() {

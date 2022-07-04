@@ -7,6 +7,7 @@ use App\Entity\Respondent;
 use App\Entity\Review;
 use App\Repository\GradeRepository;
 use App\Repository\QuestionRepository;
+use App\Repository\RespondentRepository;
 use App\Repository\ReviewRepository;
 use App\Repository\SpecializationRepository;
 use App\Repository\UserRepository;
@@ -125,19 +126,26 @@ class ReviewController extends AppController
     }
 
 	#[Route('/api/review/{id}', name: 'get_review', methods: ['GET'])]
-	public function get_review(ReviewRepository $reviewRepository, $id): Response
+	public function get_review(
+		ReviewRepository $reviewRepository,
+		RespondentRepository $respondentRepository,
+		$id): Response
 	{
 		try {
-			$result = $reviewRepository->find($id);
+			$review = $reviewRepository->find($id);
 
-			if (!$result) {
+			if (!$review) {
 				return $this->response([
 					'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
 					'message' => 'Отсутствует review с таким id',
 				], Response::HTTP_UNPROCESSABLE_ENTITY);
 			}
 
-			return $this->response($this->jsonSerialize($result, ['review-full', 'user-default', 'spec-default', 'grade-default', 'respondent-default']));
+			$opinions = $respondentRepository->findBy(['review' => $review, 'status' => RespondentStatus::COMPLETED]);
+			$normalizedOpinions = $this->normalize($opinions, ['respondent-default', 'user-default']);
+			$normalizedReview = $this->normalize($review, ['review-full', 'user-default', 'spec-default', 'grade-default', 'respondent-default']);
+
+			return $this->response($this->jsonSerialize(array_merge($normalizedReview, ["opinions" => $normalizedOpinions])));
 		} catch (\Exception $e) {
 			return $this->response([
 				'status' => Response::HTTP_UNPROCESSABLE_ENTITY,

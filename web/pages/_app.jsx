@@ -11,6 +11,7 @@ import SessionProvider from '../scripts/SessionProvider';
 import { LoadingOutlined } from '@ant-design/icons';
 
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 32 }} spin />);
+ru_locale.Empty.description = 'Пусто';
 
 export default function App({ Component, pageProps }) {
 	const [isSessionLoading, setSessionLoading] = useState(true);
