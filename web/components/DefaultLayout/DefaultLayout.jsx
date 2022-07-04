@@ -4,7 +4,7 @@ import Footer from '../Footer/Footer';
 import { Layout, Spin } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import styles from './DefaultLayout.module.scss';
-import { mainMenu, personalNavMenu } from '../../configs/navMenu';
+import { defaultMainMenu, scrumNavMenu, personalNavMenu } from '../../configs/navMenu';
 import usePageLoading from '../../scripts/hooks/usePageLoading';
 import Spinner from '../Spinner/Spinner';
 import { useSession } from '../../scripts/SessionProvider';
@@ -15,10 +15,10 @@ export default function DefaultLayout({ children }) {
 
 	const getNavMenuConfig = () => {
 		if (role === 'ROLE_SCRUM') {
-			return mainMenu;
+			return scrumNavMenu;
 		}
 
-		return null;
+		return defaultMainMenu;
 	};
 
 	return (

@@ -2,14 +2,17 @@
 
 namespace App\Controller;
 
+use App\Entity\Opinion;
 use App\Entity\Respondent;
 use App\Entity\Review;
 use App\Repository\GradeRepository;
+use App\Repository\QuestionRepository;
 use App\Repository\ReviewRepository;
 use App\Repository\SpecializationRepository;
-use App\Repository\UserQualificationRepository;
 use App\Repository\UserRepository;
+use App\Types\RespondentStatus;
 use App\Types\ReviewActions;
+use App\Types\ReviewStatus;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -72,7 +75,7 @@ class ReviewController extends AppController
 
             $history = [];
             $history[] = [
-				'action' => ReviewActions::$INITIALIZE,
+				'action' => ReviewActions::INITIALIZE,
                 'user' => $this->getUser(),
                 'comment' => null,
                 'created_at' => date_timestamp_get(new DateTime())
@@ -103,15 +106,14 @@ class ReviewController extends AppController
 			$requestType = $request->get('type');
 
             if ($requestType === 'lead') {
-	            $ownReviews = $reviewRepository->findBy(['lead' => $this->getUser()]);
-	            $data = $this->jsonSerialize($ownReviews, ['qualifications', 'grades']);
-            } elseif ($requestType === 'self') {
-				$ownReviews = $reviewRepository->findBy(['subject' => $this->getUser()]);
-				$data = $this->jsonSerialize($ownReviews, ['qualifications', 'grades']);
+	            $reviews = $reviewRepository->findBy(['lead' => $this->getUser()]);
+			} elseif ($requestType === 'self') {
+	            $reviews = $reviewRepository->findBy(['subject' => $this->getUser()]);
             } else {
 	            $reviews = $reviewRepository->findAll();
-		        $data = $this->jsonSerialize($reviews, ['qualifications', 'grades']);
             }
+
+	        $data = $this->jsonSerialize($reviews, ['review-default', 'user-default', 'spec-default', 'grade-default']);
 
             return $this->response($data);
         } catch (\Exception $e) {
@@ -135,7 +137,7 @@ class ReviewController extends AppController
 				], Response::HTTP_UNPROCESSABLE_ENTITY);
 			}
 
-			return $this->response($this->jsonSerialize($result, ['qualifications', 'grades']));
+			return $this->response($this->jsonSerialize($result, ['review-full', 'user-default', 'spec-default', 'grade-default', 'respondent-default']));
 		} catch (\Exception $e) {
 			return $this->response([
 				'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
@@ -164,9 +166,18 @@ class ReviewController extends AppController
                 $review = $reviewRepository->find($id);
                 $review->setStatus($request->get('status'));
 
+				$newStatus = $request->get('status');
+
+				if ($newStatus == ReviewStatus::OPINION_WAITING) {
+					$respondents = $review->getRespondents();
+					foreach ($respondents as $respondent) {
+						$respondent->setStatus(RespondentStatus::WAITING);
+					}
+				}
+
                 $review->addHistory(
 					[
-						'action' => ReviewActions::getActionByStatus($request->get('status')),
+						'action' => ReviewActions::getActionByStatus($newStatus),
 		                'user' => $this->getUser(),
 		                'comment' => $request->get('comment'),
 		                'created_at' => date_timestamp_get(new DateTime())
@@ -213,7 +224,7 @@ class ReviewController extends AppController
                 $review = $reviewRepository->find($id);
                 $review->addHistory(
 	                [
-						'action' => ReviewActions::$ADD_COMMENT,
+						'action' => ReviewActions::ADD_COMMENT,
 		                'user' => $this->getUser(),
 		                'comment' => $request->get('comment'),
 		                'created_at' => date_timestamp_get(new DateTime())
@@ -264,7 +275,7 @@ class ReviewController extends AppController
 
 	        $review->addHistory(
 		        [
-			        'action' => ReviewActions::$ADD_SELF_REVIEW,
+			        'action' => ReviewActions::ADD_SELF_REVIEW,
 			        'user' => $this->getUser(),
 			        'comment' => null,
 			        'created_at' => date_timestamp_get(new DateTime())
@@ -294,6 +305,7 @@ class ReviewController extends AppController
 		Request $request,
 		ReviewRepository $reviewRepository,
 		UserRepository $userRepository,
+		QuestionRepository $questionRepository,
 		$id): Response
 	{
 		try {
@@ -321,6 +333,23 @@ class ReviewController extends AppController
 			foreach ($respondentsId as $respondentId) {
 				$newRespondent = new Respondent();
 				$newRespondent->setUser($userRepository->find($respondentId));
+
+				$specialization = $review->getSpecialization();
+				$grade = $review->getGrade();
+				$questions = $questionRepository->findBy(
+					[
+						'specialization' => $specialization,
+						'grade' => $grade,
+					]
+				);
+
+				foreach ($questions as $question) {
+					$opinion = new Opinion();
+					$opinion->setQuestion($question);
+					$this->entityManager->persist($opinion);
+					$newRespondent->addOpinion($opinion);
+				}
+
 				$this->entityManager->persist($newRespondent);
 				$respondents[] = $newRespondent;
 			}
@@ -330,7 +359,7 @@ class ReviewController extends AppController
 
 			$review->addHistory(
 				[
-					'action' => ReviewActions::$ADD_RESPONDENTS_LIST,
+					'action' => ReviewActions::ADD_RESPONDENTS_LIST,
 					'user' => $this->getUser(),
 					'comment' => $request->get('comment'),
 					'created_at' => date_timestamp_get(new DateTime())

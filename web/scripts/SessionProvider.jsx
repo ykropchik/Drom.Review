@@ -11,10 +11,14 @@ export const RoutsContext = createContext(null);
  * @return {JSX.Element}
  * @constructor
  */
-export default function SessionProvider({ children, user, config, onLogin, onLogout }) {
+export default function SessionProvider({ children, user, isLoading, config, onLogin, onLogout }) {
 	const router = useRouter();
 
 	useEffect(() => {
+		if (isLoading) {
+			return;
+		}
+
 		if (user === null && router.pathname !== config.loginRoute) {
 			router.push(config.loginRoute);
 			return;
@@ -42,28 +46,6 @@ export default function SessionProvider({ children, user, config, onLogin, onLog
 
 	}, [router.pathname, config, user]);
 
-
-	return (
-		<RoutsContext.Provider value={{user, onLogin, onLogout}}>
-	        {children}
-		</RoutsContext.Provider>
-	);
-}
-
-function rolesIntersect(userRoles, configRoles) {
-	return configRoles.some(role => userRoles.includes(role));
-}
-
-export function useSession() {
-	const {user, onLogin, onLogout} = React.useContext(RoutsContext);
-	let role = 'ROLE_USER';
-
-	if (user?.roles.includes('ROLE_SCRUM')) {
-		role = 'ROLE_SCRUM';
-	} else if (user?.roles.includes('ROLE_LEAD')) {
-		role = 'ROLE_LEAD';
-	}
-
 	async function signIn(credentials) {
 		let result = await fetch(EndPoints.SIGN_IN, {
 			method: 'POST',
@@ -84,15 +66,38 @@ export function useSession() {
 		return Promise.resolve(user);
 	}
 
+	function dropUser() {
+		localStorage.removeItem('currentUser');
+	}
+
 	async function signOut() {
 		// TODO: Реализовать endpoint для выхода из системы
 
 		dropUser();
 		onLogout();
+
+		router.push(config.loginRoute);
 	}
 
-	function dropUser() {
-		localStorage.removeItem('currentUser');
+	return (
+		<RoutsContext.Provider value={{user, signIn, signOut}}>
+	        {children}
+		</RoutsContext.Provider>
+	);
+}
+
+function rolesIntersect(userRoles, configRoles) {
+	return configRoles.some(role => userRoles.includes(role));
+}
+
+export function useSession() {
+	const {user, signIn, signOut} = React.useContext(RoutsContext);
+	let role = 'ROLE_USER';
+
+	if (user?.roles.includes('ROLE_SCRUM')) {
+		role = 'ROLE_SCRUM';
+	} else if (user?.roles.includes('ROLE_LEADER')) {
+		role = 'ROLE_LEADER';
 	}
 
 	return {

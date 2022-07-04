@@ -1,6 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
-import { EditOutlined, UserOutlined, SnippetsOutlined } from '@ant-design/icons';
+import {
+	EditOutlined, UserOutlined,
+	SnippetsOutlined, UserSwitchOutlined
+} from '@ant-design/icons';
 
 export const personalNavMenu = [
 	{
@@ -13,7 +16,7 @@ export const personalNavMenu = [
 	}
 ];
 
-export const mainMenu = [
+export const scrumNavMenu = [
 	{
 		key: 'reviews',
 		label: <Link href={'/reviews'}>Reviews</Link>,
@@ -29,4 +32,17 @@ export const mainMenu = [
 		label: <Link href={'/editors'}>Редакторы</Link>,
 		icon: <EditOutlined />
 	},
+];
+
+export const defaultMainMenu = [
+	{
+		key: 'reviews',
+		label: <Link href={'/'}>Reviews</Link>,
+		icon: <SnippetsOutlined />
+	},
+	{
+		key: 'invitations',
+		label: <Link href={'/invitations'}>Приглашения</Link>,
+		icon: <UserSwitchOutlined />
+	}
 ];

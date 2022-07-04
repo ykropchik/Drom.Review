@@ -3,19 +3,24 @@ import '../public/styles/overwriteAntd.less';
 import '../public/styles/global.scss';
 import DefaultLayout from '../components/DefaultLayout/DefaultLayout';
 import Head from 'next/head';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, Spin } from 'antd';
 import ru_locale from 'antd/lib/locale/ru_RU';
 import { SWRConfig, useSWRConfig } from 'swr';
 import LoadingScreen from '../components/LoadingScreen/LoadingScreen';
 import SessionProvider from '../scripts/SessionProvider';
+import { LoadingOutlined } from '@ant-design/icons';
+
+Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 32 }} spin />);
 
 export default function App({ Component, pageProps }) {
+	const [isSessionLoading, setSessionLoading] = useState(true);
 	const [user, setUser] = useState(null);
 	const { cache } = useSWRConfig();
 	const getLayout = Component.getLayout || ((page) => <DefaultLayout>{page}</DefaultLayout>);
 
 	useEffect(() => {
 		setUser(JSON.parse(localStorage.getItem('currentUser')));
+		setSessionLoading(false);
 	}, []);
 
 	const config = {
@@ -43,10 +48,11 @@ export default function App({ Component, pageProps }) {
 
 	return (
 		<SessionProvider user={user}
+		                 isLoading={isSessionLoading}
 		                 onLogin={(user) => setUser(user)}
 		                 onLogout={() => setUser(null)}
 		                 config={config}>
-			<LoadingScreen isLoading={false}/>
+			<LoadingScreen isLoading={isSessionLoading}/>
 			{
 				getLayout(
 					<SWRConfig value={{

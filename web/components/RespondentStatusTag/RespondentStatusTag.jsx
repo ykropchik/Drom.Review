@@ -8,11 +8,13 @@ export default function RespondentStatusTag({ status }) {
 			return <Tag icon={<EyeOutlined />} color="default">Проверяется</Tag>;
 		case 'waiting':
 			return <Tag icon={<ClockCircleOutlined />} color="process">Приглашен</Tag>;
-		case 'accept':
+		case 'accepted':
 			return <Tag icon={<CheckCircleOutlined />} color="success">Принял</Tag>;
-		case 'decline':
+		case 'completed':
+			return <Tag icon={<CheckCircleOutlined />} color="success">Ответил</Tag>;
+		case 'declined':
 			return <Tag icon={<CloseCircleOutlined />} color="error">Отклонил</Tag>;
 		default:
-			return;
+			return null;
 	}
 }

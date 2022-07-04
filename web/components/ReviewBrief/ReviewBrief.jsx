@@ -46,9 +46,9 @@ function OwnBriefHeader({ review }) {
 
 function UnfamiliarBriefHeader({ review }) {
 	return (
-		<Card.Meta avatar={<UserAvatar avatarUrl={review.subject.avatarUrl} userName={review.subject.name} size={32}/>}
-		           title={review.subject.name}
-		           description={`${review.specialization}: ${review.grade}`}>
+		<Card.Meta avatar={<UserAvatar avatarUrl={review.subject.avatarUrl} userName={review.subject.fullName} size={32}/>}
+		           title={review.subject.fullName}
+		           description={`${review.specialization.name}: ${review.grade.name}`}>
 		</Card.Meta>
 	);
 }

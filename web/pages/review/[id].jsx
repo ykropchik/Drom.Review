@@ -9,7 +9,7 @@ import {
 	CommentOutlined, EditOutlined,
 	FileDoneOutlined,
 	FileTextOutlined, ForwardOutlined,
-	SyncOutlined,
+	UserSwitchOutlined,
 } from '@ant-design/icons';
 import MarkdownRender from '../../components/MarkdownRender/MarkdownRender';
 import RespondentsList from '../../components/RespondentsList/RespondentsList';
@@ -46,7 +46,7 @@ export default function ReviewPage() {
 	}, [role, review.data]);
 
 	const getPageHeaderProps = (role) => {
-		if (role === 'ROLE_LEAD') {
+		if (role === 'ROLE_LEADER') {
 			return {
 				title: review.data?.subject.fullName,
 				avatar: { style: { backgroundColor: '#DB011A'}, children: getAvatarPlaceholder(review.data?.subject.fullName) },
@@ -75,10 +75,6 @@ export default function ReviewPage() {
 
 	const onCommentChangeHandler = (value) => {
 		setComment(value.trim());
-	};
-
-	const onLeaderButtonsClickHandler = (data) => {
-		console.log(data);
 	};
 
 	const onCommentClickHandler = () => {
@@ -140,7 +136,7 @@ export default function ReviewPage() {
 				<Steps className={styles.steps} current={reviewStatusInfo[review.data?.status]?.step} direction="horizontal">
 					<Step title="Начало review" icon={<FileTextOutlined />} description="Сбор self-review и списка респондентов"/>
 					<Step title="Проверка" icon={<FileDoneOutlined />} description="Проверка self-review и списка респондентов" />
-					<Step title="Сбор 360 мнений" icon={<SyncOutlined />} description="Респонденты отказываются или пишут 360-мнение" />
+					<Step title="Сбор 360 мнений" icon={<UserSwitchOutlined />} description="Респонденты отказываются или пишут 360-мнение" />
 					<Step title="Встреча" icon={<CommentOutlined />} description="Личная встреча техлида и объекта оценки"/>
 					<Step title="Завершено" icon={<CheckCircleOutlined />}/>
 				</Steps>
@@ -201,7 +197,7 @@ export default function ReviewPage() {
 								{
 									role !== 'ROLE_USER' &&
 									<>
-										<LeaderButtons reviewStatus={review.data?.status} onClick={onLeaderButtonsClickHandler} withComment={comment}/>
+										<LeaderButtons currentStatus={review.data?.status} onClick={setNewStatus} withComment={comment}/>
 										<Divider type="vertical"/>
 									</>
 								}
@@ -234,7 +230,7 @@ export default function ReviewPage() {
 	);
 }
 
-function LeaderButtons({ reviewStatus, withComment }) {
+function LeaderButtons({ currentStatus, withComment, onClick }) {
 	const [buttonIcon, setButtonIcon] = useState(<ForwardOutlined />);
 	const [buttonText, setButtonText] = useState('Изменить статус');
 	const [changeStatusType, setChangeStatusType] = useState('next');
@@ -256,6 +252,16 @@ function LeaderButtons({ reviewStatus, withComment }) {
 		setChangeStatusType(e.key);
 	};
 
+	const onClickHandler = () => {
+		if (changeStatusType === 'edit') {
+			onClick('correction');
+		} else {
+			const statuses = Object.keys(reviewStatusInfo);
+			const nextStatusIndex = statuses.indexOf(currentStatus) + 1;
+			onClick(statuses[nextStatusIndex]);
+		}
+	};
+
 	const overlay = <Menu selectedKeys={[changeStatusType]} onClick={onButtonMenuClickHandler} items={overlayItems}/>;
 
 
@@ -267,10 +273,10 @@ function LeaderButtons({ reviewStatus, withComment }) {
 		setButtonIcon(changeStatusType === 'next' ? <ForwardOutlined /> : <EditOutlined />);
 	}, [changeStatusType]);
 
-	switch (reviewStatus) {
+	switch (currentStatus) {
 		case 'review':
-			return <Dropdown.Button icon={<CaretDownOutlined />} overlay={overlay} trigger={['click']}>{buttonIcon}{buttonText}</Dropdown.Button>;
+			return <Dropdown.Button icon={<CaretDownOutlined />} overlay={overlay} trigger={['click']} onClick={onClickHandler}>{buttonIcon}{buttonText}</Dropdown.Button>;
 		default:
-			return <Button>{buttonIcon}{buttonText}</Button>;
+			return <Button onClick={onClickHandler}>{buttonIcon}{buttonText}</Button>;
 	}
 }
