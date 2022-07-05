@@ -48,6 +48,15 @@ class ReviewController extends AppController
 				], Response::HTTP_UNPROCESSABLE_ENTITY);
 			}
 
+            if (!in_array('ROLE_LEADER', $lead->getRoles())) {
+                return $this->response([
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'message' => 'Пользователь с id ' . $request->get('lead') . ' не является техническим лидером.'
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            if ($lead->getRoles())
+
             if (!$subject || !$lead) {
                 return $this->response([
                     'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
@@ -57,10 +66,18 @@ class ReviewController extends AppController
 
 			$qualification = $request->get('qualification');
 			$specialization = $specializationRepository->find($qualification['specialization']);
+
+            if(!$specialization) {
+                return $this->response([
+                    'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                    'message' => 'Отсутствует специализация с таким id',
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
 			$specializationGrades = $specialization->getGrades();
 			$grade = $gradeRepository->find($qualification['grade']);
 
-			if(!$specializationGrades->contains($grade)) {
+			if(!$grade || !$specializationGrades->contains($grade)) {
 				return $this->response([
 					'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
 					'message' => 'У выбранной специализации отсутствует грейд с таким id',
@@ -172,6 +189,14 @@ class ReviewController extends AppController
                 ];
             } else {
                 $review = $reviewRepository->find($id);
+
+                if (!ReviewActions::getActionByStatus($request->get('status'))) {
+                    return $this->response([
+                        'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                        'message' => 'Такого статуса не существует',
+                    ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                }
+
                 $review->setStatus($request->get('status'));
 
 				$newStatus = $request->get('status');
@@ -216,7 +241,6 @@ class ReviewController extends AppController
     {
         try {
             $request = $this->transformJsonBody($request);
-            $user = $this->getUser();
 
             if (!$reviewRepository->find($id)) {
                 $data = [
