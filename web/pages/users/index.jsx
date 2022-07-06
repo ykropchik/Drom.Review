@@ -48,7 +48,7 @@ const columns = [
 		dataIndex: 'avatarUrl',
 		key: 'avatarUrl',
 		width: 26,
-		render: (data, record) => <UserAvatar avatarUrl={data} userName={record.name} size={26}/>
+		render: (data, record) => <UserAvatar avatarUrl={data} userName={record.fullName} size={26}/>
 	},
 	{
 		title: 'Имя',
@@ -62,7 +62,7 @@ const columns = [
 		key: 'specialization',
 		render: (data) => data.at(-1)?.specialization.name,
 		sorter: (a, b) => a.specialization > b.qualification.specialization ? 1 : -1,
-		onFilter: (value, record) => record.qualification.specialization.indexOf(value) === 0
+		onFilter: (value, record) => record.qualifications[0]?.specialization.name.indexOf(value) === 0
 	},
 	{
 		title: 'Грейд',
@@ -70,7 +70,7 @@ const columns = [
 		key: 'grade',
 		render: (data) => data.at(-1)?.grade.name,
 		sorter: (a, b) => a.grade > b.grade ? 1 : -1,
-		onFilter: (value, record) => record.qualification.grade.indexOf(value) === 0
+		onFilter: (value, record) => record.qualifications[0]?.grade.name.indexOf(value) === 0
 	},
 	{
 		title: 'Роль',

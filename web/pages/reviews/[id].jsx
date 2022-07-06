@@ -176,7 +176,7 @@ export default function ReviewPage() {
 							role !== 'ROLE_USER' &&
 							<Panel header={<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>360 мнения</Divider>}
 							       key="opinions">
-								{ review.data?.opinions.length === 0 && <Button type="link" onClick={() => setStatisticModalVisible(true)}>Статистика</Button> }
+								{ review.data?.opinions.length !== 0 && <Button type="link" onClick={() => setStatisticModalVisible(true)}>Статистика</Button> }
 								<OpinionsList list={review.data?.opinions}/>
 							</Panel>
 						}

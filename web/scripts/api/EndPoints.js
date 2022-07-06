@@ -14,5 +14,5 @@ export class EndPoints {
 	static RESPONDENTS = this.BASE_PATH + '/respondent';
 	static RESPONDENT_OPINION = (id) => this.BASE_PATH + `/respondent/${id}/opinion`;
 	static RESPONDENT_STATUS = (id) => this.RESPONDENTS + `/${id}/status`;
-	static OPINIONS_STATISTIC = (id) => this.BASE_PATH + '/statistic/opinion/' + id;
+	static OPINIONS_STATISTIC = (id) => this.BASE_PATH + '/statistic/review/' + id + '/opinions';
 }

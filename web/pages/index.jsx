@@ -24,7 +24,7 @@ export default function Reviews() {
 				<div className={styles.panel_content}>
 					{
 						reviews.data?.filter(
-							(review) => review.currentStatus !== 'completed').map((review, i) =>
+							(review) => review.status !== 'completed').map((review, i) =>
 							<ReviewBrief review={review} key={i} selfBrief={role !== 'ROLE_LEADER'}/>
 						)
 					}
@@ -38,7 +38,7 @@ export default function Reviews() {
 				<div className={styles.panel_content}>
 					{
 						reviews.data?.filter(
-							(review) => review.currentStatus === 'completed').map((review, i) =>
+							(review) => review.status === 'completed').map((review, i) =>
 							<ReviewBrief review={review} key={i} selfBrief={role !== 'ROLE_LEADER'}/>
 						)
 					}

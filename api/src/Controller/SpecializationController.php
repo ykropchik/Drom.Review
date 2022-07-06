@@ -86,7 +86,7 @@ class SpecializationController extends AppController
         try {
             $specializations = $specializationRepository->findAll();
 
-            return $this->response($this->jsonSerialize($specializations, ['spec-default']));
+            return $this->response($this->jsonSerialize($specializations, ['spec-full', 'grade-default']));
         } catch (\Exception $e) {
             $data = [
                 'status' => Response::HTTP_UNPROCESSABLE_ENTITY,

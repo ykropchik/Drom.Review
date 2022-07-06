@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\OpinionRepository;
 use App\Repository\RespondentRepository;
+use App\Types\RespondentStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -104,6 +105,7 @@ class RespondentController extends AppController
 			if ($comment) {
 				$respondent = $respondentRepository->find($id);
 				$respondent->setComment($comment);
+				$respondent->setStatus(RespondentStatus::COMPLETED);
 				$this->entityManager->persist($respondent);
 			}
 

@@ -122,17 +122,39 @@ class UserController extends AppController
 		}
 	}
 
-	#[Route('/api/user/{id}', name: 'update_user', methods: ['PUT'])]
-	public function update_user(Request $request, UserRepository $userRepository, $id): Response
+	#[Route('/api/user/{id}/addQualification', name: 'add_qualification', methods: ['POST'])]
+	public function add_qualification(
+		Request $request,
+		UserRepository $userRepository,
+		EntityManagerInterface $entityManager,
+		SpecializationRepository $specializationRepository,
+		GradeRepository $gradeRepository,
+		$id): Response
 	{
 		try {
-//			$data = $request->request->all();
-//			$user = $userRepository->find($id);
-//			$userRepository->updateUser($user, $data);
-//			$data = $this->jsonSerialize($user);
+			$request = $this->transformJsonBody($request);
+			$grade = $request->get('grade');
+			$specialization = $request->get('specialization');
+
+			if (!$specialization || !$grade) {
+				return $this->response([
+					'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+					'errors' => 'Не указана квалификация',
+				], Response::HTTP_UNPROCESSABLE_ENTITY);
+			}
+
+			$user = $userRepository->find($id);
+			$qualificationEntity = new Qualification();
+			$qualificationEntity->setSpecialization($specializationRepository->find($specialization));
+			$qualificationEntity->setGrade($gradeRepository->find($grade));
+			$entityManager->persist($qualificationEntity);
+			$user->addQualification($qualificationEntity);
+			$entityManager->persist($user);
+			$entityManager->flush();
+
 			return $this->response([
 				'status' => Response::HTTP_OK,
-				'message' => 'Пользователь успешно обновлен',
+				'message' => 'Квалификация успешно добавлена',
 			], Response::HTTP_OK);
 		} catch (\Exception $e) {
 			$data = [
@@ -142,6 +164,28 @@ class UserController extends AppController
 			return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
 		}
 	}
+
+//	#[Route('/api/user/{id}', name: 'update_user', methods: ['PUT'])]
+//	public function update_user(Request $request, UserRepository $userRepository, $id): Response
+//	{
+//		try {
+//			$request = $this->transformJsonBody($request);
+//			$qualification = $request->get('qualification');
+//			$name = $request->get('name');
+//			$email = $request->get('email');
+//
+//			return $this->response([
+//				'status' => Response::HTTP_OK,
+//				'message' => 'Пользователь успешно обновлен',
+//			], Response::HTTP_OK);
+//		} catch (\Exception $e) {
+//			$data = [
+//				'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+//				'message' => $e->getMessage(),
+//			];
+//			return $this->response($data, Response::HTTP_UNPROCESSABLE_ENTITY);
+//		}
+//	}
 
 	#[Route('/api/user/{id}', name: 'delete_user', methods: ['DELETE'])]
 	public function delete_user(UserRepository $userRepository, $id): Response

@@ -54,7 +54,7 @@ const drawChart = (element, data, textSize) => {
 	arcs
 		.append('text')
 		.attr('text-anchor', 'middle')
-		.text((d) => `${d.data.answer}`)
+		.text((d) => `${d.data.estimate}`)
 		.style('fill', '#fff')
 		.style('font-size', `${textSize}px`)
 		.attr('transform', (d) => {
