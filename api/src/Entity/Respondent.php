@@ -115,4 +115,13 @@ class Respondent
 		}
 		return $this;
 	}
+
+	public function getEstimateByQuestion(Question $question): ?string
+	{
+		$opinion = $this->opinions->filter(function(Opinion $opinion) use ($question) {
+			return $opinion->getQuestion() === $question;
+		});
+
+		return $opinion->first()->getEstimate();
+	}
 }

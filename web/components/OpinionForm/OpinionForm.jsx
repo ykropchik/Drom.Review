@@ -13,7 +13,7 @@ export default function OpinionForm({ opinionId, questions, onSubmit }) {
 
 	const onFinishHandler = ({comment, ...answers}) => {
 		onSubmit();
-		request(EndPoints.RESPONDENT_OPINIONS(opinionId), 'POST', { answers: answers, comment: comment } )
+		request(EndPoints.RESPONDENT_OPINION(opinionId), 'POST', { answers: answers, comment: comment } )
 			.then(() => {
 				router.push('/invitations');
 				message.success('360-мнение отправлено');

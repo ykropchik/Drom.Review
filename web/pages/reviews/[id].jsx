@@ -23,6 +23,7 @@ import useData from '../../scripts/hooks/useData';
 import { EndPoints } from '../../scripts/api/EndPoints';
 import request from '../../scripts/api/request';
 import { useSession } from '../../scripts/SessionProvider';
+import StatisticModal from '../../components/StatisticModal/StatisticModal';
 
 const { Content } = Layout;
 const { Step } = Steps;
@@ -40,6 +41,7 @@ export default function ReviewPage() {
 	const [saving, setSaving] = useState(false);
 	const [statusChanging, setStatusChanging] = useState(false);
 	const [commentSending, setCommentSending] = useState(false);
+	const [statisticModalVisible, setStatisticModalVisible] = useState(false);
 
 	useEffect(() => {
 		setPageHeaderProps(getPageHeaderProps(role));
@@ -174,6 +176,7 @@ export default function ReviewPage() {
 							role !== 'ROLE_USER' &&
 							<Panel header={<Divider style={{ margin: 0 }} orientation="left" orientationMargin={12}>360 мнения</Divider>}
 							       key="opinions">
+								{ review.data?.opinions.length !== 0 && <Button type="link" onClick={() => setStatisticModalVisible(true)}>Статистика</Button> }
 								<OpinionsList list={review.data?.opinions}/>
 							</Panel>
 						}
@@ -214,6 +217,9 @@ export default function ReviewPage() {
 					</>
 				}
 			</Spin>
+			<StatisticModal visible={statisticModalVisible}
+			                onClose={() => setStatisticModalVisible(false)} 
+			                reviewId={review.data?.id}/>
 			<SelfReviewForm visible={selfReviewFormVisible}
 			                isLoading={saving}
 			                onCancel={() => setSelfReviewFormVisible(false)}

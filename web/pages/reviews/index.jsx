@@ -9,18 +9,27 @@ import useData from '../../scripts/hooks/useData';
 import { EndPoints } from '../../scripts/api/EndPoints';
 import { reviewStatusInfo } from '../../configs/reviewInfo';
 import dateFormatter from '../../scripts/dateFormatter';
+import { useRouter } from 'next/router';
 
 const { TabPane } = Tabs;
 
 export default function Reviews() {
 	const reviews = useData(EndPoints.REVIEWS);
+	const router = useRouter();
+
+	const onRowClickHandler = (id) => {
+		router.push(`/reviews/${id}`);
+	};
 
 	return (
 		<Tabs defaultActiveKey="list">
 			<TabPane key="list"
 			         tab={<TabPaneItem icon={<OrderedListOutlined/>} title="Список review"/>}
 			>
-				<Table dataSource={reviews.data} loading={reviews.isLoading} columns={columns}/>
+				<Table dataSource={reviews.data}
+				       loading={reviews.isLoading}
+				       columns={columns}
+				       onRow={(record) => ({ onClick: () => onRowClickHandler(record.id), style: { cursor: 'pointer' } })}/>
 			</TabPane>
 			<TabPane key="newUsers"
 			         tab={<TabPaneItem icon={<FileAddOutlined/>} title="Создать"/>}
@@ -45,7 +54,7 @@ const columns = [
 		dataIndex: 'subject',
 		key: 'avatarUrl',
 		width: 26,
-		render: (data) => <UserAvatar avatarUrl={data.avatarUrl} userName={data.name} size={26}/>
+		render: (data) => <UserAvatar avatarUrl={data.avatarUrl} userName={data.fullName} size={26}/>
 	},
 	{
 		title: 'Имя',

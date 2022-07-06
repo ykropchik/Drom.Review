@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Repository\QuestionRepository;
+use App\Repository\RespondentRepository;
 use App\Repository\ReviewRepository;
 use App\Repository\UserRepository;
+use App\Types\RespondentStatus;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -69,7 +71,10 @@ class StatisticController extends AppController
     }
 
     #[Route('/api/statistic/review/{id}/opinions', name: 'statistic_review', methods: ['GET'])]
-    public function get_statistic_opinions(ReviewRepository $reviewRepository, QuestionRepository $questionRepository, $id): JsonResponse
+    public function get_statistic_opinions(
+		ReviewRepository $reviewRepository,
+		QuestionRepository $questionRepository,
+		$id): JsonResponse
     {
         try {
             $review = $reviewRepository->find($id);
@@ -82,22 +87,21 @@ class StatisticController extends AppController
             }
 
             $questions = $questionRepository->findBy(['specialization' => $review->getSpecialization()->getId(), 'grade' => $review->getGrade()->getId()]);
+	        $completedRespondents = $review->getRespondents()->filter(fn ($respondent) => $respondent->getStatus() == RespondentStatus::COMPLETED);
 
             foreach ($questions as $question) {
-                $statistic = [];
-                foreach ($question->getRating() as $estimate) {
-                    array_push($statistic, ['answer' => $estimate, 'count' => 0]);
-                }
-                array_push($data, ['id' => $question->getId(), 'text' => $question->getText(), 'statistic' => $statistic]);
-            }
+                $questionStatistic = [];
 
-            $respondents = $review->getRespondents();
-            foreach ($respondents as $respondent) {
-                $opinions = $respondent->getOpinions();
-                foreach ($opinions as $opinion) {
-                    $key = array_search($opinion->getQuestion()->getId(), array_column($data, 'id'));
-                    $data[$key]['statistic'][array_search($opinion->getEstimate(), array_column($data[$key]['statistic'], 'answer'))]['count']++;
-                }
+				foreach ($completedRespondents as $respondent) {
+					$estimate = $respondent->getEstimateByQuestion($question);
+					if (array_key_exists($estimate, $questionStatistic)) {
+						$questionStatistic[$estimate]++;
+					} else {
+						$questionStatistic[$estimate] = 1;
+					}
+				}
+
+                $data[] = ['id' => $question->getId(), 'text' => $question->getText(), 'statistic' => array_map(fn ($key, $value) => ['estimate' => $key, 'count' => $value], array_keys($questionStatistic), $questionStatistic)];
             }
 
             return $this->response($data);
